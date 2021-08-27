@@ -2,7 +2,8 @@
 
 int main ()
 {
-    double x = 
+    float x = 1; 
    float y = acos(x);
     printf(y);
+    
 }
