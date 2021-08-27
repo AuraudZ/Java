@@ -46,11 +46,11 @@ public class CodingBatTester {
 	 * "not bad"
 	 */
 	public static String notString(String str) {
-		if (str.substring(0, 3).contains("not")) {
+		if (str.length() >= 3 && str.substring(0, 3).equals("not")) {
+			// if (str.substring(0, 3).equals("not")) {
 			return str;
 		}
-
-		return "";
+		return "not " + str;
 	}
 
 	/*
@@ -60,8 +60,11 @@ public class CodingBatTester {
 	 * missingChar("kitten", 0) → "itten" missingChar("kitten", 4) → "kittn"
 	 */
 	public static String missingChar(String str, int n) {
-		return "";
+		String front = str.substring(0, n);
+		String back = str.substring(n + 1);
+		return front + back;
 	}
+
 
 	/*
 	 * Given a string, return a new string where the first and last chars have been exchanged.
@@ -93,6 +96,7 @@ public class CodingBatTester {
 				"Calling notString(\"x\") -->  " + notString("x") + ". (Should be \"not x\")");
 		System.out.println("Calling notString(\"not bad\") -->  " + notString("not bad")
 				+ ". (Should be \"not bad\" )");
+		System.out.println(notString("no"));
 		System.out.println();
 
 		System.out.println("***Testing missingChar ***");
