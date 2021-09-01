@@ -10,6 +10,7 @@ public class Circle {
         System.out.println("The circumference is " + circumference(radius));
     }
 
+
     public static double area(double radius) {
         // Calculates the area of a circle
         // PI * r^2
