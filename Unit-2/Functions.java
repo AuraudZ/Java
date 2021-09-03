@@ -30,12 +30,8 @@ public class Functions {
 	 * @return the slope of the line
 	 */
 	public static double slope(double x1, double y1, double x2, double y2) {
-		double dY = y2 - y1;
-		double dX = x2 - x1;
-		double slope = dY / dX;
-		return slope;
+		return  slope = dY / dX;
 	}
-
 	/**
 	 * This function returns the geometric mean of number1 and number2 Precondition: number1 and
 	 * number2 must both be positive
