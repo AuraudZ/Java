@@ -1,5 +1,5 @@
 public class MiscFunStuff {
-	public static void main(String[] args) {
+public	public static void main(String[] args) {
 		System.out.println("Welcome! Enter your choice.");
 		System.out.print("(1) Convert in. to cm. (2) Even or Odd  (3) Advice: ");
 		int choice = TextIO.readInt();

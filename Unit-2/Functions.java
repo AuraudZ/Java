@@ -15,6 +15,8 @@ public class Functions {
 		System.out.println("Geometric Mean: " + geometricMean(4, 9));
 		System.out.println("First And Last " + firstAndLast("Whdither"));
 		System.out.println("Middle Capitalization " + middleCapitalization("fidEhfiKldhIK"));
+		System.out.println(
+				"Middle Capitalization 2 " + middleCapitalization("ergjerngojhiuehfiryujnwef"));
 	}
 
 	/**
