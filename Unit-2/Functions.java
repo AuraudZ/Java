@@ -8,13 +8,13 @@ public class Functions {
 
 		// remember we can also System.out the result of the subroutine
 		// without storing it in another variable like above.
-		System.out.println(quadraticSolution(1, 6, 9));
+		System.out.println("Quadratic Solution " + quadraticSolution(1, 6, 9));
 
 		// You should write additional tests to make sure your functions
 		// work for different cases (like the empty String).
 		System.out.println("Geometric Mean: " + geometricMean(4, 9));
-		System.out.println(firstAndLast("Whdither"));
-		System.out.println(middleCapitalization("fidEhfiKldhIK"));
+		System.out.println("First And Last " + firstAndLast("Whdither"));
+		System.out.println("Middle Capitalization " + middleCapitalization("fidEhfiKldhIK"));
 	}
 
 	/**
@@ -61,7 +61,18 @@ public class Functions {
 	 * @return the larger of the two solutions to the equation
 	 */
 	public static double quadraticSolution(double a, double b, double c) {
-		return 0.0;
+		double discriminant = Math.pow(b, 2) - 4 * a * c;
+		if (discriminant < 0) {
+			return 0;
+		} else {
+			double solution1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+			double solution2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+			if (solution1 > solution2) {
+				return solution1;
+			} else {
+				return solution2;
+			}
+		}
 	}
 
 	/**

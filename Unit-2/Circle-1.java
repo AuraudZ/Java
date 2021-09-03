@@ -13,6 +13,7 @@ public class Circle {
     public static double area(double radius) {
         // Calculates the area of a circle
         // PI * r^2
+	String test = "Test"
         return Math.PI * Math.pow(radius, 2);
     }
 
