@@ -5,9 +5,7 @@ public class StringTimes {
         String result = "";
         for (int i = 0; i < n; i++) {
             result += str;
-
         }
-
         return result;
     }
 }
