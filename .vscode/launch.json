@@ -1,0 +1,95 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Launch ThreeN1",
+      "request": "launch",
+      "mainClass": "ThreeN1",
+      "projectName": "Java_4848ca1"
+    },
+    {
+      "type": "java",
+      "name": "Launch Current File",
+      "request": "launch",
+      "mainClass": "${file}"
+    },
+    {
+      "type": "java",
+      "name": "Launch Circle",
+      "request": "launch",
+      "mainClass": "CodingBat.Circle",
+      "projectName": "Java_4848ca1"
+    },
+    {
+      "type": "java",
+      "name": "Launch CodingBatTester",
+      "request": "launch",
+      "mainClass": "CodingBat.CodingBatTester",
+      "projectName": "Java_4848ca1"
+    },
+    {
+      "type": "java",
+      "name": "Launch FormatTesterClasswork",
+      "request": "launch",
+      "mainClass": "CodingBat.FormatTesterClasswork",
+      "projectName": "Java_4848ca1"
+    },
+    {
+      "type": "java",
+      "name": "Launch FormatTesterDemo",
+      "request": "launch",
+      "mainClass": "CodingBat.FormatTesterDemo",
+      "projectName": "Java_4848ca1"
+    },
+    {
+      "type": "java",
+      "name": "Launch GuardianTroll",
+      "request": "launch",
+      "mainClass": "CodingBat.GuardianTroll",
+      "projectName": "Java_4848ca1"
+    },
+    {
+      "type": "java",
+      "name": "Launch NonStart",
+      "request": "launch",
+      "mainClass": "CodingBat.NonStart",
+      "projectName": "Java_4848ca1"
+    },
+    {
+      "type": "java",
+      "name": "Launch frontBack",
+      "request": "launch",
+      "mainClass": "CodingBat.frontBack",
+      "projectName": "Java_4848ca1"
+    },
+    {
+      "type": "java",
+      "name": "Launch missingChar",
+      "request": "launch",
+      "mainClass": "CodingBat.missingChar",
+      "projectName": "Java_4848ca1"
+    },
+    {
+      "type": "java",
+      "name": "Launch RightTrianglePerimeterFinder",
+      "request": "launch",
+      "mainClass": "RightTrianglePerimeterFinder"
+    },
+    {
+      "type": "java",
+      "name": "Launch StringOutputter",
+      "request": "launch",
+      "mainClass": "StringOutputter"
+    },
+    {
+      "type": "cppdbg",
+      "name": "Launch Cpp",
+      "request": "launch",
+      "mainClass": "Cpp"
+    }
+  ]
+}

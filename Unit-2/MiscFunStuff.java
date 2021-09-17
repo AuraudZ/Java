@@ -17,17 +17,17 @@ public class MiscFunStuff {
 		
 		
 	}
-	
+
 	public static void convert() {
 		System.out.print("Enter your height in inches: ");
 		double heightInInches;
 		System.out.println("Your height in cm is " + inchesToCm(heightInInches));
 	}
-	
+
 	inchesToCm() {
 		
 	}
-	
+
 	public static void evenOdd() {
 		System.out.print("Give me an integer: ");
 		double number;
@@ -38,21 +38,20 @@ public class MiscFunStuff {
 		else
 			System.out.println("It's neither...enter an integer!");
 	}
-	
+
 	public static void randAdvice() { // practice debugging with System.out!
 		int rand = Math.random(); // ** generate a rand int from 1 to 3
-		
-		String advice = ""; 
-  
-		if(rand == 1)  
-			advice = "try harder";
-		else if(rand == 2)
-			advice = "keep going!";	
-		else if(rand == 3)
-			advice = "deep breaths";	
 
-		System.out.println(advice);		
+		String advice = "";
+
+		if (rand == 1)
+			advice = "try harder";
+		else if (rand == 2)
+			advice = "keep going!";
+		else if (rand == 3)
+			advice = "deep breaths";
+
+		System.out.println(advice);
 	}
 }
 
-	
