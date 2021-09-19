@@ -1,21 +1,12 @@
-
-public class ThreeN1Old {
-
+public class Adrain {
     public static void main(String[] args) {
-        // This took way to long to figure out.
-        // Timestamp 1632018003
-        System.out.println("Enter A Postive Integer");
-        int input = TextIO.getInt();
+        int input = TextIO.getlnInt();
         int max = 0;
-        if (input < 0) {
-            System.out.println("Please enter a positive integer");
-        }
-        int maxNum = 0;
         for (int i = 1; i <= input; i++) {
             System.out.println("attempt #" + i);
             int count = 0;
+            System.out.println("count is " + count);
             int num = i;
-            System.out.println("count" + count);
             while (num != 1) {
                 if (num % 2 == 0) {
                     num = num / 2;
@@ -26,9 +17,10 @@ public class ThreeN1Old {
             }
             if (count > max) {
                 max = count;
-                maxNum = i;
+                int maxNum = i;
             }
         }
-        System.out.println("The number with the most steps is " + maxNum + " with " + max + " steps");
+        System.out.println(max + " had the most terms.");
+
     }
 }
