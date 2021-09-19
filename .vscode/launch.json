@@ -9,6 +9,13 @@
       "name": "Launch ThreeN1",
       "request": "launch",
       "mainClass": "ThreeN1",
+      "projectName": "Java_989132c"
+    },
+    {
+      "type": "java",
+      "name": "Launch ThreeN1",
+      "request": "launch",
+      "mainClass": "ThreeN1",
       "projectName": "Java_4848ca1"
     },
     {
