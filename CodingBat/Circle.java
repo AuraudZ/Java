@@ -1,15 +1,17 @@
+package CodingBat;
+
 public class Circle {
     // Main Method
     public static void main(String[] args) {
 
-        // Takes inpput via TextIO and uses subrotines to calculate the area and circumference of a
+        // Takes inpput via TextIO and uses subrotines to calculate the area and
+        // circumference of a
         // circle
         System.out.println("What is the raidus of the circle ");
         double radius = TextIO.getDouble();
         System.out.println("The area is " + area(radius));
         System.out.println("The circumference is " + circumference(radius));
     }
-
 
     public static double area(double radius) {
         // Calculates the area of a circle

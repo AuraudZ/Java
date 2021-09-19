@@ -2,6 +2,7 @@ public class Adrain {
     public static void main(String[] args) {
         int input = TextIO.getlnInt();
         int max = 0;
+        int maxNum = 0;
         for (int i = 1; i <= input; i++) {
             System.out.println("attempt #" + i);
             int count = 0;
@@ -17,7 +18,7 @@ public class Adrain {
             }
             if (count > max) {
                 max = count;
-                int maxNum = i;
+                maxNum = i;
             }
         }
         System.out.println(max + " had the most terms.");

@@ -23,6 +23,7 @@ public class ThreeN1 {
         maxNum = ans[0];
         max = ans[1];
         count = ans[2];
+        System.out.println("The number of steps is " + count);
         System.out.println("The number with the most steps is " + maxNum + " with " + max + " steps");
     }
 

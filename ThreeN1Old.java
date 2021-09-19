@@ -6,16 +6,14 @@ public class ThreeN1Old {
         // Timestamp 1632018003
         System.out.println("Enter A Postive Integer");
         int input = TextIO.getInt();
-        int max = 0;
+        int max = 0; // Amount of steps
         if (input < 0) {
             System.out.println("Please enter a positive integer");
         }
-        int maxNum = 0;
+        int maxNum = 0; // Number with most steps
         for (int i = 1; i <= input; i++) {
-            System.out.println("attempt #" + i);
             int count = 0;
             int num = i;
-            System.out.println("count" + count);
             while (num != 1) {
                 if (num % 2 == 0) {
                     num = num / 2;
@@ -24,7 +22,8 @@ public class ThreeN1Old {
                 }
                 count++;
             }
-            if (count > max) {
+            System.out.println("count " + count);
+            if (count >= max) {
                 max = count;
                 maxNum = i;
             }
