@@ -10,20 +10,18 @@ public class ThreeN1 {
         // This took way to long to figure out.
         // Timestamp 1632018003
         // Inatlize Vars
-        int input = TextIO.getInt();
-        int count = 0;
-        int max = 0;
-        // Logic
         System.out.println("Enter A Postive Integer");
+        int input = TextIO.getInt();
+        // Logic
         if (input < 0) {
             System.out.println("Please enter a positive integer");
         }
         int maxNum = 0;
+        int max = 0;
         int[] ans = ThreeNPlus1(input, max, maxNum);
         maxNum = ans[0];
         max = ans[1];
-        count = ans[2];
-        System.out.println("The number of steps is " + count);
+        // System.out.println("The number of steps is " + count);
         System.out.println("The number with the most steps is " + maxNum + " with " + max + " steps");
     }
 

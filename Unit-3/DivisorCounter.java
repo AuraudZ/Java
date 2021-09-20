@@ -16,6 +16,7 @@ public class DivisorCounter {
     }
 
     public int[] DivisorCounter(int number) {
+
         return new int[number];
     }
 }
