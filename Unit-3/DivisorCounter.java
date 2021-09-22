@@ -6,6 +6,10 @@ public class DivisorCounter {
         int[] nums = new int[input];
         int[] divisors = new int[input];
         int maxDivisors = 0;
+        if (input < 1) {
+            System.out.println("Please Enter A Positive Integer");
+            // It did not work I don't know why
+        }
         for (int i = 0; i < input; i++) { // Running though every number from 1-imput
             nums[i] = i + 1;
             divisors[i] = 0;
