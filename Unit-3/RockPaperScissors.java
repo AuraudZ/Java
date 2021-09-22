@@ -1,20 +1,16 @@
 public class RockPaperScissors {
     public static void main(String[] args) {
         System.out.println("Welcome to Rock, Paper, Scissors!");
+        System.out.println("Best Of? ");
+        int bestOf = TextIO.getlnInt();
         System.out.println("Please enter your choice: ");
         String input = TextIO.getlnString();
-        Run(input);
+        Run(input, bestOf);
     }
 
-    // Get input from user
-    // Get computor choice
-    // Compare the differnce
-    // Print who wins
-    // Run loop to see who would win after best of 3
-    public static void Run(String input) {
+    public static void Run(String input, int bestOf) {
         String compChoiceString = "";
         int compChoice = (int) Math.random() * 3;
-        System.out.println("Computer chose: " + compChoice);
         switch (compChoice) {
             case 0:
                 compChoiceString = "Rock";
@@ -27,12 +23,11 @@ public class RockPaperScissors {
                 break;
         }
         System.out.println("Computer chose: " + compChoiceString);
-        int bestOfThree = 3;
         boolean tie = false;
         int compWin = 0;
         int playerWin = 0;
 
-        while (bestOfThree > 0) {
+        while (bestOf > 0) {
             if (input.equals("Rock")) {
                 if (compChoiceString.equals("Rock")) {
                     tie = true;
@@ -68,19 +63,18 @@ public class RockPaperScissors {
                     System.out.println("Tie!");
                 }
             } else {
-                bestOfThree++;
+                bestOf++;
                 System.out.println("Invalid input");
             }
-            // Who won take that and subtract from best of three
-            bestOfThree--;
-            // System.out.println("Best of three: " + bestOfThree);
-            // if computor won 2 out of 3 ouput that computer won
-            if (compWin == 1 && bestOfThree == 2) {
+            bestOf--;
+            if (compWin == 1 && bestOf == 2) {
                 System.out.println("Computer won!");
-            } else if (playerWin == 1 && bestOfThree == 2) {
+            } else if (playerWin == 1 && bestOf == 2) {
                 System.out.println("You won the round!");
+            } else {
+
             }
-            if (bestOfThree == 0) {
+            if (bestOf == 0) {
                 System.out.println("Game over!");
             } else {
                 System.out.println("Please enter your choice: ");
