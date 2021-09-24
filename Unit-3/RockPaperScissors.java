@@ -44,15 +44,18 @@ public class RockPaperScissors {
                 } else if (compChoiceString.equals("Paper")) {
                     compWin++;
                     System.out.println(youRockCompPaper);
+                    System.out.println("Score: " + compWin + " - " + playerWin);
                 } else {
                     playerWin++;
                     System.out.println(youRockCompScissors);
+                    System.out.println("Score: " + compWin + " - " + playerWin);
                 }
             } else if (input.equals("Paper")) {
                 if (compChoiceString.equals("Rock")) {
                     playerWin++;
                     System.out.println("You win!");
                     System.out.println(youPaperCompRock);
+                    System.out.println("Score: " + compWin + " - " + playerWin);
                 } else if (compChoiceString.equals("Paper")) {
                     System.out.println(youPaperCompPaper);
                     tie = true;
@@ -60,6 +63,7 @@ public class RockPaperScissors {
                 } else {
                     System.out.println(youPaperCompScissors);
                     compWin++;
+                    System.out.println("Score: " + compWin + " - " + playerWin);
                     System.out.println("You lose!");
 
                 }
@@ -68,13 +72,17 @@ public class RockPaperScissors {
                     System.out.println(youScissorsCompRock);
                     compWin++;
                     System.out.println("You lose!");
+                    System.out.println("Score: " + compWin + " - " + playerWin);
                 } else if (compChoiceString.equals("Paper")) {
                     System.out.println(youScissorsCompPaper);
                     playerWin++;
+                    System.out.println("Score: " + compWin + " - " + playerWin);
+
                     System.out.println("You win!");
                 } else {
                     System.out.println(youScissorsCompScissors);
                     tie = true;
+                    System.out.println("Score: " + compWin + " - " + playerWin);
                     System.out.println("Tie!");
                 }
             } else {
