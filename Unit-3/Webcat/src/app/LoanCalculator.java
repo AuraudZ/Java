@@ -1,5 +1,9 @@
 package app;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class LoanCalculator {
     public static void main(String[] args) {
         String table = createAmortizationTable(10000, 950, 0.17);
@@ -18,6 +22,7 @@ public class LoanCalculator {
             return "Not possible to pay off the loan.";
         }
         String format = "";
+
         StringBuilder sb = new StringBuilder();
         format = format.concat(String.format("Month     Interest        Payment         Remaining%n"));
         while (remainingAmount > 0) {
@@ -29,19 +34,17 @@ public class LoanCalculator {
                 monthlyPayment = temp;
             }
             if (remainingAmount < 0) {
+
                 remainingAmount = 0;
             }
-
-            format = format.concat(Integer.toString(months));
-            format = format.concat("         ");
-            format = format.concat(String.format("$%.2f", interest));
-            format = format.concat("\t  ");
-            format = format.concat(String.format("$%.2f", monthlyPayment));
-            format = format.concat("\t  ");
-            format = format.concat(String.format("$%.2f", remainingAmount));
-            format = format.concat("\n");
+            sb.append(String.format("%-2d", months));
+            sb.append("        ");
+            sb.append(String.format("$%-15s", interest));
+            sb.append(String.format("$%-15.2f", monthlyPayment));
+            sb.append(String.format("$%-14.2f", remainingAmount));
+            sb.append("\n");
             months++;
         }
-        return format;
+        return format + sb.toString();
     }
 }
