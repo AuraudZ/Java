@@ -49,11 +49,11 @@ public class Statistics {
 
     public static double calculateMedian(int[] array) {
         Arrays.sort(array);
-        if (array.length % 2 == 0) {
-            return (array[array.length / 2] + array[array.length / 2 - 1]) / 2;
-        } else {
-            return array[array.length / 2];
+        double[] doubleArray = new double[array.length];
+        for (int i = 0; i < array.length; i++) {
+            doubleArray[i] = array[i];
         }
+        return calculateMedian(doubleArray);
     }
 
     public static double calculateMedian(String[] array) {
