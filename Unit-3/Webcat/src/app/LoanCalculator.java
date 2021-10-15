@@ -2,24 +2,25 @@ package app;
 
 public class LoanCalculator {
     public static void main(String[] args) {
-        String table = createAmortizationTable(10000, 950, 0.17);
+        String table = createAmortizationTable(10000, 950, 0.12);
         System.out.println(table);
     }
 
-    public static String createAmortizationTable(double loadAmount, double monthlyPayment, double annualInterestRate) {
+    public static String createAmortizationTable(double loanAmount, double monthlyPayment, double annualInterestRate) {
 
         double monthlyInterestRate = annualInterestRate / 12;
         double interest = 0;
-        double remainingAmount = loadAmount;
+        double remainingAmount = loanAmount;
         double temp = 0;
         int months = 1;
-        // is not possible to pay off loan
-        if (monthlyPayment > loadAmount) {
+        if (monthlyPayment < 0) {
             return "Not possible to pay off the loan.";
         }
-        String format = "";
         StringBuilder sb = new StringBuilder();
-        format = format.concat(String.format("Month     Interest        Payment         Remaining%n"));
+        if (check(remainingAmount, monthlyPayment, annualInterestRate)) {
+            return "Not possible to pay off the loan.";
+        }
+        sb.append((String.format("Month     Interest        Payment         Remaining%n")));
         while (remainingAmount > 0) {
             interest = Math.round(monthlyInterestRate * remainingAmount * 100) / 100.0;
             remainingAmount = Math.round((remainingAmount + interest) * 100) / 100.0;
@@ -29,19 +30,26 @@ public class LoanCalculator {
                 monthlyPayment = temp;
             }
             if (remainingAmount < 0) {
+
                 remainingAmount = 0;
             }
-
-            format = format.concat(Integer.toString(months));
-            format = format.concat("         ");
-            format = format.concat(String.format("$%.2f", interest));
-            format = format.concat("\t  ");
-            format = format.concat(String.format("$%.2f", monthlyPayment));
-            format = format.concat("\t  ");
-            format = format.concat(String.format("$%.2f", remainingAmount));
-            format = format.concat("\n");
+            sb.append(String.format("%-2d", months));
+            sb.append("        ");
+            sb.append(String.format("$%-15.2f", interest));
+            sb.append(String.format("$%-15.2f", monthlyPayment));
+            sb.append(String.format("$%.2f", remainingAmount));
+            sb.append("\n");
             months++;
         }
-        return format;
+        return sb.toString();
+    }
+
+    public static boolean check(double remainingAmount, double monthlyPayment, double annualInterestRate) {
+        double monthlyInterestRate = annualInterestRate / 12;
+        double interest = Math.round(monthlyInterestRate * remainingAmount * 100) / 100.0;
+        if (monthlyPayment <= interest) {
+            return true;
+        }
+        return false;
     }
 }

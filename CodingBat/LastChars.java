@@ -1,3 +1,5 @@
+package CodingBat;
+
 public class LastChars {
     public String lastChars(String a, String b) {
         if (a.length() == 0 || b.length() == 0) {

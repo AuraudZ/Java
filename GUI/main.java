@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 
-class main {
+class Main extends JPanel {
     public static void main(String args[]) {
         JFrame frame = new JFrame("My First GUI");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -20,7 +20,6 @@ class main {
 
         m33.addActionListener(e -> System.exit(0));
         File f = new File("C:\\Users\\User\\Desktop\\test.txt");
-        m11.addActionListener(e -> desktop.Open(f));
 
         m1.add(m11);
         m1.add(m22);
@@ -29,7 +28,6 @@ class main {
         JTextArea textArea = new JTextArea();
         JCheckBox checkbox = new JCheckBox("Check");
         frame.getContentPane().add(BorderLayout.NORTH, mb);
-        frame.getContextPane().add(BorderLayout.CENTER, textArea);
         frame.getContentPane().add(checkbox);
 
         frame.getContentPane().add(button); // Adds Button to content pane of frame
