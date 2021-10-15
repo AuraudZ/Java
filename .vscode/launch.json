@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Launch MosaicCreator",
+      "request": "launch",
+      "mainClass": "MosaicCreator",
+      "projectName": "Java_99e8495d"
+    },
+    {
+      "type": "java",
       "name": "Launch ThreeN1",
       "request": "launch",
       "mainClass": "ThreeN1",

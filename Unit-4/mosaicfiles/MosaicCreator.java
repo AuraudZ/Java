@@ -11,9 +11,24 @@ public class MosaicCreator {
         int currCol = 0;
         while (Mosaic.isOpen()) {
             System.out.println("What Color? ");
-            char input = TextIO.getlnChar();
-            Color color = getColor(input);
-            Mosaic.setColor(currRow, currCol, color);
+            // Parse string into color
+            System.out.println("Row #1 Colors: ");
+            // Pad spaces with black
+            // Set only colors that the is the string length
+            String colorString = TextIO.getlnString();
+            char[] colorArray = colorString.toCharArray();
+            Mosaic.setColor(currRow, colorArray.length, Color.BLACK);
+            for (int i = 0; i < colorArray.length; i++) {
+                Mosaic.setColor(currRow, i, getColor(colorArray[i]));
+                currCol++;
+
+            }
+            // Set the rest black
+            currRow++;
+            System.out.println("Row #2 Colors: ");
+            colorString = TextIO.getlnString();
+            colorArray = colorString.toCharArray();
+
             if (currCol == columns) {
                 currCol = 0;
                 currCol++;
@@ -25,12 +40,16 @@ public class MosaicCreator {
         }
     }
 
-    /*
-     * Prompt the user (row by row) for the colors of the columns using the
-     * following code: r for red, g for green, b for blue, y for yellow, c for cyan,
-     * m for magenta, w for white, and any other character (including spaces) for
-     * black
+    /**
+     * 
+     * Prompts the user for the colors of the columns using the following code: r
+     * for red, g for green, b for blue, y for yellow, c for cyan, m for magenta, w
+     * for white, and any other character (including spaces) for black.
+     * 
+     * @param input Char input from user
+     * @return Random Color
      */
+
     private static Color getColor(char input) {
         Color color = null;
         switch (input) {
