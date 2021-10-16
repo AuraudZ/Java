@@ -18,29 +18,80 @@ public class MosaicCreator {
             String colorString = TextIO.getlnString();
             char[] colorArray = colorString.toCharArray();
             Color[] colors = parseColorArray(colorArray);
-            colors = parseColorArray(colorArray);
-            setMosaicColor(colors, currRow);
-            currRow++;
-            /*
-             * At this point, the mosaic begins changing colors every 1 second (1000
-             * milliseconds) according to the following color rotation: red -> cyan ->
-             * yellow -> white -> green -> blue -> magenta -> black Note how the color
-             * change does not have any delay, all tiles should change colors at the same
-             * time. The mosaic should continue changing colors as long as the window is
-             * open
-             */
-
-            // cycle the colors every 1 second
-            Mosaic.delay(1000);
-            Mosaic.setColor(rows, columns, Color.BLACK);
-            if (currCol == columns) {
+            colors = cleanColors(colors, columns);
+            if (currRow >= rows || currCol >= columns) {
+                System.out.println("Row " + printRow + " Colors: ");
+                colorString = TextIO.getlnString();
+                colorArray = colorString.toCharArray();
+                colors = parseColorArray(colorArray);
+                currRow = 0;
                 currCol = 0;
+            }
+            if (colors.length != columns) {
+                Mosaic.setColor(currRow, currCol, Color.BLACK);
                 currCol++;
             }
+            setMosaicColor(colors, currRow, currCol, columns);
+            Color[] rowColors = saveColors(colors, currRow, currCol);
+            currRow++;
+            if (currCol == columns) {
+                currCol = 0;
+            }
             if (currRow == rows) {
-                currRow = 0;
+                Mosaic.delay(1);
+                colorDance(rowColors, rows, columns);
             }
         }
+    }
+
+    /*
+     * At this point, the mosaic begins changing colors every 1 second (1000
+     * milliseconds) according to the following color rotation: red -> cyan ->
+     * yellow -> white -> green -> blue -> magenta -> black
+     */
+    private static void colorDance(Color[] rowColors, int currRow, int columns) {
+        int currCol = 0;
+        Color[] shiftedColors = new Color[rowColors.length];
+        shiftedColors = shiftColorArray(rowColors);
+        setMosaicColor(shiftedColors, currRow, currCol, columns);
+    }
+
+    private static Color shiftColor(Color color) {
+        Color shiftedColor;
+        if (color.equals(Color.RED)) {
+            shiftedColor = Color.CYAN;
+        } else if (color.equals(Color.CYAN)) {
+            shiftedColor = Color.YELLOW;
+        } else if (color.equals(Color.YELLOW)) {
+            shiftedColor = Color.WHITE;
+        } else if (color.equals(Color.WHITE)) {
+            shiftedColor = Color.GREEN;
+        } else if (color.equals(Color.GREEN)) {
+            shiftedColor = Color.BLUE;
+        } else if (color.equals(Color.BLUE)) {
+            shiftedColor = Color.MAGENTA;
+        } else if (color.equals(Color.MAGENTA)) {
+            shiftedColor = Color.BLACK;
+        } else {
+            shiftedColor = Color.RED;
+        }
+        return shiftedColor;
+    }
+
+    private static Color[] shiftColorArray(Color[] colors) {
+        Color[] shiftedColors = new Color[colors.length];
+        for (int i = 0; i < colors.length; i++) {
+            shiftedColors[i] = shiftColor(colors[i]);
+        }
+        return shiftedColors;
+    }
+
+    private static Color[] saveColors(Color[] colors, int currRow, int currCol) {
+        Color[] savedColors = new Color[colors.length];
+        for (int i = 0; i < colors.length; i++) {
+            savedColors[i] = colors[i];
+        }
+        return savedColors;
     }
 
     /**
@@ -52,7 +103,6 @@ public class MosaicCreator {
      * @param input Char input from user
      * @return Color of the input
      */
-
     private static Color getColor(char input) {
         Color color = null;
         switch (input) {
@@ -85,7 +135,7 @@ public class MosaicCreator {
     }
 
     /**
-     * Returns the color of the input of String parsed into char array
+     * Returns the color of the input of char array
      * 
      * @param colorArray
      * @return Color of the inputs
@@ -98,19 +148,34 @@ public class MosaicCreator {
         return colors;
     }
 
-    private static Color[] rotateColors() {
-        Color[] colors = { Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN, Color.MAGENTA, Color.WHITE };
-        Color temp = colors[0];
-        for (int i = 0; i < colors.length - 1; i++) {
-            colors[i] = colors[i + 1];
+    private static void setMosaicColor(Color[] colors, int currRow, int currCol, int columns) {
+        if (colors.length != columns) {
+            for (int i = 0; i < colors.length; i++) {
+                Mosaic.setColor(currRow, currCol, colors[i]);
+                currCol++;
+            }
+        } else {
+            for (int i = 0; i < colors.length; i++) {
+                Mosaic.setColor(currRow, i, colors[i]);
+
+            }
         }
-        colors[colors.length - 1] = temp;
-        return colors;
     }
 
-    private static void setMosaicColor(Color[] colors, int currRow) {
+    /**
+     * Removes colors that are longer than the columns
+     * 
+     * @param colors
+     * @param columns
+     * @return Color array with the colors removed
+     */
+    private static Color[] cleanColors(Color[] colors, int columns) {
+        Color[] newColors = new Color[columns];
         for (int i = 0; i < colors.length; i++) {
-            Mosaic.setColor(currRow, i, colors[i]);
+            if (i < columns) {
+                newColors[i] = colors[i];
+            }
         }
+        return newColors;
     }
 }
