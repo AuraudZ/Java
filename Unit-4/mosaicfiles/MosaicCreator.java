@@ -6,29 +6,33 @@ public class MosaicCreator {
         int rows = TextIO.getlnInt();
         System.out.println("How many columns?");
         int columns = TextIO.getlnInt();
-        Mosaic.open(rows, columns);
+        int width = 120;
+        int height = 100;
+        Mosaic.open(rows, columns, width, height);
         int currRow = 0;
         int currCol = 0;
         while (Mosaic.isOpen()) {
-            System.out.println("What Color? ");
-            // Parse string into color
-            System.out.println("Row #1 Colors: ");
-            // Pad spaces with black
-            // Set only colors that the is the string length
+            // Mosaic.setColor(rows, columns, Color.BLACK);
+            int printRow = currRow + 1;
+            System.out.println("Row " + printRow + " Colors: ");
             String colorString = TextIO.getlnString();
             char[] colorArray = colorString.toCharArray();
-            Mosaic.setColor(currRow, colorArray.length, Color.BLACK);
-            for (int i = 0; i < colorArray.length; i++) {
-                Mosaic.setColor(currRow, i, getColor(colorArray[i]));
-                currCol++;
-
-            }
-            // Set the rest black
+            Color[] colors = parseColorArray(colorArray);
+            colors = parseColorArray(colorArray);
+            setMosaicColor(colors, currRow);
             currRow++;
-            System.out.println("Row #2 Colors: ");
-            colorString = TextIO.getlnString();
-            colorArray = colorString.toCharArray();
+            /*
+             * At this point, the mosaic begins changing colors every 1 second (1000
+             * milliseconds) according to the following color rotation: red -> cyan ->
+             * yellow -> white -> green -> blue -> magenta -> black Note how the color
+             * change does not have any delay, all tiles should change colors at the same
+             * time. The mosaic should continue changing colors as long as the window is
+             * open
+             */
 
+            // cycle the colors every 1 second
+            Mosaic.delay(1000);
+            Mosaic.setColor(rows, columns, Color.BLACK);
             if (currCol == columns) {
                 currCol = 0;
                 currCol++;
@@ -36,7 +40,6 @@ public class MosaicCreator {
             if (currRow == rows) {
                 currRow = 0;
             }
-
         }
     }
 
@@ -47,7 +50,7 @@ public class MosaicCreator {
      * for white, and any other character (including spaces) for black.
      * 
      * @param input Char input from user
-     * @return Random Color
+     * @return Color of the input
      */
 
     private static Color getColor(char input) {
@@ -79,5 +82,35 @@ public class MosaicCreator {
                 break;
         }
         return color;
+    }
+
+    /**
+     * Returns the color of the input of String parsed into char array
+     * 
+     * @param colorArray
+     * @return Color of the inputs
+     */
+    private static Color[] parseColorArray(char[] colorArray) {
+        Color[] colors = new Color[colorArray.length];
+        for (int i = 0; i < colorArray.length; i++) {
+            colors[i] = getColor(colorArray[i]);
+        }
+        return colors;
+    }
+
+    private static Color[] rotateColors() {
+        Color[] colors = { Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN, Color.MAGENTA, Color.WHITE };
+        Color temp = colors[0];
+        for (int i = 0; i < colors.length - 1; i++) {
+            colors[i] = colors[i + 1];
+        }
+        colors[colors.length - 1] = temp;
+        return colors;
+    }
+
+    private static void setMosaicColor(Color[] colors, int currRow) {
+        for (int i = 0; i < colors.length; i++) {
+            Mosaic.setColor(currRow, i, colors[i]);
+        }
     }
 }
