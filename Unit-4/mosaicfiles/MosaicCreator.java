@@ -15,7 +15,6 @@ public class MosaicCreator {
         int currRow = 0;
         int currCol = 0;
         while (Mosaic.isOpen()) {
-            // Mosaic.setColor(rows, columns, Color.BLACK);
             int printRow = currRow + 1;
             System.out.println("Row " + printRow + " Colors: ");
             String colorString = TextIO.getlnString();
@@ -40,7 +39,8 @@ public class MosaicCreator {
                 currCol = 0;
             }
             while (currRow == rows) {
-                Mosaic.delay(1000);
+                Mosaic.delay(100);
+                // Why is there a null pointer exception here?
                 colorDance(currRow, currCol, columns);
             }
         }
@@ -135,6 +135,9 @@ public class MosaicCreator {
             case 'w':
                 color = Color.WHITE;
                 break;
+            case ' ': // Fixes null ptr exception
+                color = Color.BLACK;
+                break;
             default:
                 color = Color.BLACK;
                 break;
@@ -157,16 +160,9 @@ public class MosaicCreator {
     }
 
     private static void setMosaicColor(Color[] colors, int currRow, int currCol, int columns) {
-        if (colors.length != columns) {
-            for (int i = 0; i < colors.length; i++) {
-                Mosaic.setColor(currRow, currCol, colors[i]);
-                currCol++;
-            }
-        } else {
-            for (int i = 0; i < colors.length; i++) {
-                Mosaic.setColor(currRow, currCol, colors[i]);
-                currCol++;
-            }
+        for (int i = 0; i < colors.length; i++) {
+            Mosaic.setColor(currRow, currCol, colors[i]);
+            currCol++;
         }
     }
 
