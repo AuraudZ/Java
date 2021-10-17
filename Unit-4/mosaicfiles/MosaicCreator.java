@@ -9,8 +9,8 @@ public class MosaicCreator {
         int rows = TextIO.getlnInt();
         System.out.println("How many columns?");
         int columns = TextIO.getlnInt();
-        int width = 120;
-        int height = 100;
+        int width = 80;
+        int height = 80;
         Mosaic.open(rows, columns, width, height);
         int currRow = 0;
         int currCol = 0;
@@ -33,14 +33,14 @@ public class MosaicCreator {
                 Mosaic.setColor(currRow, currCol, Color.BLACK);
                 currCol++;
             }
-            setMosaicColor(colors, currRow, currCol, columns);
+            setRowColor(colors, currRow, currCol, columns);
             currRow++;
             if (currCol == columns) {
                 currCol = 0;
             }
             while (currRow == rows) {
-                Mosaic.delay(100);
                 // Why is there a null pointer exception here?
+                Mosaic.delay(1000);
                 colorDance(currRow, currCol, columns);
             }
         }
@@ -61,6 +61,7 @@ public class MosaicCreator {
     }
 
     private static Color[][] shift2DColorArray(Color[][] color, int row, int col) {
+        color = saveMosaicColors(row, col);
         Color[][] shiftedColors = saveMosaicColors(row, col);
         for (int i = 0; i < shiftedColors.length; i++) {
             for (int j = 0; j < shiftedColors[i].length; j++) {
@@ -81,23 +82,30 @@ public class MosaicCreator {
     }
 
     private static Color shiftColor(Color color) {
-        Color shiftedColor;
-        if (color.equals(Color.RED)) {
-            shiftedColor = Color.CYAN;
-        } else if (color.equals(Color.CYAN)) {
-            shiftedColor = Color.YELLOW;
-        } else if (color.equals(Color.YELLOW)) {
-            shiftedColor = Color.WHITE;
-        } else if (color.equals(Color.WHITE)) {
-            shiftedColor = Color.GREEN;
-        } else if (color.equals(Color.GREEN)) {
-            shiftedColor = Color.BLUE;
-        } else if (color.equals(Color.BLUE)) {
-            shiftedColor = Color.MAGENTA;
-        } else if (color.equals(Color.MAGENTA)) {
-            shiftedColor = Color.BLACK;
-        } else {
-            shiftedColor = Color.RED;
+        // This creates a null pointer exception
+        // I have no idea why.
+        Color shiftedColor = color;
+        try {
+            if (color.equals(null)) {
+                shiftedColor = Color.RED;
+            } else if (color.equals(Color.RED)) {
+                shiftedColor = Color.CYAN;
+            } else if (color.equals(Color.CYAN)) {
+                shiftedColor = Color.YELLOW;
+            } else if (color.equals(Color.YELLOW)) {
+                shiftedColor = Color.WHITE;
+            } else if (color.equals(Color.WHITE)) {
+                shiftedColor = Color.GREEN;
+            } else if (color.equals(Color.GREEN)) {
+                shiftedColor = Color.BLUE;
+            } else if (color.equals(Color.BLUE)) {
+                shiftedColor = Color.MAGENTA;
+            } else if (color.equals(Color.MAGENTA)) {
+                shiftedColor = Color.BLACK;
+            } else {
+                shiftedColor = Color.RED;
+            }
+        } catch (NullPointerException e) {
         }
         return shiftedColor;
     }
@@ -159,7 +167,7 @@ public class MosaicCreator {
         return colors;
     }
 
-    private static void setMosaicColor(Color[] colors, int currRow, int currCol, int columns) {
+    private static void setRowColor(Color[] colors, int currRow, int currCol, int columns) {
         for (int i = 0; i < colors.length; i++) {
             Mosaic.setColor(currRow, currCol, colors[i]);
             currCol++;
