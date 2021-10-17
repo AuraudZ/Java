@@ -2,6 +2,8 @@ import java.awt.*;
 
 public class MosaicCreator {
     // This took 10 hours im not joking and have no idea why.
+    // And am so happy that I got it to work.
+    // Thank you Mr.Smith :)
     public static void main(String[] args) {
         System.out.println("How many rows?");
         int rows = TextIO.getlnInt();
@@ -32,41 +34,50 @@ public class MosaicCreator {
                 Mosaic.setColor(currRow, currCol, Color.BLACK);
                 currCol++;
             }
-            Color[] temp = new Color[colors.length];
-
             setMosaicColor(colors, currRow, currCol, columns);
-            // Save each row's colors
-            for (int i = 0; i < rows; i++) {
-                saveRowColor(colors, currRow, currCol, columns);
-            }
             currRow++;
             if (currCol == columns) {
                 currCol = 0;
             }
-            if (currRow == rows) {
-                Mosaic.delay(1);
-                colorDance(temp, currRow, currCol, columns);
+            while (currRow == rows) {
+                Mosaic.delay(1000);
+                colorDance(currRow, currCol, columns);
             }
-
         }
     }
 
-    /*
-     * At this point, the mosaic begins changing colors every 1 second (1000
-     * milliseconds) according to the following color rotation: red -> cyan ->
-     * yellow -> white -> green -> blue -> magenta -> black
-     */
-    private static void colorDance(Color[] colors, int currRow, int currCol, int columns) {
-        Color[] shiftedColors = shiftColorArray(colors);
-        setMosaicColor(shiftedColors, currRow, currCol, columns);
+    private static void colorDance(int currRow, int currCol, int columns) {
+        Color[][] mosaicColors = saveMosaicColors(currRow, columns);
+        mosaicColors = shift2DColorArray(mosaicColors, currRow, columns);
+        setMosaicColors(mosaicColors, currRow, columns);
     }
 
-    private static Color[] saveRowColor(Color[] colors, int currRow, int currCol, int columns) {
-        Color[] temp = new Color[colors.length];
-        for (int i = 0; i < columns; i++) {
-            temp[i] = colors[i];
+    private static void setMosaicColors(Color[][] mosaicColors, int currRow, int columns) {
+        for (int i = 0; i < mosaicColors.length; i++) {
+            for (int j = 0; j < mosaicColors[i].length; j++) {
+                Mosaic.setColor(i, j, mosaicColors[i][j]);
+            }
         }
-        return temp;
+    }
+
+    private static Color[][] shift2DColorArray(Color[][] color, int row, int col) {
+        Color[][] shiftedColors = saveMosaicColors(row, col);
+        for (int i = 0; i < shiftedColors.length; i++) {
+            for (int j = 0; j < shiftedColors[i].length; j++) {
+                shiftedColors[i][j] = shiftColor(color[i][j]);
+            }
+        }
+        return shiftedColors;
+    }
+
+    private static Color[][] saveMosaicColors(int currRow, int columns) {
+        Color[][] colors = new Color[currRow][columns];
+        for (int i = 0; i < currRow; i++) {
+            for (int j = 0; j < columns; j++) {
+                colors[i][j] = Mosaic.getColor(i, j);
+            }
+        }
+        return colors;
     }
 
     private static Color shiftColor(Color color) {
@@ -89,22 +100,6 @@ public class MosaicCreator {
             shiftedColor = Color.RED;
         }
         return shiftedColor;
-    }
-
-    private static Color[] shiftColorArray(Color[] colors) {
-        Color[] shiftedColors = new Color[colors.length];
-        for (int i = 0; i < colors.length; i++) {
-            shiftedColors[i] = shiftColor(colors[i]);
-        }
-        return shiftedColors;
-    }
-
-    private static Color[] saveColors(Color[] colors, int currRow, int currCol) {
-        Color[] savedColors = new Color[colors.length];
-        for (int i = 0; i < colors.length; i++) {
-            savedColors[i] = colors[i];
-        }
-        return savedColors;
     }
 
     /**
