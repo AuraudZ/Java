@@ -1,5 +1,7 @@
 import java.awt.*;
 
+import javax.swing.text.AttributeSet.ColorAttribute;
+
 public class MosaicCreator {
     // This took 10 hours im not joking and have no idea why.
     // And am so happy that I got it to work.
@@ -14,6 +16,7 @@ public class MosaicCreator {
         Mosaic.open(rows, columns, width, height);
         int currRow = 0;
         int currCol = 0;
+        fillMosaic(rows, columns, Color.BLACK);
         while (Mosaic.isOpen()) {
             int printRow = currRow + 1;
             System.out.println("Row " + printRow + " Colors: ");
@@ -28,10 +31,6 @@ public class MosaicCreator {
                 colors = parseColorArray(colorArray);
                 currRow = 0;
                 currCol = 0;
-            }
-            if (colors.length != columns) {
-                Mosaic.setColor(currRow, currCol, Color.BLACK);
-                currCol++;
             }
             setRowColor(colors, currRow, currCol, columns);
             currRow++;
@@ -60,6 +59,15 @@ public class MosaicCreator {
         }
     }
 
+    // fill mosaic with black
+    private static void fillMosaic(int rows, int columns, Color color) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                Mosaic.setColor(i, j, color);
+            }
+        }
+    }
+
     private static Color[][] shift2DColorArray(Color[][] color, int row, int col) {
         color = saveMosaicColors(row, col);
         Color[][] shiftedColors = saveMosaicColors(row, col);
@@ -82,12 +90,10 @@ public class MosaicCreator {
     }
 
     private static Color shiftColor(Color color) {
-        // This creates a null pointer exception
-        // I have no idea why.
         Color shiftedColor = color;
         try {
             if (color.equals(null)) {
-                shiftedColor = Color.RED;
+                shiftedColor = Color.BLACK;
             } else if (color.equals(Color.RED)) {
                 shiftedColor = Color.CYAN;
             } else if (color.equals(Color.CYAN)) {
@@ -106,6 +112,7 @@ public class MosaicCreator {
                 shiftedColor = Color.RED;
             }
         } catch (NullPointerException e) {
+            System.out.println("NullPointerException");
         }
         return shiftedColor;
     }
@@ -170,8 +177,10 @@ public class MosaicCreator {
     private static void setRowColor(Color[] colors, int currRow, int currCol, int columns) {
         for (int i = 0; i < colors.length; i++) {
             Mosaic.setColor(currRow, currCol, colors[i]);
+
             currCol++;
         }
+
     }
 
     /**
@@ -187,7 +196,15 @@ public class MosaicCreator {
             if (i < columns) {
                 newColors[i] = colors[i];
             }
+
+        }
+        // This is to fix the null pointer exception and took me 3 hours
+        for (int j = 0; j < newColors.length; j++) {
+            if (newColors[j] == null) {
+                newColors[j] = Color.BLACK;
+            }
         }
         return newColors;
     }
+
 }
