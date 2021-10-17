@@ -1,11 +1,14 @@
 import java.awt.*;
 
-import javax.swing.text.AttributeSet.ColorAttribute;
-
 public class MosaicCreator {
+
+    /**
+     * @param args
+     */
     // This took 10 hours im not joking and have no idea why.
     // And am so happy that I got it to work.
     // Thank you Mr.Smith :)
+    // It is 1am and I am still working on it.
     public static void main(String[] args) {
         System.out.println("How many rows?");
         int rows = TextIO.getlnInt();
@@ -16,7 +19,7 @@ public class MosaicCreator {
         Mosaic.open(rows, columns, width, height);
         int currRow = 0;
         int currCol = 0;
-        fillMosaic(rows, columns, Color.BLACK);
+        Mosaic.fill(Color.BLACK);
         while (Mosaic.isOpen()) {
             int printRow = currRow + 1;
             System.out.println("Row " + printRow + " Colors: ");
@@ -39,18 +42,33 @@ public class MosaicCreator {
             }
             while (currRow == rows) {
                 // Why is there a null pointer exception here?
+                // It was because of the cleanColors method.
                 Mosaic.delay(1000);
                 colorDance(currRow, currCol, columns);
             }
         }
     }
 
+    /**
+     * Cycles though the colors acording to the pattern.
+     * 
+     * @param currRow
+     * @param currCol
+     * @param columns
+     */
     private static void colorDance(int currRow, int currCol, int columns) {
         Color[][] mosaicColors = saveMosaicColors(currRow, columns);
         mosaicColors = shift2DColorArray(mosaicColors, currRow, columns);
         setMosaicColors(mosaicColors, currRow, columns);
     }
 
+    /**
+     * Sets the colors of enite mosaic to the colors in the array
+     * 
+     * @param mosaicColors
+     * @param currRow
+     * @param columns
+     */
     private static void setMosaicColors(Color[][] mosaicColors, int currRow, int columns) {
         for (int i = 0; i < mosaicColors.length; i++) {
             for (int j = 0; j < mosaicColors[i].length; j++) {
@@ -59,15 +77,14 @@ public class MosaicCreator {
         }
     }
 
-    // fill mosaic with black
-    private static void fillMosaic(int rows, int columns, Color color) {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                Mosaic.setColor(i, j, color);
-            }
-        }
-    }
-
+    /**
+     * Shifts the colors in the 2D array according to the pattern
+     * 
+     * @param color
+     * @param row
+     * @param col
+     * @return Color[][]
+     */
     private static Color[][] shift2DColorArray(Color[][] color, int row, int col) {
         color = saveMosaicColors(row, col);
         Color[][] shiftedColors = saveMosaicColors(row, col);
@@ -79,6 +96,13 @@ public class MosaicCreator {
         return shiftedColors;
     }
 
+    /**
+     * Saves the current colors of the mosaic into 2d array of colors.
+     * 
+     * @param currRow
+     * @param columns
+     * @return Color[][]
+     */
     private static Color[][] saveMosaicColors(int currRow, int columns) {
         Color[][] colors = new Color[currRow][columns];
         for (int i = 0; i < currRow; i++) {
@@ -89,6 +113,10 @@ public class MosaicCreator {
         return colors;
     }
 
+    /**
+     * @param color
+     * @return Color
+     */
     private static Color shiftColor(Color color) {
         Color shiftedColor = color;
         try {
@@ -174,17 +202,23 @@ public class MosaicCreator {
         return colors;
     }
 
+    /**
+     * Sets the color of the row to the input color array from the user.
+     * 
+     * @param colors
+     * @param currRow
+     * @param currCol
+     * @param columns
+     */
     private static void setRowColor(Color[] colors, int currRow, int currCol, int columns) {
         for (int i = 0; i < colors.length; i++) {
             Mosaic.setColor(currRow, currCol, colors[i]);
-
             currCol++;
         }
-
     }
 
     /**
-     * Removes colors that are longer than the columns
+     * Removes colors that are longer than the columns and fills the rest with black
      * 
      * @param colors
      * @param columns
