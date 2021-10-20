@@ -1,3 +1,7 @@
 {
-  "java.project.sourcePaths": ["Unit-3", "Unit-4/mosaicfiles"]
+  "java.project.sourcePaths": [
+    "Unit-4/mosaicfiles",
+    "Unit-3",
+    "GUI/helloworld/src"
+  ]
 }
