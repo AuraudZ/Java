@@ -1,3 +1,5 @@
+import java.lang.Math;
+
 public class RenderFrame {
 
     static double theta_spacing = 0.07;
@@ -10,10 +12,10 @@ public class RenderFrame {
     static double K1 = screen_width * K2 * 3 / (8 * (R1 + R2));
 
     public static void main(String[] args) {
-        renderFrame(10, 10);
+        renderFrame(0.2, 0.5);
     }
 
-    public static void renderFrame(float A, double B) {
+    public static void renderFrame(double A, double B) {
         double cosA = (double) Math.cos(A);
         double cosB = (double) Math.cos(B);
         double sinA = (double) Math.sin(A);
@@ -46,14 +48,17 @@ public class RenderFrame {
                         zbuffer[xp][yp] = ooz;
                         int luminance_index = (int) L * 8;
                         String luminance = ".,-~:;=!*#$@";
-                        // map luminance to a character
-                        output[yp][xp] = luminance.charAt(luminance_index);
+                        for (int i = 0; i < luminance_index; i++) {
+                            for (int j = 0; j < luminance_index; j++) {
+                                output[xp + i][yp + j] = luminance.charAt(i);
+                            }
+                        }
                     }
 
                 }
                 System.out.print("\033[H\033[2J");
-                for (int i = 0; i < screen_height; i++) {
-                    for (int j = 0; j < screen_width; j++) {
+                for (int i = 0; i < screen_width; i++) {
+                    for (int j = 0; j < screen_height; j++) {
                         System.out.print(output[i][j]);
                     }
                     System.out.println();
@@ -64,8 +69,8 @@ public class RenderFrame {
     }
 
     private static char[][] initializeOutput(char[][] output) {
-        for (int i = 0; i < screen_height; i++) {
-            for (int j = 0; j < screen_width; j++) {
+        for (int i = 0; i < screen_width; i++) {
+            for (int j = 0; j < screen_height; j++) {
                 output[i][j] = ' ';
             }
         }
@@ -73,8 +78,8 @@ public class RenderFrame {
     }
 
     private static double[][] initializeZBuffer(double[][] zbuffer) {
-        for (int i = 0; i < screen_height; i++) {
-            for (int j = 0; j < screen_width; j++) {
+        for (int i = 0; i < screen_width; i++) {
+            for (int j = 0; j < screen_height; j++) {
                 zbuffer[i][j] = 0;
             }
         }

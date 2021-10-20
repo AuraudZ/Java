@@ -18,7 +18,6 @@ public class MosaicCreator {
         Mosaic.open(rows, columns, width, height);
         int currRow = 0;
         int currCol = 0;
-        Mosaic.fill(Color.BLACK);
         while (Mosaic.isOpen()) {
             int printRow = currRow + 1;
             System.out.println("Row " + printRow + " Colors: ");
@@ -146,9 +145,9 @@ public class MosaicCreator {
 
     /**
      * 
-     * Prompts the user for the colors of the columns using the following code: r
-     * for red, g for green, b for blue, y for yellow, c for cyan, m for magenta, w
-     * for white, and any other character (including spaces) for black.
+     * Prompts the user for the colors of the columns using the following code: r for red, g for
+     * green, b for blue, y for yellow, c for cyan, m for magenta, w for white, and any other
+     * character (including spaces) for black.
      * 
      * @param input Char input from user
      * @return Color of the input

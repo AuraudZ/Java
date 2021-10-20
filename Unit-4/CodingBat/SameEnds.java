@@ -1,3 +1,5 @@
+
+
 public class SameEnds {
     public boolean sameEnds(int[] nums, int len) {
         for (int i = 0; i < len; i++) {
@@ -6,6 +8,133 @@ public class SameEnds {
             }
         }
         return true;
+    }
+
+    public int bigDiff(int[] nums) {
+        // Return the difference between the largest and smallest values in the array.
+        int max = nums[0];
+        int min = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] > max) {
+                max = nums[i];
+            }
+            if (nums[i] < min) {
+                min = nums[i];
+            }
+        }
+        return max - min;
+    }
+
+    public int countEvens(int[] nums) {
+        // Count the number of even ints in the given array.
+        int count = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] % 2 == 0) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int sum13(int[] nums) {
+        // Return the sum of the numbers in the array, returning 0 for an empty array. Except the
+        // number 13 is very unlucky, so it does not count and numbers that come immediately after a
+        // 13 also do not count.
+        int sum = 0;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != 13) {
+                sum += nums[i];
+            } else {
+                i++;
+            }
+        }
+        return sum;
+    }
+
+    /*
+     * Return the "centered" average of an array of ints, which we'll say is the mean average of the
+     * values, except ignoring the largest and smallest values in the array. If there are multiple
+     * copies of the smallest value, ignore just one copy, and likewise for the largest value. Use
+     * int division to produce the final average. You may assume that the array is length 3 or more.
+     * 
+     * 
+     */
+    public int centeredAverage(int[] nums) {
+        int sum = 0;
+        int min = nums[0];
+        int max = nums[0];
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+            if (nums[i] < min) {
+                min = nums[i];
+            }
+            if (nums[i] > max) {
+                max = nums[i];
+            }
+        }
+        sum -= min;
+        sum -= max;
+        return sum / (nums.length - 2);
+    }
+
+
+    // Given an array of ints, return true if every element is a 1 or a 4.
+    public boolean only14(int[] nums) {
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] != 1 && nums[i] != 4) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean either24(int[] nums) {
+        int count4 = 0;
+        int count2 = 0;
+
+        for (int i = 0; i < nums.length - 1; i++) {
+
+            if (nums[i] == 2 && nums[i + 1] == 2) {
+                count2++;
+            }
+            if (nums[i] == 4 && nums[i + 1] == 4) {
+                count4++;
+            }
+
+        }
+        if (count2 != 0 && count4 == 0 || count4 != 0 && count2 == 0) {
+            return true;
+        }
+
+
+        return false;
+    }
+
+    public int[] shiftLeft(int[] nums) {
+        int[] result = new int[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            result[i] = nums[(i + 1) % nums.length];
+        }
+        return result;
+    }
+
+
+    /*
+     * Given a non-empty array of ints, return a new array containing the elements from the original
+     * array that come before the first 4 in the original array. The original array will contain at
+     * least one 4. Note that it is valid in java to create an array of length 0.
+     * 
+     */
+    public int[] pre4(int[] nums) {
+        int i = 0;
+        while (nums[i] != 4) {
+            i++;
+        }
+        int[] newNums = new int[i];
+        for (int j = 0; j < i; j++) {
+            newNums[j] = nums[j];
+        }
+        return newNums;
     }
 
     public String[] fizzBuzz(int start, int end) {
