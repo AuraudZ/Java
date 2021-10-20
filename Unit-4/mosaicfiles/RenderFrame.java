@@ -1,5 +1,3 @@
-import java.lang.*;
-
 public class RenderFrame {
 
     static double theta_spacing = 0.07;
@@ -49,7 +47,7 @@ public class RenderFrame {
                         int luminance_index = (int) L * 8;
                         String luminance = ".,-~:;=!*#$@";
                         // map luminance to a character
-                        output[xp][yp] = luminance.charAt(luminance_index);
+                        output[yp][xp] = luminance.charAt(luminance_index);
                     }
 
                 }
