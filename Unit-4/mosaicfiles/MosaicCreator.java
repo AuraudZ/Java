@@ -1,7 +1,6 @@
 import java.awt.*;
 
 public class MosaicCreator {
-
     /**
      * @param args
      */
@@ -230,7 +229,6 @@ public class MosaicCreator {
             if (i < columns) {
                 newColors[i] = colors[i];
             }
-
         }
         // This is to fix the null pointer exception and took me 3 hours
         for (int j = 0; j < newColors.length; j++) {
