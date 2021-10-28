@@ -28,6 +28,11 @@ public class Circle {
         g.fillOval(x, y, (int) (radius * 2), (int) (radius * 2));
     }
 
+    public void drawOutlined(Graphics g) {
+        g.setColor(color);
+        g.drawOval(x, y, (int) (radius * 2), (int) (radius * 2));
+    }
+
     // Getters and setters
     public int getX() {
         return this.x;

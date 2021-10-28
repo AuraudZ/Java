@@ -17,7 +17,8 @@ public class SimpleAnimationStarter3 extends JPanel implements ActionListener {
 	 * and height give the size of the drawing area, in pixels. The sizes and positions of the
 	 * rectangles that are drawn depend on the frame number, giving the illusion of motion.
 	 */
-	Circle c = new Circle(50, 50, 100, Color.BLUE);
+	Circle c = new Circle(100, 100, 100, Color.BLUE);
+	OlympicCircle oc = new OlympicCircle(50, 50, 100);
 
 	public void drawFrame(Graphics g, int frameNumber, int width, int height) {
 		g.drawString("Frame number " + frameNumber, 40, 50);
@@ -37,6 +38,7 @@ public class SimpleAnimationStarter3 extends JPanel implements ActionListener {
 			}
 			c.setColor(Math.random() < 0.5 ? Color.BLUE : Color.RED);
 		}
+		oc.draw(g);
 	}
 
 	// ------ Implementation details: DO NOT EXPECT TO UNDERSTAND THIS ------
