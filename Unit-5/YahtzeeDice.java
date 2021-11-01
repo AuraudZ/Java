@@ -30,7 +30,7 @@ public class YahtzeeDice {
     }
 
     public String toString() {
-        return "{" + "dice= " + getDice();
+        return "dice = " + getDice();
     }
 
     public int[] getDiceValues() {
