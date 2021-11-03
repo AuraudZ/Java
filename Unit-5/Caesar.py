@@ -16,5 +16,4 @@ def main():
     user_input = input("Enter the name of the input file: ")
     print("Enter the name of the output file: ")
     key = int(input());
-    user_input.
      
