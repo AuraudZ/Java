@@ -1,4 +1,4 @@
-package Yahtzee;
+package src;
 
 public class ThreesScore extends YahtzeeScore {
 
