@@ -1,7 +1,10 @@
-abstract class YahtzeeScore {
+package Yahtzee;
 
+abstract class YahtzeeScore {
 	abstract int calculateScore(int[] values);
 
-	private String name;
+	public int getScore(int[] values) {
+		return calculateScore(values);
+	}
 
 }

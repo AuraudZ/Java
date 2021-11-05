@@ -1,8 +1,8 @@
+package Yahtzee;
+
 public class LargeStraightScore extends YahtzeeScore {
 
-	public LargeStraightScore(String name) {
 
-	}
 
 	public int calculateScore(int[] values) {
 		int score = 0;
