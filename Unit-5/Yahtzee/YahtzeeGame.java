@@ -29,7 +29,7 @@ public class YahtzeeGame {
 		}
 		for (int i = 0; i < 3; i++) {
 			gameDice.roll(isHeldArray);
-			System.out.println(gameDice);
+			System.out.println(gameDice.toString());
 			if (i < 2) {
 				System.out.println("Do you want to roll again");
 				boolean t = TextIO.getlnBoolean();
@@ -49,9 +49,8 @@ public class YahtzeeGame {
 		}
 		System.out.println("What would you like to score this as?");
 		int choice = TextIO.getlnInt();
-
-		gameScoreCard.getScore(choice, gameDice.getDiceValues());
-
+		int score = gameScoreCard.getScore(choice, gameDice.getDiceValues());
+		System.out.println("Your score is " + score);
 	}
 
 	public boolean gameOver() {
