@@ -1,7 +1,5 @@
 package src;
 
-
-
 public class Die {
 
 	private int numSides;

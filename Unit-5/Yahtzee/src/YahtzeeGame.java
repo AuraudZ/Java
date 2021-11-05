@@ -47,9 +47,13 @@ public class YahtzeeGame {
 
 
 		}
-		System.out.println(gameScoreCard.printScoreCard());
+		System.out.println("Score Card \n" + gameScoreCard.printScoreCard());
+		System.out.println("Your potential score is "
+				+ gameScoreCard.printPotentialScoreCard(gameDice.getDiceValues()));
+
 		System.out.println("What would you like to score this as?");
 		int choice = TextIO.getlnInt();
+
 		String choiceString = "";
 		switch (choice) {
 			case 1:
@@ -95,14 +99,14 @@ public class YahtzeeGame {
 				System.out.println("Invalid choice");
 				break;
 		}
-		System.out.println("Your potential score is "
-				+ gameScoreCard.printPotentialScoreCard(gameDice.getDiceValues()));
 
 		System.out.println("You chose " + choiceString);
 		choice = choice - 1;
-
-		int score = gameScoreCard.getScore(choice, gameDice.getDiceValues());
-		System.out.println("Your score is " + score);
+		gameScoreCard.setValue(choice, gameDice.getDiceValues());
+		int roundScore = gameScoreCard.getValue(choice);
+		int score = gameScoreCard.totalScore();
+		System.out.println("Your round score is " + roundScore);
+		System.out.println("Your total score is " + score);
 	}
 
 	public boolean gameOver() {

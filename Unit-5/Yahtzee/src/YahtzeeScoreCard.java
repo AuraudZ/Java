@@ -74,6 +74,10 @@ public class YahtzeeScoreCard {
 
 	}
 
+	public int getValue(int input) {
+		return scores[input].getValue();
+	}
+
 	public boolean isUsed(int input) {
 		if (input < 0) {
 			return false;
