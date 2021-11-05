@@ -1,6 +1,8 @@
 public class YahtzeeDice {
     private Die[] dice = new Die[5];
 
+    private boolean[] isHeldArray = new boolean[5];
+
     public YahtzeeDice() {
         for (int i = 0; i < dice.length; i++) {
             dice[i] = new Die();
@@ -12,7 +14,6 @@ public class YahtzeeDice {
         for (int i = 0; i < this.dice.length; i++) {
             dice[i] = new Die(numSides);
         }
-
     }
 
     public YahtzeeDice(int numSides) {
@@ -41,11 +42,23 @@ public class YahtzeeDice {
         return diceValues;
     }
 
-    public Die[] roll() {
+    public int roll() {
+        int sum = 0;
         for (int i = 0; i < dice.length; i++) {
-            dice[i].roll();
+            sum += dice[i].roll();
         }
-        return dice;
+        return sum;
+    }
 
+    public int roll(boolean[] isHeldArray) {
+        int sum = 0;
+        for (int i = 0; i < dice.length; i++) {
+            if (isHeldArray[i] == false) {
+                sum += dice[i].roll();
+            } else {
+                sum += dice[i].getCurrentValue();
+            }
+        }
+        return sum;
     }
 }
