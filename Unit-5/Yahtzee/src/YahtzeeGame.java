@@ -16,7 +16,7 @@ public class YahtzeeGame {
 	}
 
 	public void startGame() {
-		System.out.println("Hello, welcome to yahtzee!");
+		System.out.println("Hello, welcome to Yahtzee!");
 		while (!gameOver()) {
 			playTurn();
 		}
@@ -41,10 +41,7 @@ public class YahtzeeGame {
 				} else {
 					i = 3;
 				}
-
 			}
-
-
 		}
 		System.out.println("Score Card \n" + gameScoreCard.printScoreCard());
 		System.out.println("Your potential score is \n"
@@ -100,14 +97,15 @@ public class YahtzeeGame {
 		}
 		if (gameScoreCard.isUsed(choice)) {
 			System.out.println("You have already scored this category");
+		} else {
+			choice = choice - 1;
+			gameScoreCard.setValue(choice, gameDice.getDiceValues());
+			System.out.println("You scored " + choiceString);
+			int roundScore = gameScoreCard.getValue(choice);
+			int score = gameScoreCard.totalScore();
+			System.out.println("Your round score is " + roundScore);
+			System.out.println("Your total score is " + score);
 		}
-		System.out.println("You chose " + choiceString);
-		choice = choice - 1;
-		gameScoreCard.setValue(choice, gameDice.getDiceValues());
-		int roundScore = gameScoreCard.getValue(choice);
-		int score = gameScoreCard.totalScore();
-		System.out.println("Your round score is " + roundScore);
-		System.out.println("Your total score is " + score);
 	}
 
 	public boolean gameOver() {

@@ -79,10 +79,12 @@ public class YahtzeeScoreCard {
 	}
 
 	public boolean isUsed(int input) {
-		if (input < 0) {
-			return false;
+		for (int i = 0; i < scores.length; i++) {
+			if (scores[i].getName().equals(scores[input - 1].getName())) {
+				return scores[i].isUsed();
+			}
 		}
-		return scores[input].isUsed();
+		return false;
 	}
 
 	public int totalScore() {
