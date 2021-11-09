@@ -1,11 +1,6 @@
 package src;
 
 public class YahtzeeGame {
-	// Game level stuff:
-	// score
-	// dice
-	// players
-
 	private YahtzeeDice gameDice;
 	private YahtzeeScoreCard gameScoreCard;
 
