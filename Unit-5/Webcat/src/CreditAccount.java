@@ -37,6 +37,7 @@ public class CreditAccount {
 		// interest rate is 12%, then a payment of $75 would result in
 		// a balance of 5634 + 56.34 - 75 = 5615.34 for the next month.
 		// (This is a simplified model of how payments are actually applied.)
+		return 0;
 	}
 
 
@@ -47,11 +48,17 @@ public class CreditAccount {
 	public void makeCharge(double amount) {
 		// add amount to the balance
 		// throw an IllegalArgumentException if the amount is negative
+		if (amount < 0) {
+			throw new IllegalArgumentException("Amount cannot be negative");
+		}
 	}
 
 	public void makePayment(double amount) {
 		// subtract amount from the balance
 		// throw an IllegalArgumentException if the amount is negative
+		if (amount < 0) {
+			throw new IllegalArgumentException("Amount cannot be negative");
+		}
 	}
 
 	public String toString() {
@@ -63,14 +70,15 @@ public class CreditAccount {
 		// "Joe F. Pyne, $7384.28, 17.3%"
 		// The balance should display two decimals places, but the
 		// interest rate should show as many decimal places as necessary.
+		return "";
 	}
 
 	public double getBalance() {
-
+		return balance;
 	}
 
 	public double getInterestRate() {
-
+		return annualInterestRate;
 	}
 
 	public void setInterestRate(double interestRate) {
@@ -79,15 +87,15 @@ public class CreditAccount {
 			throw new IllegalArgumentException("Interest rate cannot be negative");
 		}
 
+
 	}
 
 	public String getAccountHolder() {
-
+		return accountHolder;
 	}
 
 	public void setAccountHolder(String accountHolder) {
-
+		this.accountHolder = accountHolder;
 	}
-
 }
 

@@ -11,6 +11,7 @@ public class RewardsCreditAccount extends CreditAccount {
 			int points) {
 		// this constructor should initialize all of the variables
 		// with the given values. Don't change the names of the parameters!
+		super(accountHolder, balance, interestRate);
 	}
 
 	// For creating a new RewardsCreditAccount object, starting with 0 points
@@ -18,7 +19,7 @@ public class RewardsCreditAccount extends CreditAccount {
 		// this constructor should initialize points to zero
 		// (in addition to initializing the other variables)
 		// This can be (and should be) accomplished in one line of code!
-
+		super(accountHolder, balance, interestRate);
 	}
 
 
@@ -26,6 +27,8 @@ public class RewardsCreditAccount extends CreditAccount {
 	public void makeCharge(double amount) {
 		// this method should increase the balance and
 		// also award the correct amount of points
+		super.makeCharge(amount);
+		points += (int) Math.floor(amount);
 	}
 
 	public String toString() {
@@ -37,10 +40,15 @@ public class RewardsCreditAccount extends CreditAccount {
 		// and 567 points should return the String
 		// "Joe F. Pyne, $7384.28, 17.3%, 567 points"
 		// Make this method as short and succinct as possible!
-
+		StringBuilder sb = new StringBuilder();
+		sb.append(super.toString());
+		sb.append(", ");
+		sb.append(points);
+		sb.append(" points");
+		return sb.toString();
 	}
 
 	public int getPoints() {
-
+		return points;
 	}
 }

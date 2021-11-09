@@ -5,7 +5,6 @@ public class YahtzeeGame {
 	private YahtzeeScoreCard gameScoreCard;
 
 	public YahtzeeGame() {
-
 		gameDice = new YahtzeeDice();
 		gameScoreCard = new YahtzeeScoreCard();
 	}
