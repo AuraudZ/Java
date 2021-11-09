@@ -4,6 +4,12 @@ public class SixesScore extends YahtzeeScore {
 
 
 	public int calculateScore(int[] values) {
-		return 0;
+		int score = 0;
+		for (int i = 0; i < values.length; i++) {
+			if (values[i] == 6) {
+				score = score + 6;
+			}
+		}
+		return score;
 	}
 }

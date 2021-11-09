@@ -1,13 +1,20 @@
 package src;
 
+import java.util.Arrays;
+
 public class SmallStraightScore extends YahtzeeScore {
 
 
 	@Override
 	public int calculateScore(int[] values) {
 		int score = 0;
-		if (values[0] == 1 && values[1] == 2 && values[2] == 3 && values[3] == 4) {
-			score = 15;
+		// Small staight is a sequence of 4 numbers
+		Arrays.sort(values);
+		for (int i = 0; i < values.length - 1; i++) {
+			if (values[i] + 1 == values[i + 1] && values[i] + 2 == values[i + 2]
+					&& values[i] + 3 == values[i + 3]) {
+				score = 15;
+			}
 		}
 		return score;
 	}

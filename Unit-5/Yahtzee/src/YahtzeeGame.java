@@ -38,7 +38,6 @@ public class YahtzeeGame {
 						System.out.println("Would you like to hold dice " + (j + 1));
 						isHeldArray[j] = TextIO.getlnBoolean();
 					}
-
 				} else {
 					i = 3;
 				}
@@ -48,7 +47,7 @@ public class YahtzeeGame {
 
 		}
 		System.out.println("Score Card \n" + gameScoreCard.printScoreCard());
-		System.out.println("Your potential score is "
+		System.out.println("Your potential score is \n"
 				+ gameScoreCard.printPotentialScoreCard(gameDice.getDiceValues()));
 
 		System.out.println("What would you like to score this as?");
@@ -90,16 +89,18 @@ public class YahtzeeGame {
 				choiceString = "Large straight";
 				break;
 			case 12:
-				choiceString = "Yahtzee";
+				choiceString = "Chance";
 				break;
 			case 13:
-				choiceString = "Chance";
+				choiceString = "Yahtzee";
 				break;
 			default:
 				System.out.println("Invalid choice");
 				break;
 		}
-
+		if (gameScoreCard.isUsed(choice)) {
+			System.out.println("You have already scored this category");
+		}
 		System.out.println("You chose " + choiceString);
 		choice = choice - 1;
 		gameScoreCard.setValue(choice, gameDice.getDiceValues());

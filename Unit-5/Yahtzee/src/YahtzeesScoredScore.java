@@ -1,10 +1,15 @@
 package src;
 
+import java.util.Arrays;
+
 public class YahtzeesScoredScore extends YahtzeeScore {
-    public int calculateScore(int[] dice) {
+    public int calculateScore(int[] values) {
         int score = 0;
-        for (int i = 0; i < dice.length; i++) {
-            score += dice[i];
+        Arrays.sort(values);
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] == values[values.length - 1]) {
+                score = values[i] * values.length;
+            }
         }
         return score;
     }
