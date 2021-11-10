@@ -45,7 +45,6 @@ public class CreditAccount {
 			minimumMonthlyPayment = balance;
 		}
 
-
 		DecimalFormat df = new DecimalFormat("##.00");
 		return Double.parseDouble(df.format(minimumMonthlyPayment));
 	}
@@ -65,7 +64,6 @@ public class CreditAccount {
 			throw new IllegalArgumentException(
 					"Payment cannot be less than minimum monthly payment");
 		}
-		// calculate the number of months using constant payment
 		double remainingBalance = balance;
 		int months = 0;
 		while (remainingBalance > 0) {

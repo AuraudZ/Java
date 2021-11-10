@@ -43,9 +43,7 @@ public class RewardsCreditAccount extends CreditAccount {
 		// Make this method as short and succinct as possible!
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.toString());
-		sb.append(", ");
-		sb.append(points);
-		sb.append(" points");
+		sb.append(", " + points + " points");
 		return sb.toString();
 	}
 
