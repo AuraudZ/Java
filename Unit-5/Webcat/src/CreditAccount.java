@@ -1,3 +1,5 @@
+import java.text.DecimalFormat;
+
 /*
  * The assignment for this week is to implement the missing methods of two classes: CreditAccount
  * and RewardsCreditAccount. If you are going to submit through Eclipse, you should create a new
@@ -16,6 +18,13 @@ public class CreditAccount {
 	public CreditAccount(String accountHolder, double balance, double annualInterestRate) {
 		// initialize the variables and throw an IllegalArgumentException if
 		// interestRate is negative
+		if (annualInterestRate < 0) {
+			throw new IllegalArgumentException("Interest rate cannot be negative");
+		}
+		this.accountHolder = accountHolder;
+		this.balance = balance;
+		this.annualInterestRate = annualInterestRate;
+
 	}
 
 	public double calculateMinimumMonthlyPayment() {
@@ -23,7 +32,22 @@ public class CreditAccount {
 		// of the interest amount for the month (whichever is greater).
 		// If this amount is greater than the remaining balance, then the
 		// remaining balance should be returned.
-		return 0;
+
+		double minimumMonthlyPayment = 0;
+		double interestAmount = 0;
+		interestAmount = balance * annualInterestRate / 12;
+		if (interestAmount > 25) {
+			minimumMonthlyPayment = interestAmount * 2;
+		} else {
+			minimumMonthlyPayment = 25;
+		}
+		if (minimumMonthlyPayment > balance) {
+			minimumMonthlyPayment = balance;
+		}
+
+
+		DecimalFormat df = new DecimalFormat("##.00");
+		return Double.parseDouble(df.format(minimumMonthlyPayment));
 	}
 
 	public int howManyMonthsUsingConstantPayment(double payment) {
@@ -37,7 +61,19 @@ public class CreditAccount {
 		// interest rate is 12%, then a payment of $75 would result in
 		// a balance of 5634 + 56.34 - 75 = 5615.34 for the next month.
 		// (This is a simplified model of how payments are actually applied.)
-		return 0;
+		if (payment < calculateMinimumMonthlyPayment()) {
+			throw new IllegalArgumentException(
+					"Payment cannot be less than minimum monthly payment");
+		}
+		// calculate the number of months using constant payment
+		double remainingBalance = balance;
+		int months = 0;
+		while (remainingBalance > 0) {
+			remainingBalance =
+					remainingBalance + (annualInterestRate / 12) * remainingBalance - payment;
+			months++;
+		}
+		return months;
 	}
 
 
@@ -51,6 +87,7 @@ public class CreditAccount {
 		if (amount < 0) {
 			throw new IllegalArgumentException("Amount cannot be negative");
 		}
+		balance += amount;
 	}
 
 	public void makePayment(double amount) {
@@ -59,6 +96,7 @@ public class CreditAccount {
 		if (amount < 0) {
 			throw new IllegalArgumentException("Amount cannot be negative");
 		}
+		balance -= amount;
 	}
 
 	public String toString() {
@@ -70,7 +108,15 @@ public class CreditAccount {
 		// "Joe F. Pyne, $7384.28, 17.3%"
 		// The balance should display two decimals places, but the
 		// interest rate should show as many decimal places as necessary.
-		return "";
+		StringBuilder sb = new StringBuilder();
+		sb.append(accountHolder);
+		sb.append(", $");
+		DecimalFormat d = new DecimalFormat("##.00");
+		sb.append(d.format(balance));
+		sb.append(", ");
+		sb.append(annualInterestRate * 100);
+		sb.append("%");
+		return sb.toString();
 	}
 
 	public double getBalance() {
@@ -86,6 +132,7 @@ public class CreditAccount {
 		if (interestRate < 0) {
 			throw new IllegalArgumentException("Interest rate cannot be negative");
 		}
+		annualInterestRate = interestRate;
 
 
 	}

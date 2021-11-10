@@ -12,6 +12,7 @@ public class RewardsCreditAccount extends CreditAccount {
 		// this constructor should initialize all of the variables
 		// with the given values. Don't change the names of the parameters!
 		super(accountHolder, balance, interestRate);
+		this.points = points;
 	}
 
 	// For creating a new RewardsCreditAccount object, starting with 0 points
