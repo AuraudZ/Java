@@ -102,6 +102,10 @@ public class YahtzeeGame {
 		}
 	}
 
+
+	/**
+	 * @return boolean
+	 */
 	public boolean gameOver() {
 		return false;
 	}

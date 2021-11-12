@@ -5,6 +5,7 @@
  */
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class Hand {
 
@@ -15,7 +16,7 @@ public class Hand {
      * Create a hand that is initially empty.
      */
     public Hand() {
-
+        hand = new ArrayList<Card>();
     }
 
     /**
@@ -34,7 +35,7 @@ public class Hand {
     public void addCard(Card c) {
         if (c == null)
             throw new NullPointerException("Can't add a null card to a hand.");
-
+        hand.add(c);
     }
 
     /**
@@ -58,7 +59,7 @@ public class Hand {
     public void removeCard(int position) {
         if (position < 0 || position >= hand.size())
             throw new IllegalArgumentException("Position does not exist in hand: " + position);
-
+        hand.remove(position);
     }
 
     /**

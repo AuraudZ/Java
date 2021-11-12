@@ -23,7 +23,7 @@ public class Deck {
     public Deck() {
         // ***(2) Fill in one line to call the other constructor for Deck
         // Let's have the default be to NOT use Jokers.
-
+        this(false);
     }
 
     /**
@@ -44,7 +44,8 @@ public class Deck {
             for (int currentValue = 1; currentValue <= 13; currentValue++) {
                 // (1)***fill in lines to create Card objects in each slot of the Card[] named
                 // 'deck'
-
+                deck[cardCt] = new Card(currentValue, currentSuit);
+                cardCt++;
             }
         }
         if (includeJokers) {
@@ -67,6 +68,7 @@ public class Deck {
             Card temp = deck[i];
             deck[i] = deck[randomIndex];
             deck[randomIndex] = temp;
+            cardsUsed = 0;
         }
     }
 

@@ -3,6 +3,11 @@ package src;
 import java.util.Arrays;
 
 public class YahtzeesScoredScore extends YahtzeeScore {
+
+    /**
+     * @param values
+     * @return int
+     */
     public int calculateScore(int[] values) {
         int score = 0;
         Arrays.sort(values);
