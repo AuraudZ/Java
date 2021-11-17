@@ -3,8 +3,6 @@ package src;
 import java.util.Arrays;
 
 public class SmallStraightScore extends YahtzeeScore {
-
-
 	@Override
 	public int calculateScore(int[] values) {
 		int score = 0;

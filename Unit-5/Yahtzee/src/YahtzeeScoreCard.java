@@ -35,6 +35,10 @@ public class YahtzeeScoreCard {
 
 	}
 
+	public YahtzeeScore[] getScores() {
+		return scores;
+	}
+
 	public boolean gameOver() {
 		for (int i = 0; i < scores.length; i++) {
 			if (!scores[i].isUsed()) {
@@ -55,6 +59,7 @@ public class YahtzeeScoreCard {
 	public int getScore(int choice, int[] dice) {
 		return scores[choice].calculateScore(dice);
 	}
+
 
 	public String printPotentialScoreCard(int[] dice) {
 		String str = "";

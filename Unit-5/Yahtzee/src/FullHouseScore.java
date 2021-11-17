@@ -14,6 +14,8 @@ public class FullHouseScore extends YahtzeeScore {
 		} else if (values[0] == values[1] && values[2] == values[3] && values[3] == values[4]) {
 			score = 25;
 		}
+
+
 		return score;
 	}
 }

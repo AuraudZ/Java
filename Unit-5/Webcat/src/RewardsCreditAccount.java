@@ -20,7 +20,7 @@ public class RewardsCreditAccount extends CreditAccount {
 		// this constructor should initialize points to zero
 		// (in addition to initializing the other variables)
 		// This can be (and should be) accomplished in one line of code!
-		super(accountHolder, balance, interestRate);
+		this(accountHolder, balance, interestRate, 0);
 	}
 
 

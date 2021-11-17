@@ -96,10 +96,12 @@ public class YahtzeeGame {
 			gameScoreCard.setValue(choice, gameDice.getDiceValues());
 			System.out.println("You scored " + choiceString);
 			int roundScore = gameScoreCard.getValue(choice);
-			int score = gameScoreCard.totalScore();
 			System.out.println("Your round score is " + roundScore);
-			System.out.println("Your total score is " + score);
+
 		}
+		int score = gameScoreCard.totalScore();
+		System.out.println("Your total score is " + score);
+
 	}
 
 
@@ -107,6 +109,8 @@ public class YahtzeeGame {
 	 * @return boolean
 	 */
 	public boolean gameOver() {
-		return false;
+		return gameScoreCard.gameOver();
 	}
+
+
 }

@@ -33,7 +33,4 @@ abstract class YahtzeeScore {
 	public void setValue(int[] values) {
 		value = calculateScore(values);
 	}
-
-
-
 }

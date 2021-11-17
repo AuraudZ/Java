@@ -3,8 +3,6 @@ package src;
 import java.util.Arrays;
 
 public class FourOfAKindScore extends YahtzeeScore {
-
-
 	public int calculateScore(int[] values) {
 		int score = 0;
 		Arrays.sort(values);
