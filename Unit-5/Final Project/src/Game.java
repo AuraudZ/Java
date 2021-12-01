@@ -27,18 +27,49 @@ public class Game extends JPanel implements ActionListener {
         g.drawLine(width / 2, 0, width / 2, height);
         g.drawLine(0, height / 2, width, height / 2);
         // Draw red square
-        g.fillRect(width / 2 - 50, height / 2 - 50, 100, 100);
-        spawnSqaures(0, 0, width / 2 - 50, height / 2 - 50, g, frameNumber, 2);
-        // Randomly move the squares
+        g.fill3DRect(500, 300, 10, 20, true);
+        // remove sqaures if clicked
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int x = e.getX();
+                int y = e.getY();
+                // System.out.println("Mouse moved to " + x + " " + y);
+                // If over red square
+                try {
+                    Color color = new Robot().getPixelColor(x, y);
+
+                } catch (AWTException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int x = e.getX();
+                int y = e.getY();
+                System.out.println("Mouse clicked at " + x + " " + y);
+                // If over red square
+                try {
+                    // The the pixel color at location x, y
+                    Color color = new Robot().getPixelColor(x, y);
+                    System.out.println("Color: " + color.toString());
+                } catch (AWTException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
 
     }
+
+
 
     void spawnSqaures(int x, int y, int width, int height, Graphics g, int frameNumber,
             int amount) {
         // Draw red square
         for (int i = 0; i < amount; i++) {
             g.fillRect(x, y, width, height);
-
             x += width;
             y += height;
         }
@@ -51,7 +82,7 @@ public class Game extends JPanel implements ActionListener {
         /*
          * NOTE: The string in the following statement goes in the title bar of the window.
          */
-        JFrame window = new JFrame("Simple Animation");
+        JFrame window = new JFrame("Aimbot");
 
         /*
          * NOTE: If you change the name of this class, you must change the name of the class in the
