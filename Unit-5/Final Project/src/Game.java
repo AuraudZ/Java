@@ -38,6 +38,9 @@ public class Game extends JPanel implements ActionListener {
                 // If over red square
                 try {
                     Color color = new Robot().getPixelColor(x, y);
+                    if (color.equals(Color.RED)) {
+                        System.out.println("Clicked on red square");
+                    }
 
                 } catch (AWTException ex) {
                     ex.printStackTrace();
@@ -49,12 +52,16 @@ public class Game extends JPanel implements ActionListener {
             public void mouseClicked(MouseEvent e) {
                 int x = e.getX();
                 int y = e.getY();
-                System.out.println("Mouse clicked at " + x + " " + y);
+                Point p = e.getLocationOnScreen();
+                System.out.println("Mouse clicked at " + p.x + " " + p.y);
                 // If over red square
                 try {
-                    // The the pixel color at location x, y
-                    Color color = new Robot().getPixelColor(x, y);
-                    System.out.println("Color: " + color.toString());
+                    // The the pixel color of square at x,y
+                   Color c = getPixelColor(p.x, p.y);
+                    if (c.equals(Color.RED)) {
+                        System.out.println("Clicked on red square");
+                    }
+                    
                 } catch (AWTException ex) {
                     ex.printStackTrace();
                 }
@@ -131,7 +138,15 @@ public class Game extends JPanel implements ActionListener {
         frameNum++;
         repaint();
     }
-
+    public Color getPixelColor(int x, int y) {
+        try {
+            Color color = new Robot().getPixelColor(x, y);
+            return color;
+        } catch (AWTException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         drawFrame(g, frameNum, getWidth(), getHeight());
