@@ -1,95 +1,23 @@
+import javax.swing.*;
+import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
 
-/**
- * This file can be used to create very simple animations. Just fill in the definition of drawFrame
- * with the code to draw one frame of the animation, and possibly change a few of the values in the
- * rest of the program as noted below. Note that if you change the name of the class, you must also
- * change the name in the main() routine!
- */
-public class Game extends JPanel implements ActionListener {
+// Simple JPanel
+public class Game extends JPanel implements MouseListener, ActionListener {
 
-    /**
-     * Draws one frame of an animation. This subroutine is called re second and is responsible for
-     * redrawing the entire drawing area. The parameter g is used for drawing. The frameNumber
-     * starts at zero and increases by 1 each time this subroutine is called. The parameters width
-     * and height give the size of the drawing area, in pixels. The sizes and positions of the
-     * rectangles that are drawn depend on the frame number, giving the illusion of motion.
-     */
-    public void drawFrame(Graphics g, int frameNumber, int width, int height) {
-        g.drawString("Frame number " + frameNumber, 40, 50);
-        // Game Loop
-        // Draw the background
-        g.setColor(Color.BLACK);
-        // Draw Crosshair
-        g.setColor(Color.RED);
-        g.drawLine(width / 2, 0, width / 2, height);
-        g.drawLine(0, height / 2, width, height / 2);
-        // Draw red square
-        g.fill3DRect(500, 300, 10, 20, true);
-        // remove sqaures if clicked
-        addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                int x = e.getX();
-                int y = e.getY();
-                // System.out.println("Mouse moved to " + x + " " + y);
-                // If over red square
-                try {
-                    Color color = new Robot().getPixelColor(x, y);
-                    if (color.equals(Color.RED)) {
-                        System.out.println("Clicked on red square");
-                    }
-
-                } catch (AWTException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int x = e.getX();
-                int y = e.getY();
-                Point p = e.getLocationOnScreen();
-                System.out.println("Mouse clicked at " + p.x + " " + p.y);
-                // If over red square
-                try {
-                    // The the pixel color of square at x,y
-                   Color c = getPixelColor(p.x, p.y);
-                    if (c.equals(Color.RED)) {
-                        System.out.println("Clicked on red square");
-                    }
-                    
-                } catch (AWTException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-
+    // Constructor
+    public Game() {
+        // Add mouse listener
+        addMouseListener(this);
     }
-
-
-
-    void spawnSqaures(int x, int y, int width, int height, Graphics g, int frameNumber,
-            int amount) {
-        // Draw red square
-        for (int i = 0; i < amount; i++) {
-            g.fillRect(x, y, width, height);
-            x += width;
-            y += height;
-        }
-    }
-    // ------ Implementation details: DO NOT EXPECT TO UNDERSTAND THIS ------
-
 
     public static void main(String[] args) {
 
         /*
          * NOTE: The string in the following statement goes in the title bar of the window.
          */
-        JFrame window = new JFrame("Aimbot");
+        JFrame window = new JFrame("Simple Animation");
 
         /*
          * NOTE: If you change the name of this class, you must change the name of the class in the
@@ -132,24 +60,116 @@ public class Game extends JPanel implements ActionListener {
 
     } // end main
 
+    // Paint method
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        drawFrame(g, frameNum, getWidth(), getHeight());
+    }
+
+    // Get Mouse Position using MouseListener
+
+    public void drawFrame(Graphics g, int frameNumber, int width, int height) {
+        g.drawString("Frame number " + frameNumber, 40, 50);
+        Point mousePosition = getMousePosition();
+        int mouseX = mousePosition.x;
+        int mouseY = mousePosition.y;
+        g.drawString("Mouse position: " + mouseX + ", " + mouseY, 40, 70);
+        g.setColor(Color.BLACK);
+        g.fillRect(mouseX, mouseY, 10, 10);
+        g.setColor(Color.RED);
+        g.fillRect(300, 500, 50, 60);
+        new MouseInputListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Get the color of the pixel at the mouse position
+                try {
+                    Color pxColor = getPixelColor(e.getX(), e.getY());
+                    if (pxColor.equals(Color.RED)) {
+                        System.out.println("RED");
+                    }
+                } catch (Exception ex) {
+                    System.out.println("Error: " + ex);
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                System.out.println("Mouse pressed");
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                System.out.println("Mouse released");
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                System.out.println("Mouse entered");
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                System.out.println("Mouse exited");
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                System.out.println("Mouse dragged");
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                System.out.println("Mouse moved");
+            }
+        };
+    }
+
+    public Color getPixelColor(int x, int y) throws AWTException {
+        // Get the color of the pixel at the mouse position
+        Color pixelColor = new Robot().getPixelColor(x, y);
+        return pixelColor;
+    }
+
+    public Point getMousePosition() {
+        return MouseInfo.getPointerInfo().getLocation();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent evt) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent evt) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
     private int frameNum;
 
     public void actionPerformed(ActionEvent evt) {
         frameNum++;
         repaint();
-    }
-    public Color getPixelColor(int x, int y) {
-        try {
-            Color color = new Robot().getPixelColor(x, y);
-            return color;
-        } catch (AWTException ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        drawFrame(g, frameNum, getWidth(), getHeight());
     }
 
 }
