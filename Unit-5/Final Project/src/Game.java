@@ -4,12 +4,12 @@ import java.awt.*;
 import java.awt.event.*;
 
 // Simple JPanel
-public class Game extends JPanel implements MouseListener, ActionListener {
+public class Game extends JPanel implements ActionListener {
 
     // Constructor
     public Game() {
         // Add mouse listener
-        addMouseListener(this);
+        add(button);
     }
 
     public static void main(String[] args) {
@@ -67,62 +67,40 @@ public class Game extends JPanel implements MouseListener, ActionListener {
         drawFrame(g, frameNum, getWidth(), getHeight());
     }
 
-    // Get Mouse Position using MouseListener
+    JButton button = new JButton("Click Me!");
+    private int score = 0;
 
+    // Draws the frame
     public void drawFrame(Graphics g, int frameNumber, int width, int height) {
         g.drawString("Frame number " + frameNumber, 40, 50);
         Point mousePosition = getMousePosition();
         int mouseX = mousePosition.x;
         int mouseY = mousePosition.y;
         g.drawString("Mouse position: " + mouseX + ", " + mouseY, 40, 70);
-        g.setColor(Color.BLACK);
-        g.fillRect(mouseX, mouseY, 10, 10);
-        g.setColor(Color.RED);
-        g.fillRect(300, 500, 50, 60);
-        new MouseInputListener() {
-            @Override
+        g.drawString("Width: " + width + ", Height: " + height, 40, 90);
+        int randX = (int) (Math.random() * width);
+        int randY = (int) (Math.random() * height);
+        // Randomly Spawn a button every 100 frames
+        if (frameNumber % 100 == 0) {
+            button.setBounds(randX, randY, 100, 100);
+            add(button);
+        }
+        g.drawString("Score: " + score, width / 2, height / 2);
+        button.setText("");
+        button.setBorderPainted(false);
+        button.setOpaque(true);
+        Icon icon = new ImageIcon("./icon.png");
+        button.setIcon(icon);
+        button.addActionListener(this);
+        button.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                // Get the color of the pixel at the mouse position
-                try {
-                    Color pxColor = getPixelColor(e.getX(), e.getY());
-                    if (pxColor.equals(Color.RED)) {
-                        System.out.println("RED");
-                    }
-                } catch (Exception ex) {
-                    System.out.println("Error: " + ex);
-                }
-            }
+                // Remove the button
+                remove(button);
+                // Add to the score if the button is clicked
 
-            @Override
-            public void mousePressed(MouseEvent e) {
-                System.out.println("Mouse pressed");
+                score = score + 1;
             }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                System.out.println("Mouse released");
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                System.out.println("Mouse entered");
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                System.out.println("Mouse exited");
-            }
-
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                System.out.println("Mouse dragged");
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                System.out.println("Mouse moved");
-            }
-        };
+        });
     }
 
     public Color getPixelColor(int x, int y) throws AWTException {
@@ -135,35 +113,6 @@ public class Game extends JPanel implements MouseListener, ActionListener {
         return MouseInfo.getPointerInfo().getLocation();
     }
 
-    @Override
-    public void mouseClicked(MouseEvent evt) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent evt) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent arg0) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent arg0) {
-        // TODO Auto-generated method stub
-
-    }
 
     private int frameNum;
 
