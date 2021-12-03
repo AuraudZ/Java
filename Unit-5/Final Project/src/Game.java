@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -81,9 +80,19 @@ public class Game extends JPanel implements ActionListener {
         int randX = (int) (Math.random() * width);
         int randY = (int) (Math.random() * height);
         // Randomly Spawn a button every 100 frames
+        if (frameNumber < 3000) {
+            g.drawString("Time Left: " + (3000 - frameNumber) / 100, 40, 110);
+        }
+        if (frameNumber == 3000) {
+            repaint();
+            remove(button);
+            g.drawString("Game Over your score was " + score, 100, 100);
+
+        }
         if (frameNumber % 100 == 0) {
-            button.setBounds(randX, randY, 100, 100);
             add(button);
+            button.setBounds(randX, randY, 100, 100);
+
         }
         g.drawString("Score: " + score, width / 2, height / 2);
         button.setText("");
@@ -97,8 +106,7 @@ public class Game extends JPanel implements ActionListener {
                 // Remove the button
                 remove(button);
                 // Add to the score if the button is clicked
-
-                score = score + 1;
+                score++;
             }
         });
     }
