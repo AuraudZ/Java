@@ -5,7 +5,7 @@ import java.awt.event.*;
 // Simple JPanel
 public class Game extends JPanel implements ActionListener {
 
-    private static final int timerAmount = 30;
+    private static final int timerAmount = 10;
 
     // Constructor
     public Game() {
@@ -100,24 +100,29 @@ public class Game extends JPanel implements ActionListener {
 
             }
             g.drawString("Score: " + score, width / 2, height / 2);
-
+            button.setText("");
+            button.setBorderPainted(false);
+            button.setOpaque(true);
+            Icon icon = new ImageIcon("./icon.png");
+            button.setIcon(icon);
             button.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-
+                    remove(button);
                     score++;
-                    button.setText("");
-                    button.setBorderPainted(false);
-                    button.setOpaque(true);
-                    Icon icon = new ImageIcon("./icon.png");
-                    button.setIcon(icon);
-                    button.addMouseListener(this);
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {}
             });
+            try {
+                Robot r = new Robot();
+                r.mouseMove(button.getX(), button.getY());
 
+
+            } catch (AWTException e) {
+                e.printStackTrace();
+            }
 
             if (gameOver) {
                 repaint();
