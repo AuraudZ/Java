@@ -5,6 +5,8 @@ import java.awt.event.*;
 // Simple JPanel
 public class Game extends JPanel implements ActionListener {
 
+    private static final int timerAmount = 30;
+
     // Constructor
     public Game() {
         // Add mouse listener
@@ -68,48 +70,66 @@ public class Game extends JPanel implements ActionListener {
 
     JButton button = new JButton("Click Me!");
     private int score = 0;
+    private boolean gameOver = false;
 
     // Draws the frame
     public void drawFrame(Graphics g, int frameNumber, int width, int height) {
-        g.drawString("Frame number " + frameNumber, 40, 50);
-        Point mousePosition = getMousePosition();
-        int mouseX = mousePosition.x;
-        int mouseY = mousePosition.y;
-        g.drawString("Mouse position: " + mouseX + ", " + mouseY, 40, 70);
-        g.drawString("Width: " + width + ", Height: " + height, 40, 90);
-        int randX = (int) (Math.random() * width);
-        int randY = (int) (Math.random() * height);
-        // Randomly Spawn a button every 100 frames
-        if (frameNumber < 3000) {
-            g.drawString("Time Left: " + (3000 - frameNumber) / 100, 40, 110);
-        }
-        if (frameNumber == 3000) {
-            repaint();
-            remove(button);
-            g.drawString("Game Over your score was " + score, 100, 100);
+        if (!gameOver) {
 
-        }
-        if (frameNumber % 100 == 0) {
-            add(button);
-            button.setBounds(randX, randY, 100, 100);
+            g.drawString("Frame number " + frameNumber, 40, 50);
+            Point mousePosition = getMousePosition();
+            Graphics2D g2 = (Graphics2D) g;
+            // Draws the Score in the top left corner
+            g2.drawString("Score: " + score, 10, 10);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            int mouseX = mousePosition.x;
+            int mouseY = mousePosition.y;
+            g.drawString("Mouse position: " + mouseX + ", " + mouseY, 40, 70);
+            g.drawString("Width: " + width + ", Height: " + height, 40, 90);
 
-        }
-        g.drawString("Score: " + score, width / 2, height / 2);
-        button.setText("");
-        button.setBorderPainted(false);
-        button.setOpaque(true);
-        Icon icon = new ImageIcon("./icon.png");
-        button.setIcon(icon);
-        button.addActionListener(this);
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                // Remove the button
-                remove(button);
-                // Add to the score if the button is clicked
-                score++;
+            int randX = (int) (Math.random() * width);
+            int randY = (int) (Math.random() * height);
+            // Randomly Spawn a button every 100 frames
+            if (frameNumber < timerAmount * 100) {
+                g.drawString("Time Left: " + (timerAmount * 100 - frameNumber) / 100, 40, 110);
             }
-        });
+
+            if (frameNumber % 100 == 0) {
+                add(button);
+                button.setBounds(randX, randY, 100, 100);
+
+            }
+            g.drawString("Score: " + score, width / 2, height / 2);
+
+            button.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+
+                    score++;
+                    button.setText("");
+                    button.setBorderPainted(false);
+                    button.setOpaque(true);
+                    Icon icon = new ImageIcon("./icon.png");
+                    button.setIcon(icon);
+                    button.addMouseListener(this);
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {}
+            });
+
+
+            if (gameOver) {
+                repaint();
+                remove(button);
+                g.drawString("Game Over your score was " + score, 100, 100);
+            }
+            if (frameNumber == timerAmount * 100) {
+                gameOver = true;
+            }
+        }
     }
+
 
     public Color getPixelColor(int x, int y) throws AWTException {
         // Get the color of the pixel at the mouse position
