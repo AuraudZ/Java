@@ -5,7 +5,7 @@ import java.awt.event.*;
 // Simple JPanel
 public class Game extends JPanel implements ActionListener {
 
-    private static final int timerAmount = 10;
+    private static int timerAmount = 10;
 
     // Constructor
     public Game() {
@@ -14,18 +14,16 @@ public class Game extends JPanel implements ActionListener {
     }
 
     public static void main(String[] args) {
-
         /*
          * NOTE: The string in the following statement goes in the title bar of the window.
          */
         JFrame window = new JFrame("Simple Animation");
-
         /*
          * NOTE: If you change the name of this class, you must change the name of the class in the
          * next line to match!
          */
         Game drawingArea = new Game();
-
+        drawingArea.difficultyChoice();
         drawingArea.setBackground(Color.WHITE);
         window.setContentPane(drawingArea);
 
@@ -38,8 +36,6 @@ public class Game extends JPanel implements ActionListener {
         window.pack();
         window.setLocation(100, 50);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
         /*
          * Note: In the following line, you can change true to false. This will prevent the user
          * from resizing the window, so you can be sure that the size of the drawing area will not
@@ -72,10 +68,46 @@ public class Game extends JPanel implements ActionListener {
     private int score = 0;
     private boolean gameOver = false;
 
+    public void gameOver(Graphics g) {
+        g.setColor(Color.RED);
+        g.drawString("Game Over!", getWidth() / 2, getHeight() / 2);
+    }
+
+    private int speed = 100;
+
+    // Difficulty level
+    public void getDifficulty(int difficulty) {
+        if (difficulty == 1) {
+            timerAmount = 60;
+            speed = 100;
+        } else if (difficulty == 2) {
+            timerAmount = 45;
+            speed = 90;
+        } else if (difficulty == 3) {
+            timerAmount = 30;
+            speed = 80;
+        } else if (difficulty == 4) {
+            timerAmount = 15;
+            speed = 70;
+        } else if (difficulty == 5) {
+            timerAmount = 10;
+            speed = 60;
+        }
+    }
+
+    public void difficultyChoice() {
+        System.out.println("Please enter a difficulty level (1-5): ");
+        int choice = TextIO.getlnInt();
+        getDifficulty(choice);
+    }
+
+
     // Draws the frame
     public void drawFrame(Graphics g, int frameNumber, int width, int height) {
+        if (frameNumber == timerAmount * 100) {
+            gameOver = true;
+        }
         if (!gameOver) {
-
             g.drawString("Frame number " + frameNumber, 40, 50);
             Point mousePosition = getMousePosition();
             Graphics2D g2 = (Graphics2D) g;
@@ -86,15 +118,13 @@ public class Game extends JPanel implements ActionListener {
             int mouseY = mousePosition.y;
             g.drawString("Mouse position: " + mouseX + ", " + mouseY, 40, 70);
             g.drawString("Width: " + width + ", Height: " + height, 40, 90);
-
             int randX = (int) (Math.random() * width);
             int randY = (int) (Math.random() * height);
-            // Randomly Spawn a button every 100 frames
             if (frameNumber < timerAmount * 100) {
                 g.drawString("Time Left: " + (timerAmount * 100 - frameNumber) / 100, 40, 110);
             }
 
-            if (frameNumber % 100 == 0) {
+            if (frameNumber % speed == 0) {
                 add(button);
                 button.setBounds(randX, randY, 100, 100);
 
@@ -115,22 +145,21 @@ public class Game extends JPanel implements ActionListener {
                 @Override
                 public void mouseExited(MouseEvent e) {}
             });
-            try {
-                Robot r = new Robot();
-                r.mouseMove(button.getX(), button.getY());
+            // try {
+            // Robot r = new Robot();
+            // r.mouseMove(button.getX(), button.getY());
 
 
-            } catch (AWTException e) {
-                e.printStackTrace();
-            }
+            // } catch (AWTException e) {
+            // e.printStackTrace();
+            // }
 
             if (gameOver) {
-                repaint();
                 remove(button);
-                g.drawString("Game Over your score was " + score, 100, 100);
-            }
-            if (frameNumber == timerAmount * 100) {
-                gameOver = true;
+                System.out.println("Game Over");
+                System.out.println("Score: " + score);
+                // repaint();
+                gameOver(g);
             }
         }
     }
