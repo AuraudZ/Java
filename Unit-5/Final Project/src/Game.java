@@ -1,9 +1,10 @@
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.*;
 
 // Simple JPanel
-public class Game extends JPanel implements ActionListener {
+public class Game extends JPanel implements ActionListener, MouseListener {
 
     private static int timerAmount = 10;
 
@@ -11,49 +12,31 @@ public class Game extends JPanel implements ActionListener {
     public Game() {
         // Add mouse listener
         add(button);
+        button.addMouseListener(mouseListener);
     }
 
     public static void main(String[] args) {
-        /*
-         * NOTE: The string in the following statement goes in the title bar of the window.
-         */
+
         JFrame window = new JFrame("Simple Animation");
-        /*
-         * NOTE: If you change the name of this class, you must change the name of the class in the
-         * next line to match!
-         */
+
         Game drawingArea = new Game();
         drawingArea.difficultyChoice();
         drawingArea.setBackground(Color.WHITE);
         window.setContentPane(drawingArea);
-
-        /*
-         * NOTE: In the next line, the numbers 600 and 450 give the initial width and height of the
-         * drawing array. You can change these numbers to get a different size.
-         */
         drawingArea.setPreferredSize(new Dimension(600, 450));
-
         window.pack();
         window.setLocation(100, 50);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        /*
-         * Note: In the following line, you can change true to false. This will prevent the user
-         * from resizing the window, so you can be sure that the size of the drawing area will not
-         * change. It can be easier to draw the frames if you know the size.
-         */
+
         window.setResizable(true);
 
-        /*
-         * NOTE: In the next line, the number 20 gives the time between calls to drawFrame(). The
-         * time is given in milliseconds, where one second equals 1000 milliseconds. You can
-         * increase this number to get a slower animation. You can decrease it somewhat to get a
-         * faster animation, but the speed is limited by the time it takes for the computer to draw
-         * each frame.
-         */
         Timer frameTimer = new Timer(10, drawingArea);
+        frameTimer.start();
+        if (drawingArea.getIntro() == false) {
+            frameTimer.restart();
+        }
 
         window.setVisible(true);
-        frameTimer.start();
 
     } // end main
 
@@ -64,9 +47,20 @@ public class Game extends JPanel implements ActionListener {
         drawFrame(g, frameNum, getWidth(), getHeight());
     }
 
-    JButton button = new JButton("Click Me!");
+    JButton button = new JButton("");
+
+    JButton introButton = new JButton("Click to start!");
+
     private int score = 0;
     private boolean gameOver = false;
+
+    public boolean getGameOver() {
+        return gameOver;
+    }
+
+    public boolean getIntro() {
+        return intro;
+    }
 
     public void gameOver(Graphics g) {
         g.setColor(Color.RED);
@@ -101,59 +95,82 @@ public class Game extends JPanel implements ActionListener {
         getDifficulty(choice);
     }
 
+    // Create new Mouse listener
+    MouseInputAdapter mouseListener = new MouseInputAdapter() {
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent arg0) {
+            if (gameOver == false) {
+                remove(button);
+                score++;
+            } else {
+                gameOver = true;
+                remove(button);
+
+                System.out.println("Game over!");
+                System.out.println("Your score was: " + score);
+            }
+
+        }
+    };
+    MouseInputAdapter introListener = new MouseInputAdapter() {
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent arg0) {
+            if (intro) {
+                remove(introButton);
+                add(button);
+                intro = false;
+            }
+        }
+    };
+
+    Image image = new ImageIcon("./icon.png").getImage();
+    boolean intro = true;
 
     // Draws the frame
     public void drawFrame(Graphics g, int frameNumber, int width, int height) {
+        if (intro) {
+            frameNumber = 0;
+            g.drawImage(image, 0, 0, width, height, null);
+            introButton.setBounds(width / 2 - 50, height / 2, 100, 50);
+            add(introButton);
+            introButton.addMouseListener(introListener);
+        }
         if (frameNumber == timerAmount * 100) {
             gameOver = true;
         }
-        if (!gameOver) {
+
+        if (!gameOver && intro == false) {
+
             g.drawString("Frame number " + frameNumber, 40, 50);
-            Point mousePosition = getMousePosition();
             Graphics2D g2 = (Graphics2D) g;
-            // Draws the Score in the top left corner
             g2.drawString("Score: " + score, 10, 10);
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            int mouseX = mousePosition.x;
-            int mouseY = mousePosition.y;
-            g.drawString("Mouse position: " + mouseX + ", " + mouseY, 40, 70);
-            g.drawString("Width: " + width + ", Height: " + height, 40, 90);
+
             int randX = (int) (Math.random() * width);
             int randY = (int) (Math.random() * height);
+            Color randColor = new Color((int) (Math.random() * 256), (int) (Math.random() * 256),
+                    (int) (Math.random() * 256));
+            int randSize = (int) (Math.random() * width);
+            if (randSize < 10) {
+                randSize = 10;
+            } else if (randSize > 200) {
+                randSize = 200;
+            }
+
             if (frameNumber < timerAmount * 100) {
                 g.drawString("Time Left: " + (timerAmount * 100 - frameNumber) / 100, 40, 110);
             }
 
             if (frameNumber % speed == 0) {
                 add(button);
-                button.setBounds(randX, randY, 100, 100);
+                g.setColor(randColor);
+                button.setBounds(randX, randY, randSize, randSize);
 
             }
             g.drawString("Score: " + score, width / 2, height / 2);
             button.setText("");
             button.setBorderPainted(false);
             button.setOpaque(true);
-            Icon icon = new ImageIcon("./icon.png");
-            button.setIcon(icon);
-            button.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    remove(button);
-                    score++;
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {}
-            });
-            // try {
-            // Robot r = new Robot();
-            // r.mouseMove(button.getX(), button.getY());
-
-
-            // } catch (AWTException e) {
-            // e.printStackTrace();
-            // }
-
             if (gameOver) {
                 remove(button);
                 System.out.println("Game Over");
@@ -181,6 +198,35 @@ public class Game extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent evt) {
         frameNum++;
         repaint();
+    }
+
+    @Override
+    public void mouseClicked(java.awt.event.MouseEvent arg0) {
+        score++;
+    }
+
+    @Override
+    public void mouseEntered(java.awt.event.MouseEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mouseExited(java.awt.event.MouseEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mousePressed(java.awt.event.MouseEvent arg0) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mouseReleased(java.awt.event.MouseEvent arg0) {
+        // TODO Auto-generated method stub
+
     }
 
 }
