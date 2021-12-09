@@ -3,6 +3,7 @@ import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.*;
 
+
 // Simple JPanel
 public class Game extends JPanel implements ActionListener, MouseListener {
 
@@ -48,7 +49,7 @@ public class Game extends JPanel implements ActionListener, MouseListener {
     }
 
     JButton button = new JButton("");
-
+    System.out.println("Created button");
     JButton introButton = new JButton("Click to start!");
 
     private int score = 0;
