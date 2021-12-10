@@ -18,7 +18,7 @@ public class Game extends JPanel implements ActionListener, MouseListener {
 
     public static void main(String[] args) {
 
-        JFrame window = new JFrame("Simple Animation");
+        JFrame window = new JFrame("FPS Game");
 
         Game drawingArea = new Game();
         drawingArea.difficultyChoice();
