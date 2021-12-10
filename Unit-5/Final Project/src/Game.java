@@ -49,7 +49,6 @@ public class Game extends JPanel implements ActionListener, MouseListener {
     }
 
     JButton button = new JButton("");
-    System.out.println("Created button");
     JButton introButton = new JButton("Click to start!");
 
     private int score = 0;
@@ -131,8 +130,8 @@ public class Game extends JPanel implements ActionListener, MouseListener {
     public void drawFrame(Graphics g, int frameNumber, int width, int height) {
         if (intro) {
             frameNumber = 0;
-            g.drawImage(image, 0, 0, width, height, null);
-            introButton.setBounds(width / 2 - 50, height / 2, 100, 50);
+            g.setColor(Color.RED);
+            introButton.setBounds(width / 2 - 50, height / 2, 2001, 100);
             add(introButton);
             introButton.addMouseListener(introListener);
         }
@@ -208,26 +207,20 @@ public class Game extends JPanel implements ActionListener, MouseListener {
 
     @Override
     public void mouseEntered(java.awt.event.MouseEvent arg0) {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void mouseExited(java.awt.event.MouseEvent arg0) {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void mousePressed(java.awt.event.MouseEvent arg0) {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void mouseReleased(java.awt.event.MouseEvent arg0) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseReleased(java.awt.event.MouseEvent arg0) {}
 
 }
