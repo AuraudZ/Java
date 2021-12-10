@@ -153,8 +153,8 @@ public class Game extends JPanel implements ActionListener, MouseListener {
             int randSize = (int) (Math.random() * width);
             if (randSize < 10) {
                 randSize = 10;
-            } else if (randSize > 200) {
-                randSize = 200;
+            } else if (randSize > 150) {
+                randSize = 150;
             }
 
             if (frameNumber < timerAmount * 100) {
