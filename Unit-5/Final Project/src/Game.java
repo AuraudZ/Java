@@ -171,13 +171,23 @@ public class Game extends JPanel implements ActionListener, MouseListener {
             button.setText("");
             button.setBorderPainted(false);
             button.setOpaque(true);
-            if (gameOver) {
+            while (gameOver == true) {
                 remove(button);
                 add(introButton);
                 System.out.println("Game Over");
                 System.out.println("Score: " + score);
-                // repaint();
-                gameOver(g);
+                System.out.println("Would you like to play again? (y/n)");
+                boolean playAgain = TextIO.getlnBoolean();
+                if (playAgain) {
+                    gameOver = false;
+                    score = 0;
+                    frameNumber = 0;
+                    remove(introButton);
+                    add(button);
+                    repaint();
+                } else {
+                    System.exit(0);
+                }
             }
         }
     }
