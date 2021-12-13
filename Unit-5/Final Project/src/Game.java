@@ -3,11 +3,15 @@ import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.*;
 
-
 // Simple JPanel
-public class Game extends JPanel implements ActionListener, MouseListener {
+public class Game extends JPanel implements ActionListener {
 
     private static int timerAmount = 10;
+    private boolean playAgain = false;
+
+    private boolean getPlayAgain() {
+        return playAgain;
+    }
 
     // Constructor
     public Game() {
@@ -33,7 +37,7 @@ public class Game extends JPanel implements ActionListener, MouseListener {
 
         Timer frameTimer = new Timer(10, drawingArea);
         frameTimer.start();
-        if (drawingArea.getIntro() == false) {
+        if (drawingArea.getIntro() == false || drawingArea.getPlayAgain() == true) {
             frameTimer.restart();
         }
 
@@ -171,26 +175,39 @@ public class Game extends JPanel implements ActionListener, MouseListener {
             button.setText("");
             button.setBorderPainted(false);
             button.setOpaque(true);
-            while (gameOver == true) {
-                remove(button);
-                add(introButton);
-                System.out.println("Game Over");
-                System.out.println("Score: " + score);
-                System.out.println("Would you like to play again? (y/n)");
-                boolean playAgain = TextIO.getlnBoolean();
-                if (playAgain) {
-                    gameOver = false;
-                    score = 0;
-                    frameNumber = 0;
-                    remove(introButton);
-                    add(button);
-                    repaint();
-                } else {
-                    System.exit(0);
-                }
+        }
+        while (gameOver) {
+            remove(button);
+            add(introButton);
+            System.out.println("Game Over");
+            System.out.println("Score: " + score);
+            System.out.println("Would you like to play again? (y/n)");
+            playAgain = TextIO.getlnBoolean();
+            boolean changeDifficulty = false;
+            if (playAgain) {
+                System.out.println("Would you like to change the difficulty? (y/n)");
+                changeDifficulty = TextIO.getlnBoolean();
+                gameOver = false;
+                score = 0;
+                frameNumber = 0;
+                remove(introButton);
+                add(button);
+                intro = false;
+            } else {
+                System.exit(0);
+            }
+            if (changeDifficulty) {
+                difficultyChoice();
+                gameOver = false;
+                score = 0;
+                frameNumber = 0;
+                remove(introButton);
+                add(button);
+                intro = false;
             }
         }
     }
+
 
 
     public Color getPixelColor(int x, int y) throws AWTException {
@@ -210,28 +227,5 @@ public class Game extends JPanel implements ActionListener, MouseListener {
         frameNum++;
         repaint();
     }
-
-    @Override
-    public void mouseClicked(java.awt.event.MouseEvent arg0) {
-        score++;
-    }
-
-    @Override
-    public void mouseEntered(java.awt.event.MouseEvent arg0) {
-
-    }
-
-    @Override
-    public void mouseExited(java.awt.event.MouseEvent arg0) {
-
-    }
-
-    @Override
-    public void mousePressed(java.awt.event.MouseEvent arg0) {
-
-    }
-
-    @Override
-    public void mouseReleased(java.awt.event.MouseEvent arg0) {}
 
 }
