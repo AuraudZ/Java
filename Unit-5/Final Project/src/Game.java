@@ -180,15 +180,9 @@ public class Game extends JPanel implements ActionListener {
             button.setBorderPainted(false);
             button.setOpaque(true);
         }
-        if (gameOver) {
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, width, height);
-            g.setColor(Color.WHITE);
-            g.drawString("Game Over!", width / 2 - 50, height / 2);
-            g.drawString("Your score was: " + score, width / 2 - 50, height / 2 + 50);
-            remove(button);
-        }
+
         while (gameOver) {
+            // Wanted to Add a game over screen but I couldn't get it to work :(
             System.out.println("Game Over");
             System.out.println("Score: " + score);
             System.out.println("Would you like to play again? (y/n)");
@@ -218,8 +212,16 @@ public class Game extends JPanel implements ActionListener {
                 add(button);
                 intro = false;
             }
+            // g.setColor(Color.BLACK);
+            // g.fillRect(0, 0, width, height);
+            // g.setColor(Color.WHITE);
+            // g.drawString("Game Over!", width / 2 - 50, height / 2);
+            // g.drawString("Your score was: " + score, width / 2 - 50, height / 2 + 50);
+            // remove(button);
             break;
         }
+
+
     }
 
     private int frameNum;
