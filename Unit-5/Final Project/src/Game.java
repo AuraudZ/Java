@@ -8,11 +8,6 @@ public class Game extends JPanel implements ActionListener {
 
     private int timerAmount;
     private boolean playAgain = false;
-
-    private boolean getPlayAgain() {
-        return playAgain;
-    }
-
     public Timer frameTimer = new Timer(10, this);
 
     // Constructor
@@ -37,15 +32,6 @@ public class Game extends JPanel implements ActionListener {
         window.setLocation(100, 50);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(true);
-
-        if (drawingArea.getIntro() == false) {
-            drawingArea.frameTimer.restart();
-        }
-        if (drawingArea.getPlayAgain() == true) {
-            drawingArea.frameTimer.restart();
-        }
-
-
         window.setVisible(true);
 
     } // end main
@@ -115,9 +101,6 @@ public class Game extends JPanel implements ActionListener {
             } else {
                 gameOver = true;
                 remove(button);
-
-                System.out.println("Game over!");
-                System.out.println("Your score was: " + score);
             }
 
         }
@@ -195,7 +178,6 @@ public class Game extends JPanel implements ActionListener {
                 gameOver = false;
                 score = 0;
                 frameNumber = 0;
-                remove(introButton);
                 add(button);
                 intro = false;
                 frameTimer.restart();
@@ -213,16 +195,9 @@ public class Game extends JPanel implements ActionListener {
                 add(button);
                 intro = false;
             }
-            // g.setColor(Color.BLACK);
-            // g.fillRect(0, 0, width, height);
-            // g.setColor(Color.WHITE);
-            // g.drawString("Game Over!", width / 2 - 50, height / 2);
-            // g.drawString("Your score was: " + score, width / 2 - 50, height / 2 + 50);
-            // remove(button);
+
             break;
         }
-
-
     }
 
     private int frameNum;
