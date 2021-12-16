@@ -200,6 +200,7 @@ public class Game extends JPanel implements ActionListener {
                 intro = false;
                 frameTimer.restart();
             } else {
+                System.out.println("Thanks for playing!");
                 System.exit(0);
             }
             if (changeDifficulty) {
