@@ -35,6 +35,12 @@ public class Game extends JPanel implements ActionListener {
         window.setResizable(true);
         window.setVisible(true);
         drawingArea.frameTimer.start();
+        if (drawingArea.intro == false) {
+            drawingArea.frameTimer.restart();
+        }
+        if (drawingArea.intro == true) {
+            drawingArea.frameTimer.start();
+        }
 
     } // end main
 
@@ -88,28 +94,29 @@ public class Game extends JPanel implements ActionListener {
             }
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
-            // Read using leaderBoardString then pull out the runCount and add 1 to the runCount
-            // Write to leaderBoardString
-            for (String s : strings) {
-                String[] split = s.split(" ");
-                // Null check
-                if (split[0] != null || split[1] != null || split[2] != null || split[3] != null
-                        || split[4] != null || split[5] != null) {
-                    // Append to end of file
-                    if (Integer.parseInt(split[1]) == runCount) {
-                        bw.append(split[0] + " " + (Integer.parseInt(split[1]) + 1) + " " + split[2]
-                                + " " + split[3] + " " + split[4] + " " + split[5] + "\n");
-                        bw.newLine();
-                    } else {
-                        bw.write("Run: " + runCount + " Score: " + score + " Difficulty: "
-                                + difficulty);
-                        bw.newLine();
-                    }
-                }
-            }
             bw.append("Run: " + runCount + " Score: " + score + " Difficulty: " + difficulty);
             bw.newLine();
+            if (strings != null) {
+                for (String s : strings) {
+                    String[] split = s.split(" ");
+                    // Null check
+                    if (split[0] != null || split[1] != null || split[2] != null || split[3] != null
+                            || split[4] != null || split[5] != null) {
+                        if (Integer.parseInt(split[1]) == runCount) {
+                            bw.append(split[0] + " " + (Integer.parseInt(split[1])) + " " + split[2]
+                                    + " " + split[3] + " " + split[4] + " " + split[5] + "\n");
+                            bw.newLine();
+                        } else {
+                            bw.append("Run: " + runCount + " Score: " + score + " Difficulty: "
+                                    + difficulty);
+                            bw.newLine();
+                        }
+                    }
+
+                }
+            }
             bw.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -213,7 +220,6 @@ public class Game extends JPanel implements ActionListener {
             Graphics2D g2 = (Graphics2D) g;
             g2.drawString("Score: " + score, 10, 10);
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
             int randX = (int) (Math.random() * width);
             int randY = (int) (Math.random() * height);
             Color randColor = new Color((int) (Math.random() * 256), (int) (Math.random() * 256),
@@ -271,6 +277,7 @@ public class Game extends JPanel implements ActionListener {
                 add(button);
                 intro = false;
             }
+            printLeaderBoard();
             break;
         }
     }
