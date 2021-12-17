@@ -7,8 +7,6 @@ import java.io.*;
 // Simple JPanel
 public class Game extends JPanel implements ActionListener {
 
-    private static int runCount = 0;
-
     private int timerAmount;
     private boolean playAgain = false;
     public Timer frameTimer = new Timer(10, this);
@@ -30,12 +28,6 @@ public class Game extends JPanel implements ActionListener {
             File file = new File("leaderboard.txt");
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                runCount++;
-                line = bufferedReader.readLine();
-            }
-            System.out.println("Run Count: " + runCount);
             bufferedReader.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -119,17 +111,15 @@ public class Game extends JPanel implements ActionListener {
             BufferedWriter bw = new BufferedWriter(fw);
             for (int i = 0; i < strings.length; i++) {
                 bw.write(strings[i]);
+                bw.newLine();
             }
-            bw.append(" Score: " + score + " Difficulty: " + difficulty);
+            bw.append(" Score: " + score + " Difficulty: " + diff);
             bw.newLine();
             bw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
-
 
     public boolean getIntro() {
         return intro;
@@ -168,12 +158,12 @@ public class Game extends JPanel implements ActionListener {
     }
 
 
-    int difficulty = 0;
+    int diff = 1;
 
     public void difficultyChoice() {
         System.out.println("Please enter a difficulty level (1-5): ");
         int choice = TextIO.getlnInt();
-        difficulty = choice;
+        diff = choice;
         getDifficulty(choice);
     }
 
@@ -197,6 +187,7 @@ public class Game extends JPanel implements ActionListener {
             if (intro) {
                 remove(introButton);
                 add(button);
+                frameTimer.restart();
                 intro = false;
             }
         }
@@ -206,6 +197,10 @@ public class Game extends JPanel implements ActionListener {
 
     // Draws the frame
     public void drawFrame(Graphics g, int frameNumber, int width, int height) {
+        int timeLeft = timerAmount * 100 - frameNumber;
+        if (timeLeft < 0) {
+            timeLeft = 0;
+        }
         if (intro) {
             frameNumber = 0;
             g.setColor(Color.BLACK);
@@ -222,7 +217,10 @@ public class Game extends JPanel implements ActionListener {
         if (frameNumber == timerAmount * 100) {
             gameOver = true;
         }
+
+
         if (!gameOver && !intro) {
+            frameTimer.setRepeats(true);
             Graphics2D g2 = (Graphics2D) g;
             g2.drawString("Score: " + score, 10, 10);
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -236,11 +234,13 @@ public class Game extends JPanel implements ActionListener {
             } else if (randSize > 150) {
                 randSize = 150;
             }
+            // The timer should not count in the intro
             if (!intro || gameOver) {
                 if (frameNumber < timerAmount * 100) {
-                    g.drawString("Time Left: " + (timerAmount * 100 - frameNumber) / 100, 40, 50);
+                    g.drawString("Time Left: " + (timeLeft) / 100, 40, 50);
                 }
             }
+
             if (frameNumber % speed == 0) {
                 add(button);
                 button.setBounds(randX, randY, randSize, randSize);
@@ -256,6 +256,8 @@ public class Game extends JPanel implements ActionListener {
         while (gameOver) {
             // Wanted to Add a game over screen but I couldn't get it to work :(
             System.out.println("Game Over");
+            resetTimer();
+            timeLeft = timerAmount * 100 - frameNumber;
             System.out.println("Score: " + score);
             System.out.println("Would you like to play again? (y/n)");
             playAgain = TextIO.getlnBoolean();
@@ -270,22 +272,23 @@ public class Game extends JPanel implements ActionListener {
                 add(button);
                 intro = false;
                 printLeaderBoard();
-                frameTimer.restart();
             } else {
                 System.out.println("Thanks for playing!");
                 printLeaderBoard();
                 System.exit(0);
             }
             if (changeDifficulty) {
+                timeLeft = 60;
                 difficultyChoice();
                 gameOver = false;
-                resetTimer();
                 score = 0;
                 frameNumber = 0;
                 remove(introButton);
                 add(button);
                 intro = false;
+                resetTimer();
             }
+            System.exit(0);
             break;
         }
     }
