@@ -20,6 +20,11 @@ public class Game extends JPanel implements ActionListener {
         calculateRunCount();
     }
 
+    public void resetTimer() {
+        System.out.println("Resetting timer");
+        frameTimer.restart();
+    }
+
     public void calculateRunCount() {
         try {
             File file = new File("leaderboard.txt");
@@ -118,9 +123,7 @@ public class Game extends JPanel implements ActionListener {
             bw.append(" Score: " + score + " Difficulty: " + difficulty);
             bw.newLine();
             bw.close();
-        } catch (
-
-        IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -233,8 +236,10 @@ public class Game extends JPanel implements ActionListener {
             } else if (randSize > 150) {
                 randSize = 150;
             }
-            if (frameNumber < timerAmount * 100) {
-                g.drawString("Time Left: " + (timerAmount * 100 - frameNumber) / 100, 40, 50);
+            if (!intro || gameOver) {
+                if (frameNumber < timerAmount * 100) {
+                    g.drawString("Time Left: " + (timerAmount * 100 - frameNumber) / 100, 40, 50);
+                }
             }
             if (frameNumber % speed == 0) {
                 add(button);
@@ -274,7 +279,7 @@ public class Game extends JPanel implements ActionListener {
             if (changeDifficulty) {
                 difficultyChoice();
                 gameOver = false;
-                frameTimer.restart();
+                resetTimer();
                 score = 0;
                 frameNumber = 0;
                 remove(introButton);
