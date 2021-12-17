@@ -207,7 +207,6 @@ public class Game extends JPanel implements ActionListener {
             g.fillRect(0, 0, width, height);
             introButton.setBackground(Color.RED);
             introButton.setText("Click to start!");
-            // Center the button
             introButton.setBounds((width / 2) - (introButton.getWidth() / 2),
                     (height / 2) - (introButton.getHeight() / 2), introButton.getWidth(),
                     introButton.getHeight());
@@ -234,7 +233,6 @@ public class Game extends JPanel implements ActionListener {
             } else if (randSize > 150) {
                 randSize = 150;
             }
-            // The timer should not count in the intro
             if (!intro || gameOver) {
                 if (frameNumber < timerAmount * 100) {
                     g.drawString("Time Left: " + (timeLeft) / 100, 40, 50);
@@ -263,7 +261,6 @@ public class Game extends JPanel implements ActionListener {
             playAgain = TextIO.getlnBoolean();
             boolean changeDifficulty = false;
             if (playAgain) {
-                // Clear the screen
                 System.out.println("Would you like to change the difficulty? (y/n)");
                 changeDifficulty = TextIO.getlnBoolean();
                 gameOver = false;
@@ -288,7 +285,8 @@ public class Game extends JPanel implements ActionListener {
                 intro = false;
                 resetTimer();
             }
-            System.exit(0);
+            System.out.println(
+                    "This will break the timer and put it in an infinite loop, so just exit and restart the program");
             break;
         }
     }
