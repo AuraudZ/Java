@@ -17,6 +17,24 @@ public class Game extends JPanel implements ActionListener {
     public Game() {
         frameTimer.start();
         button.addMouseListener(mouseListener);
+        calculateRunCount();
+    }
+
+    public void calculateRunCount() {
+        try {
+            File file = new File("leaderboard.txt");
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                runCount++;
+                line = bufferedReader.readLine();
+            }
+            System.out.println("Run Count: " + runCount);
+            bufferedReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
@@ -94,30 +112,15 @@ public class Game extends JPanel implements ActionListener {
             }
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.append("Run: " + runCount + " Score: " + score + " Difficulty: " + difficulty);
-            bw.newLine();
-            if (strings != null) {
-                for (String s : strings) {
-                    String[] split = s.split(" ");
-                    // Null check
-                    if (split[0] != null || split[1] != null || split[2] != null || split[3] != null
-                            || split[4] != null || split[5] != null) {
-                        if (Integer.parseInt(split[1]) == runCount) {
-                            bw.append(split[0] + " " + (Integer.parseInt(split[1])) + " " + split[2]
-                                    + " " + split[3] + " " + split[4] + " " + split[5] + "\n");
-                            bw.newLine();
-                        } else {
-                            bw.append("Run: " + runCount + " Score: " + score + " Difficulty: "
-                                    + difficulty);
-                            bw.newLine();
-                        }
-                    }
-
-                }
+            for (int i = 0; i < strings.length; i++) {
+                bw.write(strings[i]);
             }
+            bw.append(" Score: " + score + " Difficulty: " + difficulty);
+            bw.newLine();
             bw.close();
+        } catch (
 
-        } catch (IOException e) {
+        IOException e) {
             e.printStackTrace();
         }
 
@@ -261,6 +264,7 @@ public class Game extends JPanel implements ActionListener {
                 frameNumber = 0;
                 add(button);
                 intro = false;
+                printLeaderBoard();
                 frameTimer.restart();
             } else {
                 System.out.println("Thanks for playing!");
@@ -277,7 +281,6 @@ public class Game extends JPanel implements ActionListener {
                 add(button);
                 intro = false;
             }
-            printLeaderBoard();
             break;
         }
     }
