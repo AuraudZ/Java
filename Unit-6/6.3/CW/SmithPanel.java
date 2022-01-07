@@ -1,5 +1,4 @@
 import java.awt.Graphics;
-import java.awt.event.*;
 import javax.swing.*;
 
 // This demos having the Listener class be SEPARATED in a different class from the component
@@ -42,5 +41,4 @@ public class SmithPanel extends JPanel {
 		super.paintComponent(g); // otherwise, PCs have jumbled output
 		g.drawString(message, 100, 100);
 	}
-
 }
