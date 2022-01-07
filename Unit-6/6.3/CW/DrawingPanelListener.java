@@ -7,7 +7,6 @@ public class DrawingPanelListener implements MouseListener {
     public DrawingPanelListener(DrawingPanel panel) {
         this.panel = panel;
         panel.addMouseListener(this);
-
     }
 
     @Override
@@ -20,32 +19,19 @@ public class DrawingPanelListener implements MouseListener {
             c = Color.GREEN;
         else
             c = Color.RED;
-
         panel.addRectangle(e.getX(), e.getY(), 100, 50, c);
         panel.repaint();
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mousePressed(MouseEvent e) {}
 
     @Override
-    public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseReleased(MouseEvent e) {}
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseEntered(MouseEvent e) {}
 
     @Override
-    public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseExited(MouseEvent e) {}
 }
