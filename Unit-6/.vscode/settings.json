@@ -1,3 +1,9 @@
 {
-  "java.project.sourcePaths": ["6.1/HW", "6.1/CW", "6.2/CW"]
+  "java.project.sourcePaths": [
+    "6.1/HW",
+    "6.1/CW",
+    "6.2/CW",
+    "6.3\\CW",
+    "6.2\\HW"
+  ]
 }
