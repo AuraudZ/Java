@@ -13,7 +13,7 @@ class PlainPanel extends JPanel {
         JButton submitButton = new JButton("Submit");
         setBackground(java.awt.Color.white);
         setLayout(new BorderLayout());
-        // add(new FramedPanel(Color.RED), BorderLayout.CENTER);
+        add(new FramedPanel(Color.CYAN), BorderLayout.CENTER);
         upperButtonPanel.add(previousButton);
         upperButtonPanel.add(nextButton);
         upperButtonPanel.setLayout(new GridLayout(1, 1));
