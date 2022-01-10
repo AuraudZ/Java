@@ -7,7 +7,9 @@ public class DrawingPanelMain {
         window.setSize(600, 400);
         window.setLocation(500, 300);
         window.setVisible(true);
+
         DrawingPanel panel = new DrawingPanel();
+        new DraggingDrawingPanelListener(panel);
         new DrawingPanelListener(panel);
         window.setContentPane(panel);
     }

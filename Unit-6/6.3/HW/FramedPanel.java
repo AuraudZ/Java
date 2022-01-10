@@ -33,6 +33,5 @@ public class FramedPanel extends JPanel {
         getGraphics().clearRect(thickness, thickness, getWidth() - 2 * thickness,
                 getHeight() - 2 * thickness);
         this.repaint();
-
     }
 }

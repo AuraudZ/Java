@@ -4,7 +4,6 @@ import javax.swing.*;
 public class DrawingPanel extends JPanel {
 	int numOfRects = 0;
 	Rectangle[] rectangles = new Rectangle[2000];
-	// instance variables represent state.
 	int counter = 0;
 
 	@Override
