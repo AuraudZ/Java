@@ -14,8 +14,8 @@ class PlainPanel extends JPanel {
         setBackground(java.awt.Color.white);
         setLayout(new BorderLayout());
         FramedPanel panel = new FramedPanel(java.awt.Color.red);
-        FramedPanelMouseListener listener = new FramedPanelMouseListener(panel);
-        panel.addMouseListener(listener);
+
+        panel.addMouseListener(new FramedPanelMouseListener(panel));
         add(panel, BorderLayout.CENTER);
         upperButtonPanel.add(previousButton);
         upperButtonPanel.add(nextButton);
