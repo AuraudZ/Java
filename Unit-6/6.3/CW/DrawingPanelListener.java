@@ -19,7 +19,7 @@ public class DrawingPanelListener implements MouseListener {
             c = Color.GREEN;
         else
             c = Color.RED;
-        panel.addRectangle(e.getX(), e.getY(), 100, 50, c);
+
         panel.repaint();
     }
 

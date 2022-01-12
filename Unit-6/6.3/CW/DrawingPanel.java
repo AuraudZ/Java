@@ -19,8 +19,12 @@ public class DrawingPanel extends JPanel {
 		}
 	}
 
-	public void addRectangle(int x, int y, int width, int height, Color color) {
-		rectangles[numOfRects] = new Rectangle(x, y, width, height, color);
+	public void addRectangle(Rectangle r) {
+		rectangles[numOfRects] = r;
 		numOfRects++;
+	}
+
+	public void removeRecentRectangle() {
+		numOfRects--;
 	}
 }

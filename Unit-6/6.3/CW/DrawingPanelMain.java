@@ -10,7 +10,6 @@ public class DrawingPanelMain {
 
         DrawingPanel panel = new DrawingPanel();
         new DraggingDrawingPanelListener(panel);
-        new DrawingPanelListener(panel);
         window.setContentPane(panel);
     }
 }
