@@ -20,4 +20,10 @@ public class Oval implements Drawable {
         g.setColor(color);
         g.fillOval(x, y, width, height);
     }
+
+    @Override
+    public void clear(Graphics graphics) {
+        graphics.setColor(Color.WHITE);
+        graphics.fillOval(x, y, width, height);
+    }
 }

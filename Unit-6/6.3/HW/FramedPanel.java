@@ -1,11 +1,16 @@
 import java.awt.*;
+import java.util.ArrayList;
 import javax.swing.*;
 
 public class FramedPanel extends JPanel {
     private Color color;
+    private ArrayList<Drawable> drawables;
+
+    private int drawableCount;
 
     public FramedPanel(Color color) {
         this.color = color;
+        drawables = new ArrayList<Drawable>();
     }
 
     @Override
@@ -25,13 +30,34 @@ public class FramedPanel extends JPanel {
 
     public void addDrawable(Drawable d) {
         d.draw(getGraphics());
+        drawables.add(d);
     }
 
     public void clear() {
-        int thickness = Math.min(getWidth() / 20, getHeight() / 20);
-        getGraphics().setColor(Color.WHITE);
-        getGraphics().clearRect(thickness, thickness, getWidth() - 2 * thickness,
-                getHeight() - 2 * thickness);
-        this.repaint();
+        for (int i = 0; i < drawables.size(); i++) {
+            drawables.remove(i);
+            repaint();
+        }
+    }
+
+    public void removeDrawable(Drawable d) {
+        for (int i = 0; i < drawables.size(); i++) {
+            if (drawables.get(i) == d) {
+                drawables.remove(i);
+            }
+        }
+    }
+
+    public void addDrawable(int index, Drawable d) {
+        d.draw(getGraphics());
+        drawables.add(index, d);
+    }
+
+    public int getDrawableCount() {
+        return drawableCount;
+    }
+
+    public void setDrawableCount(int drawableCount) {
+        this.drawableCount = drawableCount;
     }
 }

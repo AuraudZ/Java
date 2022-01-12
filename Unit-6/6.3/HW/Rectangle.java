@@ -22,4 +22,10 @@ public class Rectangle implements Drawable {
         g.fillRect(x, y, width, height);
     }
 
+    @Override
+    public void clear(Graphics graphics) {
+        graphics.setColor(Color.WHITE);
+        graphics.fillRect(x, y, width, height);
+    }
+
 }
