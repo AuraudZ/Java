@@ -64,6 +64,7 @@ public class RectanglePanelListener implements MouseListener, MouseMotionListene
 	}
 
 	public void mouseDragged(MouseEvent ev) {
+		System.out.println(currentlyDraggingRectangle);
 		if (currentlyDraggingRectangle != null) {
 			currentlyDraggingRectangle.setX(ev.getX() - offsetX);
 			currentlyDraggingRectangle.setY(ev.getY() - offsetY);
