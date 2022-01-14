@@ -1,3 +1,4 @@
+
 import javax.swing.JFrame;
 
 public class RectanglePanelMain {
@@ -11,5 +12,6 @@ public class RectanglePanelMain {
 		new RectanglePanelListener(rectPanel);
 		window.setContentPane(rectPanel);
 		window.setVisible(true);
+		rectPanel.requestFocusInWindow();
 	}
 }
