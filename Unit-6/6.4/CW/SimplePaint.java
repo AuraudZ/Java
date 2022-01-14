@@ -36,7 +36,6 @@ public class SimplePaint extends JPanel implements MouseListener, MouseMotionLis
 
     private int prevX, prevY; // The previous location of the mouse.
     private boolean dragging; // This is set to true while the user is drawing.
-    private Graphics graphicsForDrawing;
 
     // *** Let's make a nested class to define a new data type that will be stored in a data
     // structure
@@ -151,7 +150,6 @@ public class SimplePaint extends JPanel implements MouseListener, MouseMotionLis
                     g.setColor(Color.YELLOW);
                     break;
             }
-            graphicsForDrawing = g;
             g.drawLine(lines.get(i).x1, lines.get(i).y1, lines.get(i).x2, lines.get(i).y2);
         }
     }
@@ -193,6 +191,7 @@ public class SimplePaint extends JPanel implements MouseListener, MouseMotionLis
         if (x > width - 53) {
             if (y > height - 53) {
                 // ***Clicked on "CLEAR button".
+                lines.clear(); // Clear the list of lines.
 
             } else {
                 changeColor(y); // Clicked on the color palette.
@@ -206,7 +205,7 @@ public class SimplePaint extends JPanel implements MouseListener, MouseMotionLis
             dragging = true;
 
         }
-
+        repaint();
     } // end mousePressed()
 
 
@@ -247,8 +246,10 @@ public class SimplePaint extends JPanel implements MouseListener, MouseMotionLis
 
         // *** update our data structure to reflect the new state as the user is dragging
         // Remember, NO DRAWING here!
-
-        graphicsForDrawing.drawLine(prevX, prevY, x, y);
+        lines.add(new Line(prevX, prevY, x, y, currentColor));
+        prevX = x;
+        prevY = y;
+        repaint();
 
 
     } // end mouseDragged()
