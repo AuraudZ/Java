@@ -6,6 +6,7 @@ public class SubKillerMain {
     public static void main(String[] args) {
         JFrame window = new JFrame("Sub Killer Game");
         SubKillerPanel content = new SubKillerPanel();
+        new SubKillerListener(content);
         window.setContentPane(content);
         window.setSize(600, 480);
         window.setLocation(100, 100);

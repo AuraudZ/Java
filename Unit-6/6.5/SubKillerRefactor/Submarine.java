@@ -3,14 +3,19 @@ package SubKillerRefactor;
 import java.awt.*;
 
 public class Submarine {
-    int width, height; // Width and height of the submarine.
+    // Width and height of the submarine.
     int centerX, centerY; // Current position of the center of the sub.
     boolean isMovingLeft; // Tells whether the sub is moving left or right
     boolean isExploding; // Set to true when the sub is hit by the bomb.
     int explosionFrameNumber; // If the sub is exploding, this is the number
                               // of frames since the explosion started.
+    SubKillerPanel panel;
 
-    Submarine() { // Create the sub at a random location 40 pixels from bottom.
+    int width = panel.getWidth();
+    int height = panel.getHeight();
+
+    Submarine(SubKillerPanel panel) { // Create the sub at a random location 40 pixels from bottom.
+        this.panel = panel;
         centerX = (int) (width * Math.random());
         centerY = height - 40;
         isExploding = false;

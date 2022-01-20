@@ -5,7 +5,7 @@ import javax.swing.*;
 
 public class SubKillerPanel extends JPanel {
 
-    private Timer timer; // Timer that drives the animation.
+    // Timer that drives the animation.
 
     // *** Don't forget to comment out "width, height" in your refactoring!!
     // (Explained at 41:00 in 6.4 notes day 2 video)
@@ -24,12 +24,12 @@ public class SubKillerPanel extends JPanel {
                                // height of the panel have not been set at
                                // the time that the constructor is called.
 
-    private Boat boat; // The boat, bomb, and sub objects are defined
-    private Bomb bomb; // by nested classes Boat, Bomb, and Submarine,
-    private Submarine sub; // which are defined later in this class.
-                           // Note that the objects are created in the
-                           // paintComponent() method, after the width
-                           // and height of the panel are known.
+    Boat boat; // The boat, bomb, and sub objects are defined
+    Bomb bomb; // by nested classes Boat, Bomb, and Submarine,
+    Submarine sub; // which are defined later in this class.
+    // Note that the objects are created in the
+    // paintComponent() method, after the width
+    // and height of the panel are known.
 
     public SubKillerPanel() {
         setBackground(new Color(0, 200, 0));
@@ -52,9 +52,9 @@ public class SubKillerPanel extends JPanel {
             // values to the instance variables.
             width = getWidth();
             height = getHeight();
-            boat = new Boat();
-            sub = new Submarine();
-            bomb = new Bomb();
+            boat = new Boat(this);
+            sub = new Submarine(this);
+            bomb = new Bomb(boat, sub);
         }
 
         if (hasFocus())
@@ -69,8 +69,8 @@ public class SubKillerPanel extends JPanel {
         g.drawRect(2, 2, width - 5, height - 5);
 
         boat.draw(g); // **Like a Rectangle, a Boat object knows how to draw itself
-        // sub.draw(g);
-        // bomb.draw(g);
+        sub.draw(g);
+        bomb.draw(g);
 
     } // end paintComponent()
 

@@ -11,7 +11,9 @@ public class Bomb {
     boolean isFalling; // If true, the bomb is falling; if false, it
                        // is attached to the boat.
 
-    Bomb() { // Constructor creates a bomb that is initially attached to boat.
+    Bomb(Boat boat, Submarine submarine) { // Constructor creates a bomb that is initially attached
+        this.boat = boat;
+        this.sub = submarine;
         isFalling = false;
     }
 
