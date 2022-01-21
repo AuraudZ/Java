@@ -12,13 +12,16 @@ public class Submarine {
 
     SubKillerPanel panel;
 
-    int width = panel.getWidth();
-    int height = panel.getHeight();
+    int width;
+    int height;
 
     Submarine(SubKillerPanel panel) { // Create the sub at a random location 40 pixels from bottom.
         this.panel = panel;
+        width = panel.getWidth();
+        height = panel.getHeight();
         centerX = (int) (width * Math.random());
         centerY = height - 40;
+
         isExploding = false;
         isMovingLeft = (Math.random() < 0.5);
     }
@@ -65,6 +68,7 @@ public class Submarine {
 
     void draw(Graphics g) { // Draw sub and, if it is exploding, the explosion.
         g.setColor(Color.BLACK);
+        System.out.println("Sub");
         g.fillOval(centerX - 30, centerY - 15, 60, 30);
         if (isExploding) {
             // Draw an "explosion" that grows in size as the number of

@@ -43,7 +43,7 @@ public class Bomb {
         if (!isFalling) { // If not falling, set centerX and centerY
                           // to show the bomb on the bottom of the boat.
             centerX = boat.getCenterX();
-            centerY = boat.getCenterY() + boat.getCenterY() + 23;
+            centerY = boat.getCenterY() + 23;
         }
         g.setColor(Color.RED);
         g.fillOval(centerX - 8, centerY - 8, 16, 16);

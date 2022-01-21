@@ -35,13 +35,13 @@ public class SubKillerPanel extends JPanel {
 
     public SubKillerPanel() {
         setBackground(new Color(0, 200, 0));
+
     }
 
     @Override
     public void paintComponent(Graphics g) {
 
         super.paintComponent(g); // Fill panel with background color, green.
-
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -76,21 +76,6 @@ public class SubKillerPanel extends JPanel {
 
     } // end paintComponent()
 
-    public int getWidth() {
-        return this.width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return this.height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
 
     public Boat getBoat() {
         return this.boat;

@@ -46,11 +46,14 @@ public class Boat {
     }
 
     SubKillerPanel panel; // The panel that the boat is on.
-    int width = panel.getWidth();
-    int height = panel.getHeight();
+    int width;
+    int height;
 
     Boat(SubKillerPanel panel) { // Constructor centers the boat horizontally, 80 pixels from top.
+        this.panel = panel;
         centerX = panel.getWidth() / 2;
+        width = panel.getWidth();
+        height = panel.getHeight();
         centerY = 80;
     }
 
