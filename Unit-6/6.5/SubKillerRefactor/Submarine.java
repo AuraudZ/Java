@@ -68,7 +68,6 @@ public class Submarine {
 
     void draw(Graphics g) { // Draw sub and, if it is exploding, the explosion.
         g.setColor(Color.BLACK);
-        System.out.println("Sub");
         g.fillOval(centerX - 30, centerY - 15, 60, 30);
         if (isExploding) {
             // Draw an "explosion" that grows in size as the number of
