@@ -4,11 +4,12 @@ import java.awt.*;
 
 public class Submarine {
     // Width and height of the submarine.
-    int centerX, centerY; // Current position of the center of the sub.
-    boolean isMovingLeft; // Tells whether the sub is moving left or right
-    boolean isExploding; // Set to true when the sub is hit by the bomb.
-    int explosionFrameNumber; // If the sub is exploding, this is the number
-                              // of frames since the explosion started.
+    private int centerX, centerY; // Current position of the center of the sub.
+    private boolean isMovingLeft; // Tells whether the sub is moving left or right
+    private boolean isExploding; // Set to true when the sub is hit by the bomb.
+    private int explosionFrameNumber; // If the sub is exploding, this is the number
+    // of frames since the explosion started.
+
     SubKillerPanel panel;
 
     int width = panel.getWidth();
@@ -76,4 +77,78 @@ public class Submarine {
                     4 * explosionFrameNumber, explosionFrameNumber);
         }
     }
+
+
+    public int getCenterX() {
+        return this.centerX;
+    }
+
+    public void setCenterX(int centerX) {
+        this.centerX = centerX;
+    }
+
+    public int getCenterY() {
+        return this.centerY;
+    }
+
+    public void setCenterY(int centerY) {
+        this.centerY = centerY;
+    }
+
+    public boolean isIsMovingLeft() {
+        return this.isMovingLeft;
+    }
+
+    public boolean getIsMovingLeft() {
+        return this.isMovingLeft;
+    }
+
+    public void setIsMovingLeft(boolean isMovingLeft) {
+        this.isMovingLeft = isMovingLeft;
+    }
+
+    public boolean isIsExploding() {
+        return this.isExploding;
+    }
+
+    public boolean getIsExploding() {
+        return this.isExploding;
+    }
+
+    public void setIsExploding(boolean isExploding) {
+        this.isExploding = isExploding;
+    }
+
+    public int getExplosionFrameNumber() {
+        return this.explosionFrameNumber;
+    }
+
+    public void setExplosionFrameNumber(int explosionFrameNumber) {
+        this.explosionFrameNumber = explosionFrameNumber;
+    }
+
+    public SubKillerPanel getPanel() {
+        return this.panel;
+    }
+
+    public void setPanel(SubKillerPanel panel) {
+        this.panel = panel;
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
 }

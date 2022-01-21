@@ -24,9 +24,11 @@ public class SubKillerPanel extends JPanel {
                                // height of the panel have not been set at
                                // the time that the constructor is called.
 
-    Boat boat; // The boat, bomb, and sub objects are defined
-    Bomb bomb; // by nested classes Boat, Bomb, and Submarine,
-    Submarine sub; // which are defined later in this class.
+    private Boat boat; // The boat, bomb, and sub objects are defined
+    private Bomb bomb; // by nested classes Boat, Bomb, and Submarine,
+    private Submarine sub; // which are defined later in this class.
+
+
     // Note that the objects are created in the
     // paintComponent() method, after the width
     // and height of the panel are known.
@@ -54,7 +56,7 @@ public class SubKillerPanel extends JPanel {
             height = getHeight();
             boat = new Boat(this);
             sub = new Submarine(this);
-            bomb = new Bomb(boat, sub);
+            bomb = new Bomb(this, boat, sub);
         }
 
         if (hasFocus())
@@ -74,5 +76,44 @@ public class SubKillerPanel extends JPanel {
 
     } // end paintComponent()
 
+    public int getWidth() {
+        return this.width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public Boat getBoat() {
+        return this.boat;
+    }
+
+    public void setBoat(Boat boat) {
+        this.boat = boat;
+    }
+
+    public Bomb getBomb() {
+        return this.bomb;
+    }
+
+    public void setBomb(Bomb bomb) {
+        this.bomb = bomb;
+    }
+
+    public Submarine getSub() {
+        return this.sub;
+    }
+
+    public void setSub(Submarine sub) {
+        this.sub = sub;
+    }
 
 }

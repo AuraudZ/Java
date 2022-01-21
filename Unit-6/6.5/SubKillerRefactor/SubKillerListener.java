@@ -6,11 +6,9 @@ import javax.swing.Timer;
 public class SubKillerListener
         implements KeyListener, FocusListener, MouseListener, ActionListener {
 
-    SubKillerPanel gamePanel;
-    Boat boat;
-    Bomb bomb;
-    Timer timer;
-    Submarine sub;
+    private SubKillerPanel gamePanel;
+
+    private Timer timer;
 
     public SubKillerListener(SubKillerPanel gamePanel) {
         this.gamePanel = gamePanel;
@@ -23,15 +21,16 @@ public class SubKillerListener
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
-
+        if (gamePanel.getBoat() != null) {
+            gamePanel.getBoat().updateForNewFrame();
+            gamePanel.getBomb().updateForNewFrame();
+            gamePanel.getSub().updateForNewFrame();
+        }
+        gamePanel.repaint();
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseClicked(MouseEvent e) {}
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -39,22 +38,13 @@ public class SubKillerListener
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseReleased(MouseEvent e) {}
 
     @Override
-    public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseEntered(MouseEvent e) {}
 
     @Override
-    public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void mouseExited(MouseEvent e) {}
 
     @Override
     public void focusGained(FocusEvent e) {
@@ -77,22 +67,21 @@ public class SubKillerListener
         if (code == KeyEvent.VK_LEFT) {
             // Move the boat left. (If this moves the boat out of the frame, its
             // position will be adjusted in the boat.updateForNewFrame() method.)
-            boat.centerX -= 15;
+            gamePanel.getBoat().setCenterX(gamePanel.getBoat().getCenterX() - 15);
         } else if (code == KeyEvent.VK_RIGHT) {
             // Move the boat right. (If this moves boat out of the frame, its
             // position will be adjusted in the boat.updateForNewFrame() method.)
-            boat.centerX += 15;
+            gamePanel.getBoat().setCenterX(gamePanel.getBoat().getCenterX() + 15);
         } else if (code == KeyEvent.VK_DOWN) {
             // Start the bomb falling, if it is not already falling.
-            if (bomb.isFalling == false)
-                bomb.isFalling = true;
+            if (gamePanel.getBomb().getIsFalling() == false)
+                gamePanel.getBomb().setIsFalling(true);
         }
     }
 
 
     @Override
     public void keyReleased(KeyEvent e) {
-        // TODO Auto-generated method stub
 
     }
 }

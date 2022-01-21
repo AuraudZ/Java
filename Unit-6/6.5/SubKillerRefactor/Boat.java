@@ -3,7 +3,48 @@ package SubKillerRefactor;
 import java.awt.*;
 
 public class Boat {
-    int centerX, centerY; // Current position of the center of the boat.
+    private int centerX, centerY; // Current position of the center of the boat.
+
+    public int getCenterX() {
+        return this.centerX;
+    }
+
+    public void setCenterX(int centerX) {
+        this.centerX = centerX;
+    }
+
+    public int getCenterY() {
+        return this.centerY;
+    }
+
+    public void setCenterY(int centerY) {
+        this.centerY = centerY;
+    }
+
+    public SubKillerPanel getPanel() {
+        return this.panel;
+    }
+
+    public void setPanel(SubKillerPanel panel) {
+        this.panel = panel;
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return this.height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
     SubKillerPanel panel; // The panel that the boat is on.
     int width = panel.getWidth();
     int height = panel.getHeight();
