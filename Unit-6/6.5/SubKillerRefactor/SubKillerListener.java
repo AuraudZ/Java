@@ -81,7 +81,5 @@ public class SubKillerListener
 
 
     @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
+    public void keyReleased(KeyEvent e) {}
 }
