@@ -28,6 +28,7 @@ public class Bomb {
                     && Math.abs(centerY - sub.getCenterY()) <= 21) {
                 // Bomb has hit the submarine. The submarine
                 // enters the "isExploding" state.
+                panel.incrementScore();
                 sub.setIsExploding(true);
                 sub.setExplosionFrameNumber(1);
                 isFalling = false; // Bomb reappears on the boat.

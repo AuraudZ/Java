@@ -1,32 +1,48 @@
 package SubKillerRefactor;
 
 import java.awt.event.*;
+import javax.swing.JOptionPane;
+import javax.swing.JSlider;
 import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class SubKillerListener
-        implements KeyListener, FocusListener, MouseListener, ActionListener {
+        implements KeyListener, FocusListener, MouseListener, ActionListener, ChangeListener {
 
     private SubKillerPanel gamePanel;
 
     private Timer timer;
 
-    public SubKillerListener(SubKillerPanel gamePanel) {
+    public SubKillerListener(SubKillerPanel gamePanel, ScorePanel scorePanel) {
         this.gamePanel = gamePanel;
         gamePanel.addMouseListener(this);
         gamePanel.addKeyListener(this);
         gamePanel.addFocusListener(this);
+        scorePanel.getSlider().addChangeListener(this);
         timer = new Timer(30, this);
         timer.start();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (gamePanel.getBoat() != null) {
-            gamePanel.getBoat().updateForNewFrame();
-            gamePanel.getBomb().updateForNewFrame();
-            gamePanel.getSub().updateForNewFrame();
+        String s = e.getActionCommand();
+
+        if (s == null) {
+            if (gamePanel.getBoat() != null) {
+                gamePanel.getBoat().updateForNewFrame();
+                gamePanel.getBomb().updateForNewFrame();
+                gamePanel.getSub().updateForNewFrame();
+            }
+            gamePanel.repaint();
+
+        } else if (s.equals("About")) {
+            JOptionPane.showMessageDialog(gamePanel, "This game is great");
+        } else if (s.equals("Restart")) {
+            gamePanel.restart();
+        } else if (s.equals("Exit")) {
+            System.exit(0);
         }
-        gamePanel.repaint();
     }
 
     @Override
@@ -82,4 +98,13 @@ public class SubKillerListener
 
     @Override
     public void keyReleased(KeyEvent e) {}
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        JSlider source = (JSlider) e.getSource();
+        if (!source.getValueIsAdjusting()) {
+            gamePanel.setSubSpeed(source.getValue());
+            gamePanel.requestFocusInWindow();
+        }
+    }
 }

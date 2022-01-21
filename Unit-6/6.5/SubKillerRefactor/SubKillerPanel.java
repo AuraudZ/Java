@@ -27,13 +27,15 @@ public class SubKillerPanel extends JPanel {
     private Boat boat; // The boat, bomb, and sub objects are defined
     private Bomb bomb; // by nested classes Boat, Bomb, and Submarine,
     private Submarine sub; // which are defined later in this class.
-
+    private int subSpeed = 1;
+    private ScorePanel scorePanel;
 
     // Note that the objects are created in the
     // paintComponent() method, after the width
     // and height of the panel are known.
 
-    public SubKillerPanel() {
+    public SubKillerPanel(ScorePanel scorePanel) {
+        this.scorePanel = scorePanel;
         setBackground(new Color(0, 200, 0));
 
     }
@@ -72,6 +74,11 @@ public class SubKillerPanel extends JPanel {
 
         boat.draw(g); // **Like a Rectangle, a Boat object knows how to draw itself
         sub.draw(g);
+
+        for (int i = 0; i < subSpeed; i++) {
+            sub.updateForNewFrame();
+            sub.draw(g);
+        }
         bomb.draw(g);
 
     } // end paintComponent()
@@ -100,5 +107,35 @@ public class SubKillerPanel extends JPanel {
     public void setSub(Submarine sub) {
         this.sub = sub;
     }
+
+    public ScorePanel getScorePanel() {
+        return scorePanel;
+    }
+
+
+    public int getSubSpeed() {
+        return subSpeed;
+    }
+
+    public void setSubSpeed(int subSpeed) {
+        this.subSpeed = subSpeed;
+    }
+
+    public void restart() {
+        boat = null;
+        sub = null;
+        bomb = null;
+        subSpeed = 1;
+        scorePanel.setScore(0);
+        scorePanel.getScoreLabel().setText("Score: " + scorePanel.getScore());
+        scorePanel.getSlider().setValue(1);
+    }
+
+    public void incrementScore() {
+        scorePanel.setScore(scorePanel.getScore() + 1);
+        scorePanel.getScoreLabel().setText("Score: " + scorePanel.getScore());
+    }
+
+
 
 }
