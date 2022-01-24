@@ -7,13 +7,13 @@ public class SimplePaintMain {
     public static void main(String[] args) {
         JFrame window = new JFrame("Simple Paint");
         SimplePaintPanel content = new SimplePaintPanel();
-        ColorPanel colorPanel = new ColorPanel();
+        ColorPanel colorPanel = new ColorPanel(content);
         JPanel container = new JPanel();
         container.setLayout(new BorderLayout());
 
         container.add(content, BorderLayout.CENTER);
         container.add(colorPanel, BorderLayout.EAST);
-        SimplePaintListener listener = new SimplePaintListener(content);
+        SimplePaintListener listener = new SimplePaintListener(content, colorPanel);
         JMenuBar menuBar = new JMenuBar();
         JMenu simplePaintMenu = new JMenu("Simple Paint");
         JMenu optionsMenu = new JMenu("Options");
@@ -21,14 +21,11 @@ public class SimplePaintMain {
         JMenuItem exit = new JMenuItem("Exit");
         JMenuItem clear = new JMenuItem("Clear");
         JMenuItem undo = new JMenuItem("Undo");
-        JMenuItem redo = new JMenuItem("Redo");
         optionsMenu.add(clear);
         optionsMenu.add(undo);
-        optionsMenu.add(redo);
         exit.addActionListener(listener);
         clear.addActionListener(listener);
         undo.addActionListener(listener);
-        redo.addActionListener(listener);
         about.addActionListener(listener);
 
         simplePaintMenu.add(about);
