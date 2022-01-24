@@ -57,6 +57,7 @@ public class SimplePaintListener
      * curve is done, so we should set drawing to false and get rid of the graphics context that we
      * created to use during the drawing.
      */
+    @Override
     public void mouseReleased(MouseEvent evt) {
         if (dragging == false)
             return; // Nothing to do because the user isn't drawing.
@@ -71,6 +72,7 @@ public class SimplePaintListener
      * drawing area, the values of x and y are "clamped" to lie within this area. This avoids
      * drawing on the color palette or clear button.
      */
+    @Override
     public void mouseDragged(MouseEvent evt) {
         // System.out.println("mouseDragged!");
         if (dragging == false)
@@ -120,9 +122,12 @@ public class SimplePaintListener
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if (e.isControlDown() && key == KeyEvent.VK_Z) {
+        if (key == KeyEvent.VK_Z && e.isControlDown()) {
             if (paintPanel.lines.size() > 0) {
                 paintPanel.removeLastLine();
                 paintPanel.repaint();
@@ -132,10 +137,6 @@ public class SimplePaintListener
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {}
-
-    @Override
     public void keyReleased(KeyEvent e) {}
-
 
 }
