@@ -61,11 +61,18 @@ public class Circle {
 
 	public boolean containsPoint(int x, int y) {
 		// implement this method
-		// If the circle contains the point of x, y, return true.
-		if (Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2) <= Math.pow(radius, 2)) {
-			return true;
-		}
-		return false;
+		// System.out.println("Height: " + getHeight());
+		// System.out.println("Width: " + getWidth());
+		// System.out.println("X: " + getX());
+		// System.out.println("Y: " + getY());
+		// System.out.println("X: " + x);
+		// System.out.println("Y: " + y);
+		// System.out.println("Radius: " + getRadius());
 
+		if (x > getX() && x < getX() + getWidth() && y > getY() && y < getY() + getHeight()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

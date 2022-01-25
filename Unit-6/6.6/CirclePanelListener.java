@@ -40,8 +40,8 @@ public class CirclePanelListener implements MouseListener, MouseMotionListener {
 		// Find the center of the circle and then place the circle there.
 		int x = ev.getX();
 		int y = ev.getY();
-		int centerX = x - radiusOfNewlyCreatedCircles;
-		int centerY = y - radiusOfNewlyCreatedCircles;
+		int centerX = x - radiusOfNewlyCreatedCircles / 2;
+		int centerY = y - radiusOfNewlyCreatedCircles / 2;
 
 		circlePanel.addCircle(new Circle(centerX, centerY, radiusOfNewlyCreatedCircles,
 				colorOfNewlyCreatedCircles));
@@ -60,17 +60,15 @@ public class CirclePanelListener implements MouseListener, MouseMotionListener {
 		int clickingY = ev.getY();
 		// implement this method in conjunction with the mouseDragged
 		// method to be able to drag circles in the circlePanel
-		// dragging = true;
+		dragging = true;
 		Circle clickedCircle = circlePanel.containsPoint(clickingX, clickingY);
 		if (clickedCircle == null) {
 			return;
 		}
-		int centerX = clickingX - clickedCircle.getWidth();
-		int centerY = clickingY - clickedCircle.getHeight();
 
 		currentlyDraggedCircle = clickedCircle;
-		offsetX = clickingX - centerX;
-		offsetY = clickingY - centerY;
+		offsetX = ev.getX() - currentlyDraggedCircle.getX();
+		offsetY = ev.getY() - currentlyDraggedCircle.getY();
 
 		circlePanel.repaint();
 
@@ -85,12 +83,13 @@ public class CirclePanelListener implements MouseListener, MouseMotionListener {
 	public void mouseDragged(MouseEvent ev) {
 		// implement this method in conjunction with the mousePressed
 		// method to be able to drag circles in the circlePanel
-		if (currentlyDraggedCircle == null) {
+		if (!dragging || currentlyDraggedCircle == null) {
 			return;
 		}
 
 		int x = ev.getX();
 		int y = ev.getY();
+		// System.out.println("X: " + x + " Y: " + y);
 		currentlyDraggedCircle.setX(x - offsetX);
 		currentlyDraggedCircle.setY(y - offsetY);
 		circlePanel.repaint();
