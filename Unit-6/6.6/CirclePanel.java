@@ -42,12 +42,19 @@ public class CirclePanel extends JPanel {
 
 	public void removeMostRecentCircle() {
 		// implement this method
-
-
+		int index = getNumCircles();
+		if (index > 0) {
+			circles[index - 1] = null;
+			numCircles--;
+		}
+		this.repaint();
 	}
 
 	public void removeAllCircles() {
 		// implement this method
+		for (Circle circle : circles) {
+			circle = null;
+		}
 		numCircles = 0;
 		this.repaint();
 	}
