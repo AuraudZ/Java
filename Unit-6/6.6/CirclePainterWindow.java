@@ -27,7 +27,7 @@ public class CirclePainterWindow extends JFrame implements ActionListener {
 		settingsPanel.add(removeAllCircles);
 
 		JLabel radiusLabel = new JLabel("Radius:");
-		radiusTextField = new JTextField(5);
+		radiusTextField = new JTextField(15);
 		radiusTextField.addActionListener(this);
 		settingsPanel.add(radiusLabel);
 		settingsPanel.add(radiusTextField);
@@ -93,6 +93,9 @@ public class CirclePainterWindow extends JFrame implements ActionListener {
 			try {
 				int radius = Integer.parseInt(text);
 				circlePanelListener.setRadiusOfNewlyCreatedCircles(radius);
+				if (radius < 0) {
+					radiusTextField.setText("Must Be a Positive Integer");
+				}
 			} catch (NumberFormatException e) {
 				return;
 			}
