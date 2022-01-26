@@ -26,7 +26,7 @@ public class SimplePaintListener
     public void mousePressed(MouseEvent evt) {
         int x = evt.getX(); // x-coordinate where the user clicked.
         int y = evt.getY(); // y-coordinate where the user clicked.
-
+        paintPanel.requestFocusInWindow();
 
 
         if (dragging == true) // Ignore mouse presses that occur
@@ -35,7 +35,6 @@ public class SimplePaintListener
                     // two mouse buttons at the same time.)
                     // ***like left button is down+dragging but you click the right button
 
-        System.out.println("mousePressed: " + x + ", " + y);
         paintPanel.repaint(); // Clicked on "CLEAR button".
 
         // changeColor(y); // Clicked on the color palette.
@@ -105,7 +104,6 @@ public class SimplePaintListener
     @Override
     public void actionPerformed(ActionEvent e) {
         String s = e.getActionCommand();
-
         if (s == null) {
             return;
         } else if (s.equals("Clear")) {
@@ -118,7 +116,6 @@ public class SimplePaintListener
                 paintPanel.repaint();
             }
         }
-
     }
 
     @Override
@@ -127,13 +124,18 @@ public class SimplePaintListener
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_Z && e.isControlDown()) {
+        if (e.isControlDown() && key == KeyEvent.VK_Z) {
             if (paintPanel.lines.size() > 0) {
                 paintPanel.removeLastLine();
                 paintPanel.repaint();
             }
         }
-
+        if (e.isMetaDown() && key == KeyEvent.VK_Z) {
+            if (paintPanel.lines.size() > 0) {
+                paintPanel.removeLastLine();
+                paintPanel.repaint();
+            }
+        }
     }
 
     @Override
