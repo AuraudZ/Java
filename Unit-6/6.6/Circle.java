@@ -60,16 +60,16 @@ public class Circle {
 	}
 
 	public boolean containsPoint(int x, int y) {
-		// implement this method
-		// System.out.println("Height: " + getHeight());
-		// System.out.println("Width: " + getWidth());
-		// System.out.println("X: " + getX());
-		// System.out.println("Y: " + getY());
-		// System.out.println("X: " + x);
-		// System.out.println("Y: " + y);
-		// System.out.println("Radius: " + getRadius());
+		int circleX = getX();
+		int circleY = getY();
+		int pointX = x;
+		int pointY = y;
 
-		if (x > getX() && x < getX() + getWidth() && y > getY() && y < getY() + getHeight()) {
+		int circleWidth = getWidth();
+		int circleHeight = getHeight();
+
+		if (pointX > circleX && pointX < circleX + circleWidth && pointY > circleY
+				&& pointY < circleY + circleHeight) {
 			return true;
 		} else {
 			return false;
