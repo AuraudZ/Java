@@ -64,15 +64,22 @@ public class Circle {
 		int circleY = getY();
 		int pointX = x;
 		int pointY = y;
+		System.out.println("circleX: " + circleX + " circleY: " + circleY);
+		System.out.println("pointX: " + pointX + " pointY: " + pointY);
 
-		int circleWidth = getWidth();
-		int circleHeight = getHeight();
+		double distanceX = Math.sqrt(Math.pow(pointX - circleX, 2));
+		double distanceY = Math.sqrt(Math.pow(pointY - circleY, 2));
 
-		if (pointX > circleX && pointX < circleX + circleWidth && pointY > circleY
-				&& pointY < circleY + circleHeight) {
-			return true;
-		} else {
-			return false;
-		}
+		double distance = distanceX + distanceY;
+
+		System.out.println("distanceX: " + distanceX);
+		System.out.println("distanceY: " + distanceY);
+		System.out.println("distance: " + distance);
+
+		System.out.println();
+
+
+
+		return false;
 	}
 }
