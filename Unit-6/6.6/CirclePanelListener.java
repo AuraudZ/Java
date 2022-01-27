@@ -32,21 +32,15 @@ public class CirclePanelListener implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mouseClicked(MouseEvent ev) {
-		// implement this method to add a circle to circlePanel
-		// the circle should have the color and radius specified by
-		// colorOfNewlyCreatedCircles and radiusOfNewlyCreatedCircles
-		// the center of the created circle should be at the click location
-
 
 		int x = ev.getX();
 		int y = ev.getY();
-
+		System.out.println("x: " + x + " y: " + y);
 		int centerX = x - radiusOfNewlyCreatedCircles;
 		int centerY = y - radiusOfNewlyCreatedCircles;
+		System.out.println("CenterX: " + centerX + " CenterY: " + centerY);
 		circlePanel.addCircle(new Circle(centerX, centerY, radiusOfNewlyCreatedCircles,
 				colorOfNewlyCreatedCircles));
-
-
 		circlePanel.repaint();
 
 	}
@@ -72,7 +66,8 @@ public class CirclePanelListener implements MouseListener, MouseMotionListener {
 		currentlyDraggedCircle = clickedCircle;
 		offsetX = ev.getX() - currentlyDraggedCircle.getX();
 		offsetY = ev.getY() - currentlyDraggedCircle.getY();
-
+		currentlyDraggedCircle.setX(ev.getX() - offsetX);
+		currentlyDraggedCircle.setY(ev.getY() - offsetY);
 		circlePanel.repaint();
 
 	}

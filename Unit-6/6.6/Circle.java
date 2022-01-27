@@ -62,24 +62,21 @@ public class Circle {
 	public boolean containsPoint(int x, int y) {
 		int circleX = getX();
 		int circleY = getY();
-		int pointX = x;
-		int pointY = y;
-		System.out.println("circleX: " + circleX + " circleY: " + circleY);
-		System.out.println("pointX: " + pointX + " pointY: " + pointY);
+		System.out.println("Cx: " + circleX + " Cy: " + circleY);
+		System.out.println("x: " + x + " y: " + y);
 
-		double distanceX = Math.sqrt(Math.pow(pointX - circleX, 2));
-		double distanceY = Math.sqrt(Math.pow(pointY - circleY, 2));
+		double dX = x - circleX;
+		double dY = y - circleY;
+		double distanceX = Math.pow(dX, 2);
+		double distanceY = Math.pow(dY, 2);
+		double distance = Math.sqrt(distanceX + distanceY);
 
-		double distance = distanceX + distanceY;
-
-		System.out.println("distanceX: " + distanceX);
-		System.out.println("distanceY: " + distanceY);
 		System.out.println("distance: " + distance);
-
 		System.out.println();
 
-
-
+		if (distance <= radius) {
+			return true;
+		}
 		return false;
 	}
 }
