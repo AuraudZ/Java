@@ -60,8 +60,9 @@ public class DynamicArrayOfInts {
             throw new ArrayIndexOutOfBoundsException("Ilegal index, " + index);
         }
         for (int i = itemCt; i > index; i--) {
-            items[i] = items[i - 1];
+            items[i + 1] = items[i];
         }
+        items[index] = item;
     }
 
 
