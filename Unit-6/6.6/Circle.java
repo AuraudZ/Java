@@ -1,4 +1,4 @@
-// *** Your name:
+// *** Your name:Auraud Zarafshar
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -62,18 +62,8 @@ public class Circle {
 	public boolean containsPoint(int x, int y) {
 		int circleX = getX();
 		int circleY = getY();
-
 		int dX = (x - circleX);
 		int dY = (y - circleY);
-
-		int difference = (int) Math.sqrt(Math.pow(x - circleX, 2) + Math.pow(y - circleY, 2));
-		System.out.println();
-		System.out.println("----------------------------------------------------");
-		System.out.println("difference: " + difference);
-		System.out.println("X: " + circleX + " Y: " + circleY);
-		System.out.println("x: " + x + " y: " + y);
-		System.out.println("dX: " + dX + " dY: " + dY);
-		System.out.println("----------------------------------------------------");
 		if (dY <= 0) {
 			return false;
 		}
