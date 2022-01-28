@@ -59,10 +59,14 @@ public class DynamicArrayOfInts {
         if (index < 0 || index >= itemCt) {
             throw new ArrayIndexOutOfBoundsException("Ilegal index, " + index);
         }
+        if (itemCt == items.length) {
+            items = Arrays.copyOf(items, 2 * items.length);
+        }
         for (int i = itemCt; i > index; i--) {
             items[i + 1] = items[i];
         }
         items[index] = item;
+        itemCt++;
     }
 
 
