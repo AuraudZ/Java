@@ -33,10 +33,8 @@ public class CirclePanelListener implements MouseListener, MouseMotionListener {
 
 		int x = ev.getX();
 		int y = ev.getY();
-		System.out.println("x: " + x + " y: " + y);
 		int centerX = x - radiusOfNewlyCreatedCircles;
 		int centerY = y - radiusOfNewlyCreatedCircles;
-		System.out.println("CenterX: " + centerX + " CenterY: " + centerY);
 		circlePanel.addCircle(new Circle(centerX, centerY, radiusOfNewlyCreatedCircles,
 				colorOfNewlyCreatedCircles));
 		circlePanel.repaint();
