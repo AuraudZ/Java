@@ -59,6 +59,9 @@ public class DynamicArrayOfInts {
         if (index < 0 || index >= itemCt) {
             throw new ArrayIndexOutOfBoundsException("Ilegal index, " + index);
         }
+        for (int i = itemCt; i > index; i--) {
+            items[i] = items[i - 1];
+        }
     }
 
 
@@ -70,7 +73,10 @@ public class DynamicArrayOfInts {
     public void remove(int index) {
         if (index < 0 || index >= itemCt)
             throw new ArrayIndexOutOfBoundsException("Illegal index, " + index);
-
+        for (int i = index + 1; i < itemCt; i++) {
+            items[i - 1] = items[i];
+        }
+        itemCt--;
     }
 
 
