@@ -83,7 +83,6 @@ public class CirclePanelListener implements MouseListener, MouseMotionListener {
 
 		int x = ev.getX();
 		int y = ev.getY();
-		// System.out.println("X: " + x + " Y: " + y);
 		currentlyDraggedCircle.setX(x - offsetX);
 		currentlyDraggedCircle.setY(y - offsetY);
 		circlePanel.repaint();
