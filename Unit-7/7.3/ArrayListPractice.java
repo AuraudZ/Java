@@ -57,11 +57,19 @@ public class ArrayListPractice {
 	 * help you solve this problem
 	 */
 	public static void removeBadPairs(ArrayList<Integer> list) {
-		// Find if left element is larger than right element
 		if (list.size() == 0) {
 			return;
 		}
-
+		for (int i = 0; i < list.size() - 1; i++) {
+			if (list.get(i) > list.get(i + 1)) {
+				list.remove(i);
+				list.remove(i + 1);
+				i--;
+			}
+		}
+		if (list.size() % 2 == 1) {
+			list.remove(list.size() - 1);
+		}
 	}
 
 
