@@ -6,8 +6,8 @@ public class ReverseInputUsingDynamicArray {
 
 	public static void main(String[] args) {
 		// **declare dynamic data structure to hold numbers
-		DynamicArrayOfInts list = new DynamicArrayOfInts(); // Let's use our new, custom, dynamic
-															// data type
+		DynamicArrayOfInts list = new DynamicArrayOfInts(); // Let's use our new, custom,
+															// dynamic data type
 
 
 		System.out.println("Enter a non-zero integer and it will be added to the list.\n"
