@@ -60,15 +60,12 @@ public class ArrayListPractice {
 		if (list.size() == 0) {
 			return;
 		}
-		for (int i = 0; i < list.size() - 1; i++) {
+		for (int i = 0; i < list.size() - 1; i += 2) {
 			if (list.get(i) > list.get(i + 1)) {
 				list.remove(i);
-				list.remove(i + 1);
-				i--;
+				list.remove(i);
+				i -= 2;
 			}
-		}
-		if (list.size() % 2 == 1) {
-			list.remove(list.size() - 1);
 		}
 	}
 
