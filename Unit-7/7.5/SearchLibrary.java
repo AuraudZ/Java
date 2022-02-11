@@ -45,22 +45,6 @@ public class SearchLibrary {
 		}
 		if (verboseModeOn)
 			System.out.println("Total number of checks: " + checkCount);
-
 		return -1;
 	}
-
-	public static int binarySearchRecursive(int num, int[] list, int low, int high) {
-		if (low > high) {
-			return -1;
-		}
-		int mid = (low + high) / 2;
-		if (list[mid] == num) {
-			return mid;
-		} else if (list[mid] < num) {
-			return binarySearchRecursive(num, list, mid + 1, high);
-		} else {
-			return binarySearchRecursive(num, list, low, mid - 1);
-		}
-	}
-
 }

@@ -14,7 +14,7 @@ public class SingleSearchTester {
 																		// index 81918
 
 		// ***Enter in your own number to search for and array to search in***
-		int numToSearchFor = 1760909555;
+		int numToSearchFor = 870046809;
 		int[] arrayToSearchIn = test3; // arrayToSearchIn will point to the array you choose
 
 
