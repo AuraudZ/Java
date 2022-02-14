@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class TwoDimensionalArrayTester {
 	public static void main(String[] args) {
 		int[][] twoByThree = new int[2][3];
@@ -7,7 +9,6 @@ public class TwoDimensionalArrayTester {
 
 		// Test countZeros method
 		System.out.println("Zeros: " + countZeros(fourByFive));
-
 		// Call fill1And3() method
 		fill1And3(fourByFive);
 
