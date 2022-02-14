@@ -3,9 +3,7 @@ public class TwoDimensionalArrayTester {
 		int[][] twoByThree = new int[2][3];
 		int[][] threeByThree = new int[3][3];
 		int[][] fourByFive = new int[4][5];
-		for (int i = 0; i < fourByFive.length; i++) {
-			System.out.println(java.util.Arrays.toString(fourByFive[i]));
-		}
+		print2DArray(fourByFive);
 
 		// Test countZeros method
 		System.out.println("Zeros: " + countZeros(fourByFive));
@@ -14,9 +12,7 @@ public class TwoDimensionalArrayTester {
 		fill1And3(fourByFive);
 
 		// Print out array, see if fill1And3() actually changed anything
-		for (int i = 0; i < fourByFive.length; i++) {
-			System.out.println(java.util.Arrays.toString(fourByFive[i]));
-		}
+		print2DArray(fourByFive);
 
 		// Check if countZeros() properly detects the lack of 0's
 		System.out.println("Zeros: " + countZeros(fourByFive));
@@ -50,5 +46,11 @@ public class TwoDimensionalArrayTester {
 			}
 		}
 		return count;
+	}
+
+	public static void print2DArray(int[][] arr) {
+		for (int i = 0; i < arr.length; i++) {
+			System.out.println(java.util.Arrays.toString(arr[i]));
+		}
 	}
 }
