@@ -10,12 +10,12 @@ public class SingleSearchTester {
 		int[] test1 = new int[] {2, 9, 11, 15, 28, 33, 40, 47, 51, 64, 76, 77, 82, 85, 94};
 		int[] test2 = new int[] {67, 35, 51, 45, 40, 50, 37, 55, 20};
 		int[] test3 = ArrayImporter.readArrayFile("smallArray.txt"); // for testing, after sorting,
-																		// '1760909555' will be at
-																		// index 81918
+		int[] test4 = ArrayImporter.readArrayFile("largeArray.txt"); // '1760909555' will be at
+		// index 81918
 
 		// ***Enter in your own number to search for and array to search in***
 		int numToSearchFor = 870046809;
-		int[] arrayToSearchIn = test3; // arrayToSearchIn will point to the array you choose
+		int[] arrayToSearchIn = test4; // arrayToSearchIn will point to the array you choose
 
 
 		// Remember, Binary Search requires a sorted list...
