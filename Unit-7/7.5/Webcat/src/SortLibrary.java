@@ -34,6 +34,11 @@ public class SortLibrary {
 	// void normally would be OK.
 	// However, I want you to keep track of and return the number of swaps.
 	public static int bubbleSort(int[] nums) {
+		int numSwaps = 0;
+
+		for (int i = 0; i < nums.length; i++) {
+
+		}
 		return 0; // number of swaps
 	}
 
