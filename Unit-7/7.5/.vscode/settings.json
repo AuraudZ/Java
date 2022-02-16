@@ -1,7 +1,9 @@
 {
   "java.project.referencedLibraries": [
     "lib/**/*.jar",
-    "Webcat\\lib\\junit-4.13.2.jar"
+    "Webcat\\lib\\junit-4.13.2.jar",
+    "Webcat\\lib\\hamcrest.jar",
+    "Webcat\\lib\\junit.jar"
   ],
   "java.project.sourcePaths": ["Webcat\\src\\test", "Webcat\\src"]
 }
