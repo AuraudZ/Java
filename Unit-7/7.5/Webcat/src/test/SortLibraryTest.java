@@ -36,6 +36,7 @@ public class SortLibraryTest {
 	@Before
 	public void setUp() throws Exception {
 		// have to reset the arrays before each test
+		// int[] temp = readArrayFile("longEvenRandomArray.txt");
 		longEvenRandomArray = readArrayFile("longEvenRandomArray.txt");
 		copyOflongEvenRandomArray = Arrays.copyOf(longEvenRandomArray, longEvenRandomArray.length);
 

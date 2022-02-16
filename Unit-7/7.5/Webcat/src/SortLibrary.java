@@ -10,11 +10,11 @@ public class SortLibrary {
 		int[] alreadySorted = new int[] {2, 9, 11, 15, 28, 33, 40, 47, 51, 64, 76, 77, 82, 85, 94};
 		int[] reversed = new int[] {94, 85, 82, 77, 76, 64, 51, 47, 40, 33, 28, 15, 11, 9, 2};
 		int[] mostlySorted = new int[] {2, 85, 11, 15, 28, 33, 47, 40, 51, 64, 76, 77, 82, 9, 94};
-		// int[] longerArray = ArrayImporter.readArrayFile("smallArray.txt");
+		int[] longerArray = ArrayImporter.readArrayFile("smallArray.txt");
 		int[] myCustomTest = new int[] {15, 23, 42, 4, 8, 16, 1};
 
 		// ***Enter your array to sort here
-		int[] arrayToSort = random; // arrayToSort will point to the array you choose
+		int[] arrayToSort = longerArray; // arrayToSort will point to the array you choose
 		int[] copyOfArrayToSort = Arrays.copyOf(arrayToSort, arrayToSort.length);
 
 		// ***Enter which sort you want to test
