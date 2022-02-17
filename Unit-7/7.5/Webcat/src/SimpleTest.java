@@ -6,11 +6,17 @@ import java.util.Scanner;
 
 public class SimpleTest {
 
+    int[] longEvenRandomArray;
+    int[] copyOflongEvenRandomArray;
+
     public static void main(String[] args) {
-        String cwd = System.getProperty("user.dir");
-        System.out.println(cwd);
-        int[] temp = readArrayFile("longEvenRandomArray.txt");
-        System.out.println(Arrays.toString(temp));
+
+        SimpleTest test = new SimpleTest();
+        test.longEvenRandomArray = readArrayFile("longEvenRandomArray.txt");
+        test.copyOflongEvenRandomArray =
+                Arrays.copyOf(test.longEvenRandomArray, test.longEvenRandomArray.length);
+        int[] temp = test.copyOflongEvenRandomArray;
+        System.out.println(temp.length);
     }
 
 

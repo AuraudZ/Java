@@ -1,4 +1,3 @@
-
 import static org.junit.Assert.*;
 
 
@@ -36,6 +35,7 @@ public class SortLibraryTest {
 		// have to reset the arrays before each test
 		// int[] temp = readArrayFile("longEvenRandomArray.txt");
 		longEvenRandomArray = readArrayFile("longEvenRandomArray.txt");
+
 		copyOflongEvenRandomArray = Arrays.copyOf(longEvenRandomArray, longEvenRandomArray.length);
 
 		longOddReversedArray = readArrayFile("longOddReversedArray.txt");
