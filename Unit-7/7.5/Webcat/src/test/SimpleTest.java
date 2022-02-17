@@ -8,7 +8,8 @@ public class SimpleTest {
 
     public static void main(String[] args) {
         String cwd = System.getProperty("user.dir");
-        int[] temp = readArrayFile(cwd + "/Webcat/longEvenRandomArray.txt");
+        System.out.println(cwd);
+        int[] temp = readArrayFile("longEvenRandomArray.txt");
         System.out.println(Arrays.toString(temp));
     }
 
