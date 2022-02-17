@@ -83,18 +83,22 @@ public class SortLibrary {
 	// After break, we will go over how to do this without recursion.
 	public static void mergeSort(int[] nums) {
 		int[] temp = new int[nums.length];
-		for (int blockSize = 1; blockSize < nums.length; blockSize *= 2) {
-			for (int i = 0; i < nums.length; i += 2 * blockSize) {
-				int low = i;
-				int mid = Math.min(i + blockSize, nums.length);
-				int high = Math.min(i + 2 * blockSize, nums.length);
-				merge(nums, temp, low, mid, high);
-			}
+		// Block size is the size of the sub-array we are sorting
+
+		// Base case: if the block size is 1, we are done
+		if (nums.length == 1) {
+			return;
+		}
+		// Recursive case: split the array into two halves, sort them, and merge them
+		int[] left = new int[nums.length / 2];
+		int[] right = new int[nums.length - left.length];
+		for (int i = 0; i < left.length; i++) {
+			left[i] = nums[i];
 		}
 
-	}
+		for (int i = 0; i < right.length; i++) {
 
-	private static void merge(int[] nums, int[] temp, int low, int mid, int high) {
+		}
 
 	}
 
