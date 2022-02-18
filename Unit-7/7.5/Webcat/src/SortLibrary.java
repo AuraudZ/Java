@@ -1,4 +1,4 @@
-// **** YOUR NAME HERE:Auraud
+// **** YOUR NAME HERE:Auraud Zarafshar
 import java.util.Arrays;
 
 public class SortLibrary {
@@ -96,9 +96,6 @@ public class SortLibrary {
 
     // Method to merge two sorted arrays into one sorted array.
     private static void merge(int[] nums, int[] temp, int left, int mid, int right) {
-        // Do merge step
-        // Keep merging untill both sides are done
-        // copy from temp back into nums
         for (int i = left; i < right; i++)
             temp[i] = nums[i];
 
