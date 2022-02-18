@@ -99,12 +99,11 @@ public class SortLibrary {
         // Do merge step
         // Keep merging untill both sides are done
         // copy from temp back into nums
-        for (int i = left; i < right; i++) {
+        for (int i = left; i < right; i++)
             temp[i] = nums[i];
 
-        }
         for (int i = left, j = mid, k = left; k < right; k++) {
-            if (i < mid && j < right) {
+            if (i < mid && j < right) { // Sort the right side
                 if (temp[i] < temp[j]) {
                     nums[k] = temp[i];
                     i++;
@@ -113,17 +112,12 @@ public class SortLibrary {
                     nums[k] = temp[j];
                     j++;
                 }
-                // Break out of loop if one side is done
-
             } else if (i < mid)  { // Check the other side and copy
                 nums[k] = temp[i];
                 i++;
-
             }
         }
     }
-
-
 }
 
 
