@@ -5,9 +5,9 @@ public class ArithmeticTester {
 
 	public static void main(String[] args) {
 		System.out.println("Welcome to the Arithmetic Tester!  Some informative but not really relevant values: ");
-		//printValues();
+		printValues();
 		System.out.println();
-		
+
 		System.out.println("This amazing program lets you do many things");
 		
 		while(true) {
@@ -59,15 +59,20 @@ public class ArithmeticTester {
 			if(okToMultiply(x,y)) // could generate ArithmeticException
 				System.out.println(x + " * " + y + " = " + (x * y));
 		}
+		catch(InputMismatchException e) {
+			System.out.println("Error: You must enter an integer");
+		}
+		catch (ArithmeticException e) {
+			System.out.println("Ints will overflow after multiplication!");
+		}
 //		catch(RuntimeException e) {
 //			System.out.println("There was a problem.");
 //		}
-		catch(ArithmeticException e) {
-			System.out.println("Ints will overflow after multiplication!");
-		}
+
 	}
 	
 	private static void divide(Scanner stdin) {
+		try {
 		System.out.println("Enter an int: ");
 		int x = stdin.nextInt(); // could generate InputMismatchException
 		System.out.println("Enter an int to divide by: ");
@@ -75,6 +80,12 @@ public class ArithmeticTester {
 		
 		if(okToDivide(x,y))
 			System.out.println(x + " / " + y + " = " + (x / (double)y));
+	} catch (InputMismatchException e) {
+		System.out.println("Error: You must enter an integer");
+		}
+		catch (ArithmeticException e) {
+			System.out.println("Cannot divide by zero!");
+		}
 	}
 	
 	private static void squareRoot(Scanner stdin) {
@@ -88,7 +99,7 @@ public class ArithmeticTester {
 	private static void readNumFromFile()  {
         FileReader reader = null;
         String fileName = "test.txt";
-        
+
         int charValue = -1; // read from FileReader reader
         
         System.out.println("The number in the file was: " + Character.getNumericValue(charValue));
@@ -101,6 +112,9 @@ public class ArithmeticTester {
 	}
 	
 	private static boolean okToDivide(int x, int y) {
+		if(y == 0) {
+			throw new ArithmeticException("Cannot divide by zero!");
+		}
 		return true;
 	}
 	
