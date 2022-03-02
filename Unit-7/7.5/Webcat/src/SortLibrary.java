@@ -94,7 +94,6 @@ public class SortLibrary {
 
 
 
-    // Method to merge two sorted arrays into one sorted array.
     private static void merge(int[] nums, int[] temp, int left, int mid, int right) {
         for (int i = left; i < right; i++)
             temp[i] = nums[i];
