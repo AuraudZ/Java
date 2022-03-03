@@ -38,11 +38,11 @@ public class FileReaderTester {
     		while(true) {
 				try {
 					line = bufferedReader.readLine();
+					randomChanceEvent(bufferedReader);
 					if(line == null) {
 						System.out.println("Finished reading file '" + fileName + "'");
 						break;
 					}
-					//randomChanceEvent(bufferedReader);
 					System.out.println(line.toUpperCase());
 
 				}
@@ -63,7 +63,9 @@ public class FileReaderTester {
 		}
     private static void randomChanceEvent(BufferedReader br) throws IOException {
     		int eventResult = (int)(Math.random()*100);
-    		if(eventResult < 4) // simulates a random corruption that might cause the
-    			br.close(); // stream to be corrupted (e.g. it is closed or disrupted somehow)
+    if (eventResult < 4) // simulates a random corruption that might cause the
+    	{
+      		br.close(); // stream to be corrupted (e.g. it is closed or disrupted somehow)
+   		}
     }
 }
