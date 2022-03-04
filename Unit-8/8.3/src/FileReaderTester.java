@@ -13,7 +13,7 @@ public class FileReaderTester {
     		BufferedReader bufferedReader = null;
     		FileReader fileReader = null;
         // The name of the file to open.
-        String fileName = "dialog.txt";
+        String fileName = "dialog2.txt";
         // This will reference one line at a time
         String line = null;
 			//*** End Member Variables***
@@ -44,7 +44,6 @@ public class FileReaderTester {
 						break;
 					}
 					System.out.println(line.toUpperCase());
-
 				}
 				catch (IOException e) {
 					// Print this if there is an error while bufferedReader is reading the stream
@@ -52,13 +51,16 @@ public class FileReaderTester {
 					System.out.println("Error reading file '" + fileName + "'");
 					return;
 				}
-			}
-			try {
-				bufferedReader.close();
+				finally{
+					if(line == null) {
+						try {
+							bufferedReader.close();
+						}
+						catch (IOException e) {
+							System.out.println("Error closing file '" + fileName + "'");
+						}
+					}
 				}
-			catch (IOException e) {
-				// Print this if there is an error while bufferedReader is closing the stream
-				System.out.println("Error closing file '" + fileName + "'");
 			}
 		}
     private static void randomChanceEvent(BufferedReader br) throws IOException {
