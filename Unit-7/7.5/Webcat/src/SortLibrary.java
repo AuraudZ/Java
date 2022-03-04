@@ -95,7 +95,7 @@ public class SortLibrary {
 
 
     private static void merge(int[] nums, int[] temp, int left, int mid, int right) {
-        for (int i = left; i < right; i++)
+          for (int i = left; i < right; i++)
             temp[i] = nums[i];
 
         for (int i = left, j = mid, k = left; k < right; k++) {
@@ -108,7 +108,7 @@ public class SortLibrary {
                     nums[k] = temp[j];
                     j++;
                 }
-            } else if (i < mid)  { // Check the other side and copy
+            } else if (i < mid) { // Check the other side and copy
                 nums[k] = temp[i];
                 i++;
             }

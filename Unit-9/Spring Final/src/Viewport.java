@@ -14,7 +14,7 @@ public Viewport() {
 }
 
 @Override
-   public void pain(Graphics g) {
+   public void paint(Graphics g) {
     g.setColor(Color.BLACK);
     g.fillRect(0,0,getWidth(),getHeight());
     for (int x = 0; x < getWidth(); x++) {
