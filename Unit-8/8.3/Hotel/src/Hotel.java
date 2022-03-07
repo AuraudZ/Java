@@ -6,8 +6,7 @@ public class Hotel {
     		rooms = new Reservation[numberOfRooms];
     		waitList = new ArrayList<String>();
     }
-	
-	
+
 	// each element of rooms corresponds to a room in the hotel;
 	// if rooms[index] is null, the room is empty;
 	// otherwise, it contains a reference to the Reservation 
@@ -19,7 +18,7 @@ public class Hotel {
 	
 	// waitList contains names of guests who have not yet been
 	// assigned a room because all rooms are full
-	private ArrayList waitList;
+	private ArrayList<String> waitList;
 	
 	// if there are any empty rooms (rooms with no reservation), 
 	// 		then create a reservation for an empty room for the
