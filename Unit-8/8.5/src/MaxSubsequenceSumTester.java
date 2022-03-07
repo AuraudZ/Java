@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 // Code from "Data Structures and Problem Solving Using Java"
 // by Mark Allen Weiss (2nd edition), 2001.   
 public final class MaxSubsequenceSumTester
@@ -8,7 +10,7 @@ public final class MaxSubsequenceSumTester
     static private int seqStart = 0;
     static private int seqEnd = -1;
 
-    // comment out sysouts on lines 22, 26, 29 after you understand how it works
+    // comment out sys-outs on lines 22, 26, 29 after you understand how it works
     public static int maxSubsequenceSum1( int [ ] a )
     {
         int maxSum = 0;
@@ -46,24 +48,21 @@ public final class MaxSubsequenceSumTester
     {
         int maxSum = 0;
         long startTime = System.currentTimeMillis();
-        
         for( int i = 0; i < a.length; i++ ) {
             int thisSum = 0;
             for( int j = i; j < a.length; j++ ) {
-                thisSum += a[ j ];
+                thisSum += a[j];
                 if( thisSum > maxSum )
                 {
                     maxSum   = thisSum;
                     seqStart = i;
                     seqEnd   = j;
-
                 }
             }
         }
 		long stopTime = System.currentTimeMillis(); 
 		long timeForQuadraticMaxSubSum = (stopTime - startTime);
 		System.out.println("Time for Quadratic Max Sub Sum " + timeForQuadraticMaxSubSum + " ms");
-        
 		return maxSum;
     }
 
@@ -75,22 +74,24 @@ public final class MaxSubsequenceSumTester
     {
         int maxSum = 0;
         int thisSum = 0;
-        
         long startTime = System.currentTimeMillis();
-        
-        for( int i = 0, j = 0; j < a.length; j++ ) {
-        	
-        }
-
+        for( int i = 0, j =0; j < a.length; j++ ) {
+            thisSum += a[j]; // add the next element
+            if(thisSum > maxSum) { // End condition
+                maxSum = thisSum;
+                seqStart = i;
+                seqEnd = j;
+            }
+            else  if (thisSum < 0) { // Add one to i and start over
+                i = j+1;
+                thisSum = 0;
+            }
+       }
 		long stopTime = System.currentTimeMillis(); 
 		long timeForLinearMaxSubSum = (stopTime - startTime);
 		System.out.println("Time for Linear Max Sub Sum " + timeForLinearMaxSubSum + " ms");
-
         return maxSum;
     }
-
-   
-
     /**
      * Simple test program.
      */
