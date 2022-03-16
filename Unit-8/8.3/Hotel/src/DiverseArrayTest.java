@@ -25,6 +25,8 @@ public class DiverseArrayTest {
 
     @Test
     public void testArraySum() {
+
+
         assertEquals(6, DiverseArray.arraySum(shortArray));
     }
 
