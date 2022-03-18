@@ -50,15 +50,10 @@ public class SortLibraryForQuicksort {
     private static int partitionStep(int[] nums, int loIndex, int hiIndex) {
         int pivotIndex = (int) (Math.random() * (hiIndex - loIndex) + loIndex);
         int pivotNum = nums[pivotIndex];
-      // Partition the array
         while (loIndex < hiIndex) {
-            // Allow duplicates values to still be sorted
-
            while (nums[loIndex] < pivotNum) {
                 loIndex++;
             }
-
-
             while (nums[hiIndex] > pivotNum) {
                 hiIndex--;
             }
@@ -67,7 +62,6 @@ public class SortLibraryForQuicksort {
             }
             swapValues(nums, loIndex, hiIndex);
         }
-
         pivotIndex = loIndex;
        return pivotIndex;
     }
