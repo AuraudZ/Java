@@ -4,23 +4,23 @@ import java.util.Arrays;
 public class SortLibraryForQuicksort {
 
     public static void main(String[] args) {
-        int[] random = new int[]{33, 94, 9, 40, 77, 82, 47, 15, 51, 64, 76, 28, 2, 85, 11};
-        int[] alreadySorted = new int[]{2, 9, 11, 15, 28, 33, 40, 47, 51, 64, 76, 77, 82, 85, 94};
-        int[] reversed = new int[]{94, 85, 82, 77, 76, 64, 51, 47, 40, 33, 28, 15, 11, 9, 2};
-        int[] mostlySorted = new int[]{2, 85, 11, 15, 28, 33, 47, 40, 51, 64, 76, 77, 82, 9, 94};
-        int[] randomWithDuplicates = new int[]{33, 94, 9, 40, 77, 1};
-        int[] myCustomTest = new int[]{5, 3, 69, 73, 11, 17, 1, 74, 34, 86};
+        int[] random = new int[] {33, 94, 9, 40, 77, 82, 47, 15, 51, 64, 76, 28, 2, 85, 11};
+        int[] alreadySorted = new int[] {2, 9, 11, 15, 28, 33, 40, 47, 51, 64, 76, 77, 82, 85, 94};
+        int[] reversed = new int[] {94, 85, 82, 77, 76, 64, 51, 47, 40, 33, 28, 15, 11, 9, 2};
+        int[] mostlySorted = new int[] {2, 85, 11, 15, 28, 33, 47, 40, 51, 64, 76, 77, 82, 9, 94};
+        int[] myCustomTest = new int[] {5, 3, 69, 73, 11, 17, 1, 74, 34, 86};
 
         // ***Enter your array to sort here
-        int[] arrayToSort = randomWithDuplicates; // arrayToSort will point to the array you choose
+        int[] arrayToSort = random; // arrayToSort will point to the array you choose
         int[] copyOfArrayToSort = Arrays.copyOf(arrayToSort, arrayToSort.length);
 
         long startTime1 = System.currentTimeMillis();
-        quickSort(arrayToSort);        // Call your sort method -- Remember array is modified in the method, not returned!
+        quickSort(arrayToSort); // Call your sort method -- Remember array is modified in the
+                                // method, not returned!
         long stopTime1 = System.currentTimeMillis();
 
         long startTime2 = System.currentTimeMillis();
-        Arrays.sort(copyOfArrayToSort);    // call java.util.Array's sort method for comparison
+        Arrays.sort(copyOfArrayToSort); // call java.util.Array's sort method for comparison
         long stopTime2 = System.currentTimeMillis();
 
         if (arrayToSort.length < 50) {
@@ -37,10 +37,9 @@ public class SortLibraryForQuicksort {
         quickSortRecursive(nums, 0, nums.length - 1);
     }
 
-    public  static void quickSortRecursive(int[] nums, int loIndex, int hiIndex) {
-        if (loIndex >= hiIndex) {
+    public static void quickSortRecursive(int[] nums, int loIndex, int hiIndex) {
+        if (loIndex >= hiIndex)
             return;
-        }
         int pivotIndex = partitionStep(nums, loIndex, hiIndex);
         quickSortRecursive(nums, loIndex, pivotIndex - 1);
         quickSortRecursive(nums, pivotIndex + 1, hiIndex);
@@ -51,19 +50,19 @@ public class SortLibraryForQuicksort {
         int pivotIndex = (int) (Math.random() * (hiIndex - loIndex) + loIndex);
         int pivotNum = nums[pivotIndex];
         while (loIndex < hiIndex) {
-           while (nums[loIndex] < pivotNum) {
+            while (nums[loIndex] < pivotNum) {
                 loIndex++;
             }
             while (nums[hiIndex] > pivotNum) {
                 hiIndex--;
             }
-            if(loIndex >= hiIndex) {
+            if (loIndex >= hiIndex) {
                 break;
             }
             swapValues(nums, loIndex, hiIndex);
         }
         pivotIndex = loIndex;
-       return pivotIndex;
+        return pivotIndex;
     }
 
     private static void swapValues(int[] nums, int loIndex, int hiIndex) {
