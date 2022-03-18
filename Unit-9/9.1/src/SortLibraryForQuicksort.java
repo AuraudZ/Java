@@ -12,7 +12,7 @@ public class SortLibraryForQuicksort {
         int[] myCustomTest = new int[]{5, 3, 69, 73, 11, 17, 1, 74, 34, 86};
 
         // ***Enter your array to sort here
-        int[] arrayToSort = randomWithDuplicates; // arrayToSort will point to the array you choose
+        int[] arrayToSort = random; // arrayToSort will point to the array you choose
         int[] copyOfArrayToSort = Arrays.copyOf(arrayToSort, arrayToSort.length);
 
         long startTime1 = System.currentTimeMillis();
@@ -50,9 +50,7 @@ public class SortLibraryForQuicksort {
     private static int partitionStep(int[] nums, int loIndex, int hiIndex) {
         int pivotIndex = (int) (Math.random() * (hiIndex - loIndex) + loIndex);
         int pivotNum = nums[pivotIndex];
-      // Partition the array
         while (loIndex < hiIndex) {
-            // Allow duplicates values to still be sorted
 
            while (nums[loIndex] < pivotNum) {
                 loIndex++;
