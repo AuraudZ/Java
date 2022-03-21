@@ -14,10 +14,9 @@ public class LinkedListTester {
 		myLinkedList.head.next.next.next.next.next = new Node("The Abercrombie Guy");	
 		myLinkedList.head.next.next.next.next.next.next = new Node("The Bad Guy");	
 		myLinkedList.head.next.next.next.next.next.next.next = new Node("The Abercrombie Guy's friend");	
-		
 		// check .toString()
-		System.out.println(myLinkedList); 
-		
+		System.out.println(myLinkedList);
+
 		// check iterative and recursive count nodes
 		System.out.println(myLinkedList.countNodesWithString("Abe"));
 		System.out.println(myLinkedList.recursivelyCountNodesWithString(myLinkedList.head, "Abe"));
@@ -31,6 +30,7 @@ public class LinkedListTester {
 		myLinkedList.printReversed(myLinkedList.head);
 		System.out.println();
 		myLinkedList.printReversed(myLinkedList.head.next.next);
+
 	}
 	
 	

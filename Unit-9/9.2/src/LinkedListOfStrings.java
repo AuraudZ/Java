@@ -1,35 +1,66 @@
 public class LinkedListOfStrings {
 	// What is our underlying data structure...not a Node[]!  A linked list!
-	// Well, what does a LinkedList need? 
-	
+	// Well, what does a LinkedList need?
+	Node head;
+	int nodeCount;
 	// iteratively traverse the Linked List, printing out the String + " --> "
 	// unless it's the last node, in which case print out the String + " --> null"
 	public String toString() {
-
+		String listString = "";
+		Node current = head;
+		while (current != null) {
+			listString += current.name + " --> ";
+			current = current.next;
+		}
+		return  listString + "null";
 	}
 	
 	// iteratively traverse the Linked List, counting out the number of Nodes
 	// whose String contains str
 	public int countNodesWithString(String str) {
-
+		int count = 0;
+		for (Node current = head; current != null; current = current.next) {
+			if (current.name.contains(str)) {
+				count++;
+			}
+		}
+		return count;
 	}
 	
 	// recursively traverse the Linked List, counting out the number of Nodes
 	// whose String contains str
 	public int recursivelyCountNodesWithString(Node head, String str) {
-
-		
+		// Base Case: if head is null reutrn
+		int count = 0;
+		if(head == null) {
+			return 0;
+		}
+		// Recursive Case: if head.name contains str, add 1 to count
+		if(head.name.contains(str)) {
+			return 1 + recursivelyCountNodesWithString(head.next, str);
+		}
+		return recursivelyCountNodesWithString(head.next, str);
 	}
 	
 	// Prints the nodes in reverse, iteratively
 	public void printReversed(Node head) {
+		Node current = head;
+		while (current != null) {
+			System.out.println(current.name);
+			current = current.next;
 
-
+		}
 	}
 	
 	// Prints the nodes in reverse, recursively
 	public void recursivelyPrintReversed(Node head) {
-
+		// Base Case: if head is null return
+		if(head == null) {
+			return;
+		}
+		// Recursive Case: print the next node, then recursively print the next node
+		recursivelyPrintReversed(head.next);
+		System.out.println(head.name);
 	}
 	
 	
@@ -53,7 +84,7 @@ public class LinkedListOfStrings {
 	
 	// Removes all of the elements from this list.
 	public void clear() {
-		
+
 	}
 	
 	// Returns true if this list contains the specified element.
@@ -63,14 +94,18 @@ public class LinkedListOfStrings {
 	
 	// Returns the element at the specified position in this list
 	// Throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
-	public Node get(int index) {
-		return null;
+	public Node get(int index) throws IndexOutOfBoundsException {
+	Node current = head;
+	for (int i = 0; i < index; i++) {
+		current = current.next;
+	}
+	return current;
 	}
 	
 	// Removes the element at the specified position in this list.
 	// Returns the element previously at the specified position
 	// Throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
-	public Node remove(int index) {
+	public Node remove(int index) throws IndexOutOfBoundsException {
 		return null;
 	}
 	
