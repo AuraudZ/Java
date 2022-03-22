@@ -24,13 +24,12 @@ public class LinkedListTester {
 		// check iterative and recursive print reversed (HW)
 		myLinkedList.recursivelyPrintReversed(myLinkedList.head);
 		System.out.println();
-		myLinkedList.recursivelyPrintReversed(myLinkedList.head.next.next); 
+		myLinkedList.recursivelyPrintReversed(myLinkedList.head.next.next);
 		
 		System.out.println();
 		myLinkedList.printReversed(myLinkedList.head);
 		System.out.println();
 		myLinkedList.printReversed(myLinkedList.head.next.next);
-
 	}
 	
 	

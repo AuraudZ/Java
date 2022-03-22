@@ -5,9 +5,10 @@ public class SortLibraryForMergeSort {
 	public static void main(String[] args) {
 		// Test arrays you can use to check your sorts.
 		// They represent common arrangements: random, already sorted, reversed, mostly sorted
+		int[] random = new int[]{33, 94, 9, 40, 77, 82, 47, 15, 51, 64, 76, 28, 2, 85, 11};
 		int[] myCustomTest = new int[]{5,3,69,73,11,17,1,74,34,86}; //***use this one
 		// ***Enter your array to sort here
-		int[] arrayToSort = myCustomTest; // arrayToSort will point to the array you choose
+		int[] arrayToSort = random; // arrayToSort will point to the array you choose
 		int[] copyOfArrayToSort = Arrays.copyOf(arrayToSort, arrayToSort.length);
 		
 

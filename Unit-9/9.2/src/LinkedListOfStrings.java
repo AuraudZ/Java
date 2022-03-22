@@ -31,7 +31,6 @@ public class LinkedListOfStrings {
 	// whose String contains str
 	public int recursivelyCountNodesWithString(Node head, String str) {
 		// Base Case: if head is null reutrn
-		int count = 0;
 		if(head == null) {
 			return 0;
 		}
@@ -44,14 +43,15 @@ public class LinkedListOfStrings {
 	
 	// Prints the nodes in reverse, iteratively
 	public void printReversed(Node head) {
+		String reversedName = "";
 		Node current = head;
 		while (current != null) {
-			System.out.println(current.name);
+			reversedName = current.name + "\n" + reversedName;
 			current = current.next;
-
 		}
+		System.out.println(reversedName);
 	}
-	
+
 	// Prints the nodes in reverse, recursively
 	public void recursivelyPrintReversed(Node head) {
 		// Base Case: if head is null return
@@ -78,13 +78,15 @@ public class LinkedListOfStrings {
 	
 	// Inserts the specified element at the specified position in this list.
 	// Throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index > size())
-	public void add(int index, Node n) {
-		
+	public void add(int index, Node n) throws IndexOutOfBoundsException {
+
 	}
 	
 	// Removes all of the elements from this list.
 	public void clear() {
-
+		while (head != null) {
+			head = head.next;
+		}
 	}
 	
 	// Returns true if this list contains the specified element.
@@ -100,7 +102,7 @@ public class LinkedListOfStrings {
 		current = current.next;
 	}
 	return current;
-	}
+}
 	
 	// Removes the element at the specified position in this list.
 	// Returns the element previously at the specified position
