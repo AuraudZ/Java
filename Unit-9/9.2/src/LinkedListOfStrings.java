@@ -79,10 +79,16 @@ public class LinkedListOfStrings {
 	// Inserts the specified element at the specified position in this list.
 	// Throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index > size())
 	public void add(int index, Node n) throws IndexOutOfBoundsException {
-
+		Node current = head;
+		for (int i = 0; i < index; i++) {
+			current = current.next;
+		}
+		n.next = current.next;
+		current.next = n;
+		nodeCount++;
 	}
 	
-	// Removes all of the elements from this list.
+	// Removes all the elements from this list.
 	public void clear() {
 		while (head != null) {
 			head = head.next;
@@ -97,10 +103,10 @@ public class LinkedListOfStrings {
 	// Returns the element at the specified position in this list
 	// Throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
 	public Node get(int index) throws IndexOutOfBoundsException {
-	Node current = head;
-	for (int i = 0; i < index; i++) {
-		current = current.next;
-	}
+		Node current = head;
+		for (int i = 0; i < index; i++) {
+			current = current.next;
+		}
 	return current;
 }
 	
@@ -108,7 +114,13 @@ public class LinkedListOfStrings {
 	// Returns the element previously at the specified position
 	// Throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
 	public Node remove(int index) throws IndexOutOfBoundsException {
-		return null;
+		Node current = head;
+		for (int i = 0; i < index; i++) {
+			current = current.next;
+		}
+		current.next = current.next.next;
+		nodeCount--;
+		return current;
 	}
 	
 	
