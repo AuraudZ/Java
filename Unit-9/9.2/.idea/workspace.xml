@@ -47,22 +47,12 @@
       <recent name="C:\Users\Auraud\Desktop\APCS\Java\Unit-9\9.2\src" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.LinkedListOfStringsTest.testRemoveWithIndex">
+  <component name="RunManager" selected="JUnit.LinkedListOfStringsTest.testSet">
     <configuration name="LinkedListOfStringsTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="9.2" />
       <option name="PACKAGE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="LinkedListOfStringsTest" />
       <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="LinkedListOfStringsTest.testAddToSpecifiedIndex" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="9.2" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="LinkedListOfStringsTest" />
-      <option name="METHOD_NAME" value="testAddToSpecifiedIndex" />
-      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -97,13 +87,23 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="LinkedListOfStringsTest.testSet" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="9.2" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="LinkedListOfStringsTest" />
+      <option name="METHOD_NAME" value="testSet" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.LinkedListOfStringsTest.testSet" />
+        <item itemvalue="JUnit.LinkedListOfStringsTest" />
         <item itemvalue="JUnit.LinkedListOfStringsTest.testRemoveWithIndex" />
         <item itemvalue="JUnit.LinkedListOfStringsTest.testContains" />
         <item itemvalue="JUnit.LinkedListOfStringsTest.testClear" />
-        <item itemvalue="JUnit.LinkedListOfStringsTest.testAddToSpecifiedIndex" />
-        <item itemvalue="JUnit.LinkedListOfStringsTest" />
       </list>
     </recent_temporary>
   </component>

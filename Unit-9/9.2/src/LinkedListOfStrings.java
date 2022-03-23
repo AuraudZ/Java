@@ -198,12 +198,20 @@ public class LinkedListOfStrings {
     // Return the element previously at the specified position
     public Node set(int index, Node n) throws IndexOutOfBoundsException {
         Node current = head;
+        if(index < 0 || index >= nodeCount) {
+            throw new IndexOutOfBoundsException();
+        }
+        if(current == null) {
+            throw new IndexOutOfBoundsException();
+        }
+        // Go through the list until we get to the index, then set the element to the new one
         for (int i = 0; i < index; i++) {
             current = current.next;
         }
+        Node temp = current;
         current.next = n;
         nodeCount++;
-        return current;
+        return temp;
     }
 
     // Returns the number of elements in this collection.
