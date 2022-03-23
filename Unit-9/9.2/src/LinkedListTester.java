@@ -30,6 +30,25 @@ public class LinkedListTester {
 		myLinkedList.printReversed(myLinkedList.head);
 		System.out.println();
 		myLinkedList.printReversed(myLinkedList.head.next.next);
+
+		LinkedListOfStrings myLinkedList2 = new LinkedListOfStrings();
+		myLinkedList2.head = new Node("Abe");
+		myLinkedList2.add(new Node("Bart"));
+		myLinkedList2.add(new Node("Carol"));
+		System.out.println(myLinkedList2);
+		myLinkedList2.remove(0);
+		System.out.println(myLinkedList2);
+		myLinkedList2.remove(1);
+		System.out.println(myLinkedList2);
+		myLinkedList2.add(new Node("Dawn"));
+		System.out.println(myLinkedList2);
+		myLinkedList2.add(new Node("Dawn"));
+		myLinkedList2.add(new Node("Dawn"));
+		myLinkedList2.add(new Node("Dawn"));
+		myLinkedList2.add(new Node("Dawn"));
+		myLinkedList2.clear();
+		System.out.println(myLinkedList2);
+
 	}
 	
 	
