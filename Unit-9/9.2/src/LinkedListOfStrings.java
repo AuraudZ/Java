@@ -106,7 +106,7 @@ public class LinkedListOfStrings {
             current = current.next;
         }
         // Update the next node
-        if(index > 0) {
+        if (index > 0) {
             n.next = current.next;
             current.next = n;
         }
@@ -128,10 +128,10 @@ public class LinkedListOfStrings {
             if (current.equals(n)) {
                 return true;
             }
-            if(current.name.equals(n.name)) {
+            if (current.name.equals(n.name)) {
                 return true;
             }
-            if(current.next == null) {
+            if (current.next == null) {
                 return false;
             }
         }
@@ -141,9 +141,12 @@ public class LinkedListOfStrings {
     // Returns the element at the specified position in this list
     // Throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
     public Node get(int index) throws IndexOutOfBoundsException {
+        if (index < 0 || index >= nodeCount) {
+            throw new IndexOutOfBoundsException();
+        }
         Node current = head;
         for (int i = 0; i < index; i++) {
-            if(current == null) {
+            if (current == null) {
                 throw new IndexOutOfBoundsException();
             }
             current = current.next;
@@ -158,7 +161,7 @@ public class LinkedListOfStrings {
         if (index < 0 || index >= nodeCount) {
             throw new IndexOutOfBoundsException();
         }
-       // If the index is 0, remove the head
+        // If the index is 0, remove the head
         if (index == 0) {
             Node temp = head;
             head = head.next;
@@ -183,11 +186,28 @@ public class LinkedListOfStrings {
     // Removes the first occurrence of the specified element from this list, if it is present.
     // Returns true if this list contained the specified element (or equivalently, if this list changed as a result of the call).
     public boolean remove(Node n) {
+        // If the head is the node we want to remove it but it is not working and return 0 index instead of 1
+        // But when we try to remove  node from the front of the list, it is not working
+
+        if (head.equals(n)) {
+            head = head.next;
+            nodeCount--;
+            return true;
+        }
+        if (head.next.equals(n)) {
+            head.next = head.next.next;
+            nodeCount--;
+            return true;
+        }
+        // Run through the list, checking each node for equality
         for (Node current = head; current != null; current = current.next) {
             if (current.equals(n)) {
                 current.next = current.next.next;
                 nodeCount--;
                 return true;
+            }
+            if (current.next == null) {
+                return false;
             }
         }
         return false;
@@ -198,20 +218,41 @@ public class LinkedListOfStrings {
     // Return the element previously at the specified position
     public Node set(int index, Node n) throws IndexOutOfBoundsException {
         Node current = head;
-        if(index < 0 || index >= nodeCount) {
+        if (index < 0 || index >= nodeCount) {
             throw new IndexOutOfBoundsException();
         }
-        if(current == null) {
+        if (current == null) {
             throw new IndexOutOfBoundsException();
         }
-        // Go through the list until we get to the index, then set the element to the new one
         for (int i = 0; i < index; i++) {
+            // Loop through the list until we get to the index
+            // once we get to the index, we need to save a reference to the node we want to remove to return it later
+            if (i == index - 1) {
+                Node list = current.next.next;
+                Node temp = current.next; // Reference to the node we want to remove to return it later
+                n.next = list;
+                current.next = n;
+                return temp;
+            }
             current = current.next;
+
         }
-        Node temp = current;
-        current.next = n;
-        nodeCount++;
-        return temp;
+        if (current.next == null) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        // Make sure we are setting the node at the correct index
+        if (index == 0) {
+            Node list = current.next; // Temp is the rest of the list
+            Node previous = current;  // Previous is the node before the node we want to replace
+            // We need to change the next node to the rest of the list
+            n.next = list;
+            // Set the current node to the new node
+            current = n;
+            head = current;
+            return previous;
+        }
+        return null;
     }
 
     // Returns the number of elements in this collection.
