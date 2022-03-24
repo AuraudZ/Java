@@ -128,6 +128,8 @@ public class LinkedListOfStrings {
             if (current.equals(n)) {
                 return true;
             }
+
+
             if (current.name.equals(n.name)) {
                 return true;
             }
@@ -236,7 +238,6 @@ public class LinkedListOfStrings {
         if (current.next == null) {
             throw new IndexOutOfBoundsException();
         }
-
         // Make sure we are setting the node at the correct index
         if (index == 0) {
             Node list = current.next; // Temp is the rest of the list

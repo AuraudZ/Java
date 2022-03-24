@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="68613257-ff2c-4f35-b54d-38763ee320ac" name="Changes" comment="Other files">
+    <list default="true" id="68613257-ff2c-4f35-b54d-38763ee320ac" name="Changes" comment="Intro to linked lists">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/LinkedListOfStrings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LinkedListOfStrings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Recursion2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Recursion2.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +54,14 @@
       <recent name="C:\Users\Auraud\Desktop\APCS\Java\Unit-9\9.2\src" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.LinkedListOfStringsTest">
+  <component name="RunManager" selected="Application.Recursion2">
+    <configuration name="LinkedListTester" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="LinkedListTester" />
+      <module name="9.2" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Recursion2" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Recursion2" />
       <module name="9.2" />
@@ -80,16 +88,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="LinkedListOfStringsTest.testRemoveWithIndex" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="9.2" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="LinkedListOfStringsTest" />
-      <option name="METHOD_NAME" value="testRemoveWithIndex" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="LinkedListOfStringsTest.testSet" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="9.2" />
       <option name="PACKAGE_NAME" value="" />
@@ -102,11 +100,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Recursion2" />
+        <item itemvalue="Application.LinkedListTester" />
         <item itemvalue="JUnit.LinkedListOfStringsTest" />
         <item itemvalue="JUnit.LinkedListOfStringsTest.testRemoveNode" />
         <item itemvalue="JUnit.LinkedListOfStringsTest.testSet" />
-        <item itemvalue="Application.Recursion2" />
-        <item itemvalue="JUnit.LinkedListOfStringsTest.testRemoveWithIndex" />
       </list>
     </recent_temporary>
   </component>
@@ -153,6 +151,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Intro to linked lists" />
@@ -167,6 +166,26 @@
           <properties class="java.lang.NullPointerException" package="java.lang" />
           <option name="timeStamp" value="1" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/LinkedListOfStrings.java</url>
+          <line>132</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/LinkedListOfStrings.java</url>
+          <line>127</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/LinkedListOfStrings.java</url>
+          <line>63</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Recursion2.java</url>
+          <line>44</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
