@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="68613257-ff2c-4f35-b54d-38763ee320ac" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../9.1/.idea/runConfigurations.xml" beforeDir="false" />
+    <list default="true" id="68613257-ff2c-4f35-b54d-38763ee320ac" name="Changes" comment="Other files">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/LinkedListOfStrings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LinkedListOfStrings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Recursion2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Recursion2.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,10 +28,8 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
-  <component name="JavaAutoRunManager">
-    <enabled-run-configurations>
-      <run-configuration type="JUnit" name="Rerun Failed Tests" />
-    </enabled-run-configurations>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="26ZWbn5hFBSNAcYlZzfA7SF06cM" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -57,7 +53,7 @@
       <recent name="C:\Users\Auraud\Desktop\APCS\Java\Unit-9\9.2\src" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.LinkedListOfStringsTest.testSet">
+  <component name="RunManager" selected="JUnit.LinkedListOfStringsTest">
     <configuration name="Recursion2" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Recursion2" />
       <module name="9.2" />
@@ -106,10 +102,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.LinkedListOfStringsTest.testSet" />
-        <item itemvalue="Application.Recursion2" />
         <item itemvalue="JUnit.LinkedListOfStringsTest" />
         <item itemvalue="JUnit.LinkedListOfStringsTest.testRemoveNode" />
+        <item itemvalue="JUnit.LinkedListOfStringsTest.testSet" />
+        <item itemvalue="Application.Recursion2" />
         <item itemvalue="JUnit.LinkedListOfStringsTest.testRemoveWithIndex" />
       </list>
     </recent_temporary>
@@ -130,7 +126,21 @@
       <option name="project" value="LOCAL" />
       <updated>1647631741354</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Fuck this shit took me 2 hours">
+      <created>1648082817353</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1648082817353</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Other files">
+      <created>1648082826505</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1648082826505</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -146,7 +156,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Intro to linked lists" />
-    <option name="LAST_COMMIT_MESSAGE" value="Intro to linked lists" />
+    <MESSAGE value="Fuck this shit took me 2 hours" />
+    <MESSAGE value="Other files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Other files" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -155,11 +167,6 @@
           <properties class="java.lang.NullPointerException" package="java.lang" />
           <option name="timeStamp" value="1" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/LinkedListOfStrings.java</url>
-          <line>230</line>
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>

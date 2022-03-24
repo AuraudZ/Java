@@ -186,32 +186,28 @@ public class LinkedListOfStrings {
     // Removes the first occurrence of the specified element from this list, if it is present.
     // Returns true if this list contained the specified element (or equivalently, if this list changed as a result of the call).
     public boolean remove(Node n) {
-        // If the head is the node we want to remove it but it is not working and return 0 index instead of 1
-        // But when we try to remove  node from the front of the list, it is not working
-
-        if (head.equals(n)) {
+        // If the first node is the node we want to remove, remove it
+        if (head.name.equals(n.name)) {
             head = head.next;
             nodeCount--;
             return true;
         }
-        if (head.next.equals(n)) {
-            head.next = head.next.next;
-            nodeCount--;
-            return true;
-        }
-        // Run through the list, checking each node for equality
-        for (Node current = head; current != null; current = current.next) {
-            if (current.equals(n)) {
-                current.next = current.next.next;
+
+        Node current = head;
+        Node list = head;
+        // Iterate through the list until we get to the node we want to remove
+        for (int i = 0; i < nodeCount; i++) {
+            if (current.name.equals(n.name)) {
+                list.next = current.next;
                 nodeCount--;
                 return true;
             }
-            if (current.next == null) {
-                return false;
-            }
+            list = current;
+            current = current.next;
         }
         return false;
     }
+
 
     // Replaces the element at the specified position in this list with the specified element.
     // Throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
