@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="68613257-ff2c-4f35-b54d-38763ee320ac" name="Changes" comment="Intro to linked lists" />
+    <list default="true" id="68613257-ff2c-4f35-b54d-38763ee320ac" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../9.1/.idea/runConfigurations.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/LinkedListOfStrings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LinkedListOfStrings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Recursion2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Recursion2.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -24,6 +29,11 @@
       <filtered-out-file-type name="TAG" />
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
+  </component>
+  <component name="JavaAutoRunManager">
+    <enabled-run-configurations>
+      <run-configuration type="JUnit" name="Rerun Failed Tests" />
+    </enabled-run-configurations>
   </component>
   <component name="ProjectId" id="26ZWbn5hFBSNAcYlZzfA7SF06cM" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -48,6 +58,13 @@
     </key>
   </component>
   <component name="RunManager" selected="JUnit.LinkedListOfStringsTest.testSet">
+    <configuration name="Recursion2" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Recursion2" />
+      <module name="9.2" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="LinkedListOfStringsTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="9.2" />
       <option name="PACKAGE_NAME" value="" />
@@ -57,21 +74,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="LinkedListOfStringsTest.testClear" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="LinkedListOfStringsTest.testRemoveNode" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="9.2" />
       <option name="PACKAGE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="LinkedListOfStringsTest" />
-      <option name="METHOD_NAME" value="testClear" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="LinkedListOfStringsTest.testContains" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="9.2" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="LinkedListOfStringsTest" />
-      <option name="METHOD_NAME" value="testContains" />
+      <option name="METHOD_NAME" value="testRemoveNode" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -100,10 +107,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="JUnit.LinkedListOfStringsTest.testSet" />
+        <item itemvalue="Application.Recursion2" />
         <item itemvalue="JUnit.LinkedListOfStringsTest" />
+        <item itemvalue="JUnit.LinkedListOfStringsTest.testRemoveNode" />
         <item itemvalue="JUnit.LinkedListOfStringsTest.testRemoveWithIndex" />
-        <item itemvalue="JUnit.LinkedListOfStringsTest.testContains" />
-        <item itemvalue="JUnit.LinkedListOfStringsTest.testClear" />
       </list>
     </recent_temporary>
   </component>
@@ -136,7 +143,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Intro to linked lists" />
@@ -149,7 +155,15 @@
           <properties class="java.lang.NullPointerException" package="java.lang" />
           <option name="timeStamp" value="1" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/LinkedListOfStrings.java</url>
+          <line>230</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/9_2$LinkedListOfStringsTest_testRemoveNode.ic" NAME="LinkedListOfStringsTest.testRemoveNode Coverage Results" MODIFIED="1648080286713" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>

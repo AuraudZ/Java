@@ -6,6 +6,7 @@ public class Recursion2 {
         int target = 17;
 //        System.out.println(cb.groupSum(start, nums, target));
         System.out.println(cb.splitArray(nums));
+        System.out.println(equationSolver());
     }
 
 
@@ -41,5 +42,13 @@ public class Recursion2 {
         }
         return splitArrayHelper(nums, start + 1, sum1, sum2) || splitArrayHelper(nums, start + 1, sum1 + nums[start], sum2);
     }
+
+  public static  int equationSolver() {
+       double a = 3*Math.pow(-2,4);
+       double b = -6*Math.pow(-2,3);
+       double c = -5*-2;
+       double d = a + b + c+10;
+       return (int) d;
+  }
 
 }
