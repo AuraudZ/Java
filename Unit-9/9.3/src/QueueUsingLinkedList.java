@@ -19,7 +19,16 @@ public class QueueUsingLinkedList implements QueueBehavior {
 	 */
 	public void enqueue(int num) {
 		Node newNode = new Node(num);  // A Node to hold the new item.
-		
+		if (front == null) {
+			front = newNode;
+		}
+		else {
+			Node runner = front;
+			while(runner.next != null) {
+				runner = runner.next;
+			}
+			runner.next = newNode;
+		}
 		
 	}
 	
@@ -32,6 +41,7 @@ public class QueueUsingLinkedList implements QueueBehavior {
 		if ( front == null)
 			throw new IllegalStateException("Can’t dequeue from an empty queue.");
 		int firstItem = front.item;
+		front = front.next;
 		//****  // The previous second item is now first.
 		return firstItem;
 	}

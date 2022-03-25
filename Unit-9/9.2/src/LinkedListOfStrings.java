@@ -88,6 +88,11 @@ public class LinkedListOfStrings {
         return true;
     }
 
+    public boolean add (String str) {
+        Node n = new Node(str);
+        return add(n);
+    }
+
     // Inserts the specified element at the specified position in this list.
     // Throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index > size())
     public void add(int index, Node n) throws IndexOutOfBoundsException {
@@ -128,8 +133,6 @@ public class LinkedListOfStrings {
             if (current.equals(n)) {
                 return true;
             }
-
-
             if (current.name.equals(n.name)) {
                 return true;
             }

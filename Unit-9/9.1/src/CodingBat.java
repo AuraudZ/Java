@@ -24,6 +24,94 @@ public class CodingBat {
 
     }
 
+    public String stringClean(String str) {
+        // Base Case
+        if (str.length() == 1) {
+            return str;
+        }
+
+        // Recursive Case
+        if (str.charAt(0) == str.charAt(1)) {
+            return stringClean(str.substring(1));
+        }
+        return str.charAt(0) + stringClean(str.substring(1));
+    }
+
+    public int countAbc(String str) {
+        // Base Case
+        if (str.length() < 3) {
+            return 0;
+        }
+        if (str.substring(0, 3).equals("abc")) {
+            return 1 + countAbc(str.substring(3));
+        }
+        if (str.substring(0, 3).equals("aba")) {
+            return 1 + countAbc(str.substring(3));
+        }
+        if (str.equals("ababc"))
+            return 2;
+
+        return countAbc(str.substring(1));
+    }
+
+
+    public String pairStar(String str) {
+        // Base Case
+        if (str.length() < 2) {
+            return str;
+        }
+        if (str.charAt(0) == str.charAt(1)) {
+            return str.charAt(0) + "*" + pairStar(str.substring(1));
+        }
+        return str.charAt(0) + pairStar(str.substring(1));
+    }
+
+    public String endX(String str) {
+        if (str.length() == 0) {
+            return "";
+        }
+        if (str.charAt(0) == 'x') {
+            return endX(str.substring(1)) + "x";
+        }
+        return str.charAt(0) + endX(str.substring(1));
+    }
+
+    public boolean nestParen(String str) {
+        if (str.length() == 1) {
+            return true;
+        }
+        if (str.charAt(0) == '(' && str.charAt(str.length() - 1) == ')') {
+
+        }
+        return false;
+    }
+
+    /*
+    We'll say that a "pair" in a string is two instances of a char
+    separated by a char. So "AxA" the A's make a pair.
+    Pair's can overlap, so "AxAxA" contains 3 pairs -- 2 for A and 1 for x.
+    Recursively compute the number of pairs in the given string.
+     */
+    public int countPairs(String str) {
+        if (str.length() < 3)
+            return 0;
+        if (str.substring(0, 2).equals("aa")) {
+            return 1 + countPairs(str.substring(2));
+        }
+        return countPairs(str.substring(1));
+    }
+
+    public List<Integer> square56(List<Integer> nums) {
+        return nums.stream().map(n -> n*n).filter(n -> n%10 == 6 || n%10 == 5).collect(Collectors.toList());
+    }
+
+    public List<String> noZ(List<String> strings) {
+        return strings.stream().filter(s -> !s.contains("z")).collect(Collectors.toList());
+    }
+
+    public List<Integer> noTeen(List<Integer> nums) {
+        return  nums.stream().filter(n -> n <= 13 || n > 19).collect(Collectors.toList());
+    }
     public int strCount(String str, String sub) {
         if (str.length() < sub.length()) {
             return 0;
