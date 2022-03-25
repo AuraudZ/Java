@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="68613257-ff2c-4f35-b54d-38763ee320ac" name="Changes" comment="Intro to linked lists">
+    <list default="true" id="68613257-ff2c-4f35-b54d-38763ee320ac" name="Changes" comment="Some webcat changes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/LinkedListOfStrings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/LinkedListOfStrings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Recursion2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Recursion2.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +45,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -138,7 +136,21 @@
       <option name="project" value="LOCAL" />
       <updated>1648082826505</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Coding bat problems">
+      <created>1648161042950</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1648161042950</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Some webcat changes">
+      <created>1648161069834</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1648161069834</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -157,7 +169,9 @@
     <MESSAGE value="Intro to linked lists" />
     <MESSAGE value="Fuck this shit took me 2 hours" />
     <MESSAGE value="Other files" />
-    <option name="LAST_COMMIT_MESSAGE" value="Other files" />
+    <MESSAGE value="Coding bat problems" />
+    <MESSAGE value="Some webcat changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Some webcat changes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -180,11 +194,6 @@
           <url>file://$PROJECT_DIR$/src/LinkedListOfStrings.java</url>
           <line>63</line>
           <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/Recursion2.java</url>
-          <line>44</line>
-          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
