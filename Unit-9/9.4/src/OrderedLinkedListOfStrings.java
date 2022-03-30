@@ -27,16 +27,20 @@ public class OrderedLinkedListOfStrings {
 		Node prev = null;
 		
 		if(runner == null) { // empty list
-
-			
+			head = n;
+			return;
 		}
-		
 		// Advance to the correct location in the Linked List
 		while(runner != null && n.name.compareTo(runner.name) >= 0) { 
 			prev = runner;  // update 'prev' in case you need to insert 
 			runner = runner.next; // update 'runner'
 		}
-
+		// Handle case 3: insert at the beginning of the list
+		if(prev == null) {
+			n.next = head;
+			head = n;
+			return;
+		}
 		// Insert Node now that we are in the correct spot
 		prev.next = n;
 		n.next = runner;
