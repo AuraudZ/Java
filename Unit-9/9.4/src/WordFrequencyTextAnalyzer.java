@@ -9,7 +9,7 @@ public class WordFrequencyTextAnalyzer {
 	public static void main(String[] args) {
 		String start = "a";
 		String end = "d";
-		String searchWord = "the";
+		String searchWord = "best";
 		
 		// *** Uncomment if you want to use the command line to pass in the file name
 //		if (args.length != 1) {
