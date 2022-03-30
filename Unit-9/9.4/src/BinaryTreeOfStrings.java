@@ -1,7 +1,7 @@
 
 public class BinaryTreeOfStrings {
 	// Every Binary Tree object needs a reference to its root
-	TreeNode root;
+	TreeNode<String> root;
 
 	// Insert a TreeNode into the tree in the proper location to 
 	// maintain a sorted order.  If there is a tie, you can insert it to the right.
@@ -10,9 +10,30 @@ public class BinaryTreeOfStrings {
 	// str.compareTo(anotherStr) < 0 if str is "before" anotherStr
 	// str.compareTo(anotherStr) == 0 if they are equal -- or you can use .equals()
 	public void insert(String str) {
-		TreeNode n = new TreeNode(str);
-		TreeNode runner = root; // Traverse iteratively
+		TreeNode<String> n = new TreeNode<>(str);
+		TreeNode<String> runner = root; // Traverse iteratively
+		// Empty tree
+		if(root == null) {
+			root = n;
+			return;
+		}
 
+		while (true) {
+			if(str.compareTo(runner.name) < 0) {
+				if(runner.left == null) {
+					runner.left = n;
+					return;
+				}
+
+			}
+			else {
+				if(runner.right == null) {
+					runner.right = n;
+					return;
+				}
+			}
+			runner = runner.left;
+		}
 	}
 	
 
@@ -20,6 +41,18 @@ public class BinaryTreeOfStrings {
 	// Return false otherwise.
 	// Traverse the tree iteratively.
 	public boolean contains(String nameToFind) {
+		TreeNode<String> runner = root;
+		while (runner != null) {
+			if (nameToFind.compareTo(runner.name) < 0) {
+				runner = runner.left;
+			}
+			else if (nameToFind.compareTo(runner.name) > 0) {
+				runner = runner.right;
+			}
+			else {
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -31,12 +64,15 @@ public class BinaryTreeOfStrings {
 		return containsRecursive(root, nameToFind);
 	}
 	
-	private boolean containsRecursive(TreeNode root, String nameToFind) {
+	private boolean containsRecursive(TreeNode<String> root, String nameToFind) {
 		// base case
-		return false;
-		
-		// recursive call
-		
+		if(root == null)
+			return false;
+		// if we find the name, return true
+		if(nameToFind.compareTo(root.name) == 0)
+			return true;
+		// otherwise, recurse on the left and right subtrees
+		return containsRecursive(root.left, nameToFind) || containsRecursive(root.right, nameToFind);
 	}
 	
 	// HUGE thanks to Michal Kreuzman for writing this print method!
