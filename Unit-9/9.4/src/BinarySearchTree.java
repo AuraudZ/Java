@@ -22,13 +22,13 @@ public class BinarySearchTree {
 		}
 		Node current = root;
 		while(true) {
-			if(current.item.getWord().equals(word)) {
-				current.item.increaseCount();
+			if(current.item.getWord().equals(word)) { // if word is already in tree
+				current.item.increaseCount(); // Unique word, so increase count
 				totalWordCount++;
 				return;
 			}
-			if(current.item.getWord().compareTo(word) > 0) {
-				if(current.left == null) {
+			if(current.item.getWord().compareTo(word) > 0) { // if word is lexicographically less than current we go left
+				if(current.left == null) { // if there is no left child we add a new node
 					current.left = new Node(new WordFrequency(word));
 					size++;
 					totalWordCount++;
