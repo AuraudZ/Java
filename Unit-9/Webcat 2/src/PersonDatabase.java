@@ -58,9 +58,59 @@ public class PersonDatabase {
 			rootOfBirthDateTree = new Node(p);
 		}
 		if(rootOfNameTree != null) {
-			putName(p, p.lastName, p.firstName, rootOfNameTree);
+			return putName(p, p.lastName, p.firstName, rootOfNameTree);
+		}
+		if(rootOfBirthDateTree != null) {
+			return putBirthDay(p, p.birthDay, p.birthMonth, p.birthYear, rootOfBirthDateTree);
 		}
 		return false;
+	}
+
+	private boolean putBirthDay(Person p, int birthDay, int birthMonth, int birthYear, Node root) {
+		// Sorted by birthdate (ascending order)
+		if (root == null) {
+			root = new Node(p);
+		}
+		// Traverse the tree placing the nodes in the correct order
+		// The order by birthdate is ascending order
+		// If the name and birthdate are the same, then DO NOT add the node
+
+		if(root.item.birthYear == birthYear && root.item.birthMonth == birthMonth && root.item.birthDay == birthDay && !(root.item.firstName.equals(p.firstName) && root.item.lastName.equals(p.lastName))) {
+			return false;
+		}
+
+		if(root.item.birthYear > birthYear) {
+			if(root.left == null) {
+				root.left = new Node(p);
+				size++;
+			}
+			else {
+				putBirthDay(p, birthDay, birthMonth, birthYear, root.left);
+			}
+		}
+
+		if(root.item.birthYear < birthYear) {
+			if(root.right == null) {
+				root.right = new Node(p);
+				size++;
+			}
+			else {
+				putBirthDay(p, birthDay, birthMonth, birthYear, root.right);
+			}
+		}
+
+		if(root.item.birthYear == birthYear) {
+			if(root.item.birthMonth > birthMonth) {
+				if(root.left == null) {
+					root.left = new Node(p);
+				}
+				else {
+					putBirthDay(p, birthDay, birthMonth, birthYear, root.left);
+				}
+			}
+		}
+
+		return root.item.birthDay != birthDay || root.item.birthMonth != birthMonth || root.item.birthYear != birthYear;
 	}
 
 	/**
@@ -70,58 +120,44 @@ public class PersonDatabase {
 	 * @param firstName first name
 	 */
 	public boolean putName(Person p, String lastName, String firstName, Node root) {
-		// Check if the root is null
-		// Sort by name if name is the same and if the birthday is different from it is okay
-		// if the name is different from we need to go to the left or right and add it
-		// to the tree
 		if(root == null) {
 			root = new Node(p);
 			size++;
 			return true;
 		}
-		else if(lastName.compareTo(root.item.lastName) == 0 && firstName.compareTo(root.item.firstName) == 0) {
-			// If the name is the same, we need to check the birthdate
-			if(p.birthDay == root.item.birthDay && p.birthMonth == root.item.birthMonth && p.birthYear == root.item.birthYear) {
-				// Add the person to the tree
-				root.item = p;
-				size++;
-				return true;
-			}
-			else if (p.birthDay < root.item.birthDay || p.birthMonth < root.item.birthMonth || p.birthYear < root.item.birthYear) {
-				// If the name is the same but the birthdate is different, we need to go to the left
-				putName(p, lastName, firstName, root.left);
-			}
-			else {
-				// If the name is the same but the birthdate is different, we need to go to the right
-				putName(p, lastName, firstName, root.right);
-			}
 
+		if(root.item.lastName.equals(lastName) && root.item.firstName.equals(firstName) && root.item.birthDay == p.birthDay && root.item.birthMonth == p.birthMonth && root.item.birthYear == p.birthYear) {
+			return false;
 		}
-		else if(lastName.compareTo(root.item.lastName) < 0) {
-			// If the name is less than the root, we need to go to the left
-			// Make sure the birthdate is different
-			if(p.birthDay != root.item.birthDay || p.birthMonth != root.item.birthMonth || p.birthYear != root.item.birthYear) {
-				// Add the person to the tree
+
+		// If a node is created, it should be added to both the name tree and the birthdate tree
+
+
+		if (lastName.compareTo(root.item.lastName) < 0 && firstName.compareTo(root.item.firstName) < 0) {
+			if(root.left == null) {
 				root.left = new Node(p);
 				size++;
-				return true;
 			}
-			else {
-				putName(p, lastName, firstName, root.left);
-			}
+			return putName(p, lastName, firstName, root.left);
 		}
-		else {
-			// If the name is greater than the root, we need to go to the right
-			// Make sure the birthdate is different
-			if(p.birthDay != root.item.birthDay || p.birthMonth != root.item.birthMonth || p.birthYear != root.item.birthYear) {
-				// Add the person to the tree
+		if (lastName.compareTo(root.item.lastName) > 0 && firstName.compareTo(root.item.firstName) > 0) {
+			if(root.right == null) {
 				root.right = new Node(p);
 				size++;
-				return true;
 			}
-			else {
-				putName(p, lastName, firstName, root.right);
+			return putName(p, lastName, firstName, root.right);
+		}
+		if (lastName.compareTo(root.item.lastName) > 0 && firstName.compareTo(root.item.firstName) < 0) {
+			if(root.right == null) {
+				root.right = new Node(p);
 			}
+			return putName(p, lastName, firstName, root.right);
+		}
+		if (lastName.compareTo(root.item.lastName) < 0 && firstName.compareTo(root.item.firstName) > 0) {
+			if(root.left == null) {
+				root.left = new Node(p);
+			}
+			return putName(p, lastName, firstName, root.left);
 		}
 		return false;
 	}
@@ -134,30 +170,7 @@ public class PersonDatabase {
 	 * @return a list of Person objects (possibly empty)
 	 */
 	public List<Person> find(String firstName, String lastName) {
-		// Run through the tree and find the name
-		// It is a binary search tree so it should be easy
-		if(rootOfNameTree == null) {
-			return null;
-		}
-		// Create a list to store the results
-		List<Person> results = new ArrayList<Person>();
-		Node current = rootOfNameTree;
-		while (current != null) {
-			// If the name is the same, we need to check the birthdate
-			if(lastName.compareTo(current.item.lastName) == 0 && firstName.compareTo(current.item.firstName) == 0) {
-				// Add the person to the list
-//				results.add(current.item);
-			}
-			else if(lastName.compareTo(current.item.lastName) < 0) {
-				// If the name is less than the root, we need to go to the left
-				current = current.left;
-			}
-			else {
-				// If the name is greater than the root, we need to go to the right
-				current = current.right;
-			}
-		}
-		return results;
+		return null;
 	}
 
 	/**
@@ -170,28 +183,37 @@ public class PersonDatabase {
 	 * @return a list of Person objects (possibly empty)
 	 */
 	public List<Person> find(int birthDay, int birthMonth, int birthYear) {
-		// Run through the tree and find the birth date
-		// It is a binary search tree so it should be easy
+		List<Person> list = new ArrayList<Person>();
 		if(rootOfBirthDateTree == null) {
-			return null;
+			return list;
 		}
-		Node current = rootOfBirthDateTree;
-		List<Person> results = new ArrayList<Person>();
-		while (current != null) {
-			if(current.item.birthDay == birthDay && current.item.birthMonth == birthMonth && current.item.birthYear == birthYear) {
-			//	results.add(current.item);
-			}
-			if(current.item.birthDay < birthDay && current.item.birthMonth < birthMonth && current.item.birthYear < birthYear) {
-				current = current.right;
-			}
-			else {
-				current = current.left;
-			}
-		}
-		return results;
+
+		find(birthDay, birthMonth, birthYear, rootOfBirthDateTree,list);
+		return list;
 	}
-	
-	
+
+	private List<Person> find(int birthDay, int birthMonth, int birthYear, Node root, List<Person> list) {
+		if(root == null) {
+			return new ArrayList<Person>();
+		}
+		// Base case if left and right are null
+		if(root.left == null && root.right == null) {
+			return list;
+		}
+
+		if(rootOfBirthDateTree.item.birthDay == birthDay && rootOfBirthDateTree.item.birthMonth == birthMonth && rootOfBirthDateTree.item.birthYear == birthYear) {
+			list.add(rootOfBirthDateTree.item);
+		}
+		if(rootOfBirthDateTree.left != null) {
+			find(birthDay, birthMonth, birthYear, rootOfBirthDateTree.left, list);
+		}
+		if(rootOfBirthDateTree.right != null) {
+			find(birthDay, birthMonth, birthYear, rootOfBirthDateTree.right, list);
+		}
+		return list;
+	}
+
+
 	//***** For testing purposes
 	public Node getNameRoot() {
 		return rootOfNameTree;
