@@ -7,9 +7,9 @@ import java.util.Scanner;
 public class WordFrequencyTextAnalyzer {
 	
 	public static void main(String[] args) {
-		String start = "a";
-		String end = "z";
-		String searchWord = "the";
+		String start = "b";
+		String end = "p";
+		String searchWord = "times";
 		
 		// *** Uncomment if you want to use the command line to pass in the file name
 //		if (args.length != 1) {

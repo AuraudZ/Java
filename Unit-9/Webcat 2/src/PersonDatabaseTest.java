@@ -44,7 +44,7 @@ public class PersonDatabaseTest {
 		}
 	}
 	
-	@Test(timeout = 60000)
+	@Test(timeout = 6000)
 	public void testPutNoDuplicatesAllowed() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < 12; i++) {
@@ -68,8 +68,9 @@ public class PersonDatabaseTest {
 		for (int i = 0; i < 11; i++) {
 			db.put(personArray[i]);
 		}
-		
+
 		if (db.size() != 11) {
+			assertEquals(11, db.size());
 			fail("The size of the database is incorrect."
 					+ "Either size wasn't updated correctly"
 					+ " or all of the people didn't get entered.");
