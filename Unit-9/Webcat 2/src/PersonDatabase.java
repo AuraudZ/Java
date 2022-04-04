@@ -106,7 +106,7 @@ public class PersonDatabase {
           current = current.right;
         }
         if(current.item.firstName.compareTo(firstName) == 0){
-          if(birthDay.compareTo(current.item.birthDay) > 0){
+          if(birthYear.compareTo(current.item.birthYear) > 0){
             if(current.left == null){
               current.left = new Node(p);
               size++;
@@ -114,7 +114,7 @@ public class PersonDatabase {
             }
             current = current.left;
           }
-          if(birthDay.compareTo(current.item.birthDay) < 0){
+          if(birthYear.compareTo(current.item.birthYear) < 0){
             if(current.right == null){
               current.right = new Node(p);
               size++;
@@ -122,7 +122,7 @@ public class PersonDatabase {
             }
             current = current.right;
           }
-          if(birthDay.compareTo(current.item.birthDay) == 0){
+          if(birthYear.compareTo(current.item.birthYear) == 0){
             if(birthMonth.compareTo(current.item.birthMonth) > 0){
               if(current.left == null){
                 current.left = new Node(p);
@@ -140,7 +140,7 @@ public class PersonDatabase {
               current = current.right;
             }
             if(birthMonth.compareTo(current.item.birthMonth) == 0){
-              if(birthYear.compareTo(current.item.birthYear) > 0){
+              if(birthDay.compareTo(current.item.birthDay) > 0){
                 if(current.left == null){
                   current.left = new Node(p);
                   size++;
@@ -148,7 +148,7 @@ public class PersonDatabase {
                 }
                 current = current.left;
               }
-              if(birthYear.compareTo(current.item.birthYear) < 0){
+              if(birthDay.compareTo(current.item.birthDay) < 0){
                 if(current.right == null){
                   current.right = new Node(p);
                   size++;
@@ -156,7 +156,7 @@ public class PersonDatabase {
                 }
                 current = current.right;
               }
-              if(birthYear.compareTo(current.item.birthYear) == 0){
+              if(birthDay.compareTo(current.item.birthDay) == 0){
                 if(current.left == null){
                   current.left = new Node(p);
                   size++;
