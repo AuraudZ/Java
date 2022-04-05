@@ -39,25 +39,20 @@ public class PersonDatabase {
      */
     public boolean put(Person p) {
 
-
-
         if (rootOfNameTree == null && rootOfBirthDateTree == null) {
             rootOfNameTree = new Node(p);
             size++;
             Node current = rootOfNameTree;
-            return putName(p, p.lastName, p.firstName, current);
+            return putName(p, p.lastName, p.firstName, current.right) || putName(p, p.firstName, p.lastName, current.left);
         }
 
         if(rootOfBirthDateTree == null) {
             rootOfBirthDateTree = new Node(p);
             size++;
             Node current = rootOfBirthDateTree;
-            return putBirthDay(p, p.birthDay, p.birthMonth, p.birthYear, current);
+            return putBirthDay(p, p.birthDay, p.birthMonth, p.birthYear, current.right) || putBirthDay(p, p.birthDay, p.birthMonth, p.birthYear, current.left);
         }
-
-
-        Node current = rootOfBirthDateTree;
-        return putBirthDay(p, p.birthDay, p.birthMonth, p.birthYear, rootOfBirthDateTree);
+        return false;
     }
 
     private boolean putBirthDay(Person p, int birthDay, int birthMonth, int birthYear, Node root) {
@@ -68,7 +63,7 @@ public class PersonDatabase {
             return true;
         }
         Node runner = root;
-        while (true) {
+        while (runner != null) {
             if (p.equals(runner.item)) {
                 return false;
             }
@@ -123,6 +118,7 @@ public class PersonDatabase {
                 }
             }
         }
+        return false;
     }
 
     /**
@@ -213,28 +209,8 @@ public class PersonDatabase {
     public List<Person> find(String firstName, String lastName) {
         List<Person> result = new ArrayList<>();
         Node runner = rootOfNameTree;
-        while (runner != null) {
-            if (runner.item.lastName.compareTo(lastName) > 0) {
-                runner = runner.left;
-            }
-            if (runner.item.lastName.compareTo(lastName) < 0) {
-                runner = runner.right;
-            }
-            if (runner.item.lastName.compareTo(lastName) == 0) {
-                if (runner.item.firstName.compareTo(firstName) > 0) {
-                    runner = runner.left;
-                }
-                if (runner.item.firstName.compareTo(firstName) < 0) {
-                    runner = runner.right;
-                }
-                if (runner.item.firstName.compareTo(firstName) == 0) {
-                    result.add(runner.item);
-                }
-            }
-        }
         return result;
     }
-
     /**
      * Returns a list of all Person objects in the database with the given birth date. This method
      * should search in the birth date tree.
@@ -247,6 +223,33 @@ public class PersonDatabase {
     public List<Person> find(int birthDay, int birthMonth, int birthYear) {
         List<Person> list = new ArrayList<Person>();
         Node current = rootOfBirthDateTree;
+        while (current != null) {
+            if (current.item.birthDay == birthDay && current.item.birthMonth == birthMonth && current.item.birthYear == birthYear) {
+                list.add(current.item);
+            }
+            if(current.item.birthYear > birthYear) {
+                current = current.left;
+            }
+            if(current.item.birthYear < birthYear) {
+                current = current.right;
+            }
+            if(current.item.birthYear == birthYear) {
+                if(current.item.birthMonth > birthMonth) {
+                    current = current.left;
+                }
+                if(current.item.birthMonth < birthMonth) {
+                    current = current.right;
+                }
+                if(current.item.birthMonth == birthMonth) {
+                    if(current.item.birthDay > birthDay) {
+                        current = current.left;
+                    }
+                    if(current.item.birthDay < birthDay) {
+                        current = current.right;
+                    }
+                }
+            }
+        }
         return list;
     }
 
