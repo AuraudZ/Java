@@ -62,7 +62,7 @@ public class PersonDatabaseTest {
 		}
 	}
 	
-	@Test(timeout = 60000)
+	@Test()
 	public void testPutFirst11NameNodesCorrect() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < 11; i++) {
@@ -89,14 +89,14 @@ public class PersonDatabaseTest {
 		// Check left side of tree
 		Node rene = root.left.left.left.right;
 		assertEquals("Salvry", rene.item.lastName);
-		
+
 		Node john = root.left.left.right;
 		assertEquals("Smith", john.item.lastName);
 		assertEquals(2000, john.item.birthYear);
 		
 	}
 	
-	@Test(timeout = 60000)
+	@Test(timeout = 6000)
 	public void testPutFirst11BirthdayNodesCorrect() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < 11; i++) {
@@ -126,7 +126,7 @@ public class PersonDatabaseTest {
 		assertEquals("Smith", john.item.lastName);
 	}
 	
-	@Test(timeout = 60000)
+	@Test(timeout = 6000)
 	public void testPutTimeAndSizeCorrect() {
 		long startTime = System.currentTimeMillis();
 		PersonDatabase db = new PersonDatabase();
@@ -147,7 +147,7 @@ public class PersonDatabaseTest {
 		}
 	}
 	
-	@Test(timeout = 60000)
+	@Test()
 	public void testFindWithNameRetrievesAllJohnSmiths() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < size; i++) {
@@ -194,7 +194,7 @@ public class PersonDatabaseTest {
 		}
 	}
 
-	@Test(timeout = 60000)
+	@Test(timeout = 6000)
 	public void testFindWithNameSpeed() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < size; i++) {
@@ -214,7 +214,7 @@ public class PersonDatabaseTest {
 		}		
 	}
 	
-	@Test(timeout = 60000)
+	@Test(timeout = 6000)
 	public void testFindWithNameCanFindEveryPerson() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < size; i++) {
@@ -244,7 +244,7 @@ public class PersonDatabaseTest {
 		}	
 	}
 	
-	@Test(timeout = 60000)
+	@Test(timeout = 6000)
 	public void testFindWithDateRetrievesAll2001_4_30() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < size; i++) {
@@ -268,7 +268,7 @@ public class PersonDatabaseTest {
 		}
 	}
 	
-	@Test(timeout = 60000)
+	@Test(timeout = 6000)
 	public void testFindWithDateSpeed() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < size; i++) {
@@ -288,7 +288,7 @@ public class PersonDatabaseTest {
 		}
 	}
 	
-	@Test(timeout = 60000)
+	@Test(timeout = 6000)
 	public void testFindWithDateCanFindEveryPerson() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < size; i++) {
