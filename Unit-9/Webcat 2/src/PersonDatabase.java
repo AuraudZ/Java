@@ -46,12 +46,12 @@ public class PersonDatabase {
             return true;
         }
 
-       while (true) {
-           // We need to sort both trees using the differnt helper methods
-           Node nameNode = rootOfNameTree;
-           Node bDayNode = rootOfBirthDateTree;
-           return putName(p,p.lastName,p.firstName,nameNode) ? true : putBirthDay(p,p.birthDay,p.birthMonth,p.birthYear,bDayNode);
-       }
+        while (true) {
+            // We need to sort both trees using the differnt helper methods
+            Node nameNode = rootOfNameTree;
+            Node bDayNode = rootOfBirthDateTree;
+            return putName(p, p.lastName, p.firstName, nameNode) || putBirthDay(p, p.birthDay, p.birthMonth, p.birthYear, bDayNode);
+        }
     }
 
 
@@ -206,38 +206,22 @@ public class PersonDatabase {
      * @return a list of Person objects (possibly empty)
      */
     public List<Person> find(String firstName, String lastName) {
-       return find(firstName, lastName, rootOfNameTree);
-    }
-
-    private List<Person> find (String firstName, String lastName, Node root) {
-        List<Person> result = new ArrayList<>();
-        Node runner = root;
+        List<Person> list = new ArrayList<>();
+        Node runner = rootOfNameTree;
         while (runner != null) {
-            if(runner.right == null) {
-                return result;
+            if(runner.item.firstName.equals(firstName) && runner.item.lastName.equals(lastName)) {
+                list.add(runner.item);
             }
-            if(runner.left == null) {
-                return result;
+            if(runner.left != null && runner.left.item.firstName.equals(firstName) && runner.left.item.lastName.equals(lastName)) {
+                list.add(runner.left.item);
             }
-            if (runner.item.lastName.compareTo(lastName) > 0) {
-                runner = runner.left;
+            if(runner.right != null && runner.right.item.firstName.equals(firstName) && runner.right.item.lastName.equals(lastName)) {
+                list.add(runner.right.item);
             }
-            if (runner.item.lastName.compareTo(lastName) < 0) {
-                runner = runner.right;
-            }
-            if (runner.item.lastName.compareTo(lastName) == 0) {
-                if (runner.item.firstName.compareTo(firstName) > 0) {
-                    runner = runner.left;
-                }
-                if (runner.item.firstName.compareTo(firstName) < 0) {
-                    runner = runner.right;
-                }
-                if (runner.item.firstName.compareTo(firstName) == 0) {
-                    result.add(runner.item);
-                }
-            }
+
+
         }
-        return result;
+        return list;
     }
 
 
@@ -251,33 +235,46 @@ public class PersonDatabase {
      * @return a list of Person objects (possibly empty)
      */
     public List<Person> find(int birthDay, int birthMonth, int birthYear) {
+        Integer day = birthDay;
+        Integer month = birthMonth;
+        Integer year = birthYear;
         List<Person> list = new ArrayList<Person>();
         Node current = rootOfBirthDateTree;
         while (current != null) {
-            if (current.item.birthDay == birthDay && current.item.birthMonth == birthMonth && current.item.birthYear == birthYear) {
-                list.add(current.item);
-            }
-            if(current.item.birthYear > birthYear) {
-                current = current.left;
-            }
-            if(current.item.birthYear < birthYear) {
-                current = current.right;
-            }
-            if(current.item.birthYear == birthYear) {
-                if(current.item.birthMonth > birthMonth) {
-                    current = current.left;
-                }
-                if(current.item.birthMonth < birthMonth) {
-                    current = current.right;
-                }
-                if(current.item.birthMonth == birthMonth) {
-                    if(current.item.birthDay > birthDay) {
+            if (year.compareTo(current.item.birthYear) == 0) {
+                if (month.compareTo(current.item.birthMonth) == 0) {
+                    if (day.compareTo(current.item.birthDay) == 0) {
+                        list.add(current.item);
+                    }
+                    if (day.compareTo(current.item.birthDay) < 0) {
                         current = current.left;
                     }
-                    if(current.item.birthDay < birthDay) {
+                    if (day.compareTo(current.item.birthDay) > 0) {
+
                         current = current.right;
                     }
                 }
+                if (month.compareTo(current.item.birthMonth) > 0) {
+
+                    current = current.right;
+                }
+                if (month.compareTo(current.item.birthMonth) < 0) {
+
+                    current = current.left;
+                }
+            }
+            if (year.compareTo(current.item.birthYear) > 0) {
+                current = current.right;
+            }
+            if(current == null){
+                return list;
+            }
+
+            if (year.compareTo(current.item.birthYear) < 0) {
+                if (current.left == null) {
+                    return list;
+                }
+                current = current.left;
             }
         }
         return list;
