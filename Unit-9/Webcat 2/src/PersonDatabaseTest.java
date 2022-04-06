@@ -44,7 +44,7 @@ public class PersonDatabaseTest {
 		}
 	}
 	
-	@Test(timeout = 6000)
+	@Test(timeout = 60000)
 	public void testPutNoDuplicatesAllowed() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < 12; i++) {
@@ -95,8 +95,8 @@ public class PersonDatabaseTest {
 		assertEquals(2000, john.item.birthYear);
 		
 	}
-	
-	@Test(timeout = 60000)
+
+	@Test(timeout = 70000)
 	public void testPutFirst11BirthdayNodesCorrect() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < 11; i++) {
@@ -104,6 +104,7 @@ public class PersonDatabaseTest {
 		}
 		
 		if (db.size() != 11) {
+			assertEquals(11, db.size());
 			fail("The size of the database is incorrect."
 					+ "Either size wasn't updated correctly"
 					+ " or all of the people didn't get entered.");
@@ -214,7 +215,7 @@ public class PersonDatabaseTest {
 		}		
 	}
 	
-	@Test(timeout = 6000)
+	@Test(timeout = 60000)
 	public void testFindWithNameCanFindEveryPerson() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < size; i++) {
@@ -244,7 +245,7 @@ public class PersonDatabaseTest {
 		}	
 	}
 	
-	@Test(timeout = 6000)
+	@Test(timeout = 70000)
 	public void testFindWithDateRetrievesAll2001_4_30() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < size; i++) {
