@@ -96,7 +96,7 @@ public class PersonDatabaseTest {
 		
 	}
 	
-	@Test(timeout = 6000)
+	@Test(timeout = 60000)
 	public void testPutFirst11BirthdayNodesCorrect() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < 11; i++) {
@@ -147,7 +147,7 @@ public class PersonDatabaseTest {
 		}
 	}
 	
-	@Test()
+	@Test(timeout = 60000)
 	public void testFindWithNameRetrievesAllJohnSmiths() {
 		PersonDatabase db = new PersonDatabase();
 		for (int i = 0; i < size; i++) {
