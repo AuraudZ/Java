@@ -45,29 +45,25 @@ public class PersonDatabase {
             size++;
             return true;
         }
-
+        Integer birthDay = p.birthDay;
+        Integer birthMonth = p.birthMonth;
+        Integer birthYear = p.birthYear;
+        Node runner = rootOfBirthDateTree;
+        Node root = rootOfBirthDateTree;
         while (true) {
-            // We need to sort both trees using the differnt helper methods
-            Node nameNode = rootOfNameTree;
-            Node bDayNode = rootOfBirthDateTree;
-            return putName(p, p.lastName, p.firstName, nameNode) || putBirthDay(p, p.birthDay, p.birthMonth, p.birthYear, bDayNode);
-        }
-    }
+            // Puts in the name tree
+            if (runner.item.firstName.equals(p.firstName) && runner.item.lastName.equals(p.lastName)) {
+                if (birthDaysEqual(runner.item, p)) {
+                    return false;
+                }
+            }
 
 
-    private boolean putBirthDay(Person p, int birthDay, int birthMonth, int birthYear, Node root) {
-        //leverage
-        if (root == null) {
-            root = new Node(p);
-            size++;
-            return true;
-        }
-        Node runner = root;
-        while (true) {
+            // Puts in the birthdate tree
             if (p.equals(runner.item)) {
                 return false;
             }
-            if (birthDaysEqual(p, root.item) && namesEqual(p, root.item)) {
+            if (birthDaysEqual(p, rootOfBirthDateTree.item) && namesEqual(p, root.item)) {
                 return false;
             }
             if (birthYear < runner.item.birthYear) {
@@ -115,10 +111,14 @@ public class PersonDatabase {
                         }
                         runner = runner.right;
                     }
+                    return false;
                 }
             }
         }
     }
+
+
+
 
     /**
      * Helper method for put
