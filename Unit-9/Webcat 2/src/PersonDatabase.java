@@ -41,19 +41,19 @@ public class PersonDatabase {
 
         if (rootOfNameTree == null && rootOfBirthDateTree == null) {
             rootOfNameTree = new Node(p);
-            size++;
-            Node current = rootOfNameTree;
-            return putName(p, p.lastName, p.firstName, current.right) || putName(p, p.firstName, p.lastName, current.left);
-        }
-
-        if(rootOfBirthDateTree == null) {
             rootOfBirthDateTree = new Node(p);
             size++;
-            Node current = rootOfBirthDateTree;
-            return putBirthDay(p, p.birthDay, p.birthMonth, p.birthYear, current.right) || putBirthDay(p, p.birthDay, p.birthMonth, p.birthYear, current.left);
+            return true;
         }
-        return false;
+
+       while (true) {
+           // We need to sort both trees using the differnt helper methods
+           Node nameNode = rootOfNameTree;
+           Node bDayNode = rootOfBirthDateTree;
+           return putName(p,p.lastName,p.firstName,nameNode) ? true : putBirthDay(p,p.birthDay,p.birthMonth,p.birthYear,bDayNode);
+       }
     }
+
 
     private boolean putBirthDay(Person p, int birthDay, int birthMonth, int birthYear, Node root) {
         //leverage
@@ -63,7 +63,7 @@ public class PersonDatabase {
             return true;
         }
         Node runner = root;
-        while (runner != null) {
+        while (true) {
             if (p.equals(runner.item)) {
                 return false;
             }
@@ -118,7 +118,6 @@ public class PersonDatabase {
                 }
             }
         }
-        return false;
     }
 
     /**
@@ -207,10 +206,41 @@ public class PersonDatabase {
      * @return a list of Person objects (possibly empty)
      */
     public List<Person> find(String firstName, String lastName) {
+       return find(firstName, lastName, rootOfNameTree);
+    }
+
+    private List<Person> find (String firstName, String lastName, Node root) {
         List<Person> result = new ArrayList<>();
-        Node runner = rootOfNameTree;
+        Node runner = root;
+        while (runner != null) {
+            if(runner.right == null) {
+                return result;
+            }
+            if(runner.left == null) {
+                return result;
+            }
+            if (runner.item.lastName.compareTo(lastName) > 0) {
+                runner = runner.left;
+            }
+            if (runner.item.lastName.compareTo(lastName) < 0) {
+                runner = runner.right;
+            }
+            if (runner.item.lastName.compareTo(lastName) == 0) {
+                if (runner.item.firstName.compareTo(firstName) > 0) {
+                    runner = runner.left;
+                }
+                if (runner.item.firstName.compareTo(firstName) < 0) {
+                    runner = runner.right;
+                }
+                if (runner.item.firstName.compareTo(firstName) == 0) {
+                    result.add(runner.item);
+                }
+            }
+        }
         return result;
     }
+
+
     /**
      * Returns a list of all Person objects in the database with the given birth date. This method
      * should search in the birth date tree.
