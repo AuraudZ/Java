@@ -224,21 +224,7 @@ public class PersonDatabase {
     return p.birthDay < item.birthDay;
   }
 
-  private boolean birthDaySmaller(Person p1, int birthYear, int birthMonth, int birthDay) {
-    return p1.birthYear < birthYear
-        || (p1.birthYear == birthYear && p1.birthMonth < birthMonth)
-        || (p1.birthYear == birthYear && p1.birthMonth == birthMonth && p1.birthDay < birthDay);
-  }
-
-  private boolean birthDayBigger(Person item, int birthYear, int birthMonth, int birthDay) {
-    return item.birthYear > birthYear
-        || (item.birthYear == birthYear && item.birthMonth > birthMonth)
-        || (item.birthYear == birthYear
-            && item.birthMonth == birthMonth
-            && item.birthDay > birthDay);
-  }
-
-  // ***** For testing purposes
+    // ***** For testing purposes
   public Node getNameRoot() {
     return rootOfNameTree;
   }
