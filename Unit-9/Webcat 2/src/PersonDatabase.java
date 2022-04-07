@@ -50,43 +50,27 @@ public class PersonDatabase {
 
     private boolean putBirthDay(Person p) {
         Node runner = rootOfBirthDateTree;
-        Node insert = new Node(p);
-
         if (rootOfBirthDateTree == null) {
             rootOfBirthDateTree = new Node(p);
             return true;
         }
-        if (runner == null) {
-            rootOfBirthDateTree = insert;
-            return true;
-        }
-        int comp;
         while (true) {
-            comp = compareBday(runner.item, insert);
-            if (comp > 0) { // Older so we need to right
+            if(p.equals(runner.item)) {
+                return false;
+            }
+            if (birthGreater(p, runner.item)) {
                 if (runner.right == null) {
-                    runner.right = insert;
+                    runner.right = new Node(p);
                     return true;
                 }
                 runner = runner.right;
-            } else if (comp < 0) { // Younger so we need to left
+            }
+            else {
                 if (runner.left == null) {
-                    runner.left = insert;
+                    runner.left = new Node(p);
                     return true;
                 }
                 runner = runner.left;
-            } else { // Equal so we need to check if birthdays are equal
-                String insName = p.lastName + ", " + p.firstName; // Just concatenate the names so it's easier to compare
-                String curName = runner.item.lastName + ", " + runner.item.firstName;
-                if (insName.equals(curName)) {
-                    return false;
-                } else {
-                    if (runner.left == null) {
-                        runner.left = insert;
-                        return true;
-                    }
-                    runner = runner.left;
-                }
             }
         }
     }
@@ -95,14 +79,13 @@ public class PersonDatabase {
         Node runner = rootOfNameTree;
         if (rootOfNameTree == null) {
             rootOfNameTree = new Node(p);
-            size++;
             return true;
         }
         while (true) {
             if (p.equals(runner.item)) {
                 return false;
             }
-            if (nameLess(p, runner.item)) {
+            if (nameGreater(p, runner.item)) {
                 if (runner.right == null) {
                     runner.right = new Node(p);
                 }
@@ -116,7 +99,30 @@ public class PersonDatabase {
         }
     }
 
-    private boolean nameLess(Person p1, Person p2) {
+    private boolean birthGreater(Person p1, Person p2) { // Checks if p1's birthdate is greater than p2's
+        if(p1.birthYear > p2.birthYear) {
+            return true;
+        }
+        if(p1.birthYear < p2.birthYear) {
+            return false;
+        }
+        if(p1.birthMonth > p2.birthMonth) {
+            return true;
+        }
+        if(p1.birthMonth < p2.birthMonth) {
+            return false;
+        }
+        if(p1.birthDay > p2.birthDay) {
+            return true;
+        }
+        if(p1.birthDay < p2.birthDay) {
+            return false;
+        }
+        return false;
+    }
+
+
+    private boolean nameGreater(Person p1, Person p2) { // Checks if p1's name is lexicographically greater than p2's
         // Check if the last names are the same
         int compLast = p1.lastName.compareTo(p2.lastName);
         if (compLast > 0) {
@@ -134,18 +140,6 @@ public class PersonDatabase {
         return false;
     }
 
-
-
-
-    private boolean birthDaysEqual(Person p1, Person p2) {
-        return p1.birthDay == p2.birthDay
-                && p1.birthMonth == p2.birthMonth
-                && p1.birthYear == p2.birthYear;
-    }
-
-    private boolean namesEqual(Person p1, Person p2) {
-        return p1.lastName.equals(p2.lastName) && p1.firstName.equals(p2.firstName);
-    }
 
     /**
      * Returns a list of all Person objects in the database with the given name. This method should
@@ -193,25 +187,45 @@ public class PersonDatabase {
      * @return a list of Person objects (possibly empty)
      */
     public List<Person> find(int birthDay, int birthMonth, int birthYear) {
-        List<Person> results = new ArrayList<>();
-        Person temp = new Person("", "", birthDay, birthMonth, birthYear);
-        return find(temp, rootOfBirthDateTree, results);
+        List<Person> result = new ArrayList<>();
+        Person t = new Person("","",birthDay, birthMonth, birthYear);
+        return find(t,rootOfBirthDateTree,result);
     }
 
-    private List<Person> find(Person p, Node runner, List<Person> result) {
-        if (runner == null) {
+    private List<Person> find(Person p, Node root, List<Person> result) {
+        if (root == null) {
             return result;
         }
+        if (birthGreater(p, root.item)) {
+            return find(p, root.right, result);
+        }
+        if (birthLess(p, root.item)) {
+            return find(p, root.left, result);
+        }
+        result.add(root.item);
+        return find(p, root.left, result);
+    }
 
-        int diff = compareBday(p, runner);
-        if (diff == 0) { // if the birthdays are equal then we found the person
-            result.add(runner.item);
-            return find(p, runner.left, result); // We need to go left because we want to find all people with the same birthday
+    private boolean birthLess(Person p, Person item) {
+        if (p.birthYear < item.birthYear) {
+            return true;
         }
-        if (diff > 0) {
-            return find(p, runner.right, result);
+        if (p.birthYear > item.birthYear) {
+            return false;
         }
-        return find(p, runner.left, result);
+        if (p.birthMonth < item.birthMonth) {
+            return true;
+        }
+        if (p.birthMonth > item.birthMonth) {
+            return false;
+        }
+        if (p.birthDay < item.birthDay) {
+            return true;
+        }
+        if (p.birthDay > item.birthDay) {
+            return false;
+        }
+        return false;
     }
 
     private int compareBday(Person person, Node node) {
