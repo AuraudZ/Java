@@ -50,7 +50,7 @@ public class PersonDatabaseTest {
 		for (int i = 0; i < 12; i++) {
 			db.put(personArray[i]);
 		}
-		
+		assertEquals(12, db.size());
 		assertFalse(db.put(personArray[4]));
 		assertFalse(db.put(personArray[3]));
 		assertFalse(db.put(personArray[7]));
