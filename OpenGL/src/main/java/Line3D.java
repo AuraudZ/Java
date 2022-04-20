@@ -91,7 +91,6 @@ public class Line3D implements GLEventListener {
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        // TODO Auto-generated method stub
         final GL2 gl = drawable.getGL().getGL2();
         if( height <= 0 )
             height = 1;
@@ -101,7 +100,7 @@ public class Line3D implements GLEventListener {
         gl.glMatrixMode( GL2.GL_PROJECTION );
         gl.glLoadIdentity();
 
-        glu.gluPerspective( 45.0f, h, 1.0, 20.0 );
+        glu.gluPerspective( 90.0f, h, 1.0, 20.0 );
         gl.glMatrixMode( GL2.GL_MODELVIEW );
         gl.glLoadIdentity();
     }
