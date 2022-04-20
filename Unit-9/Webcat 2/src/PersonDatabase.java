@@ -57,7 +57,7 @@ public class PersonDatabase {
       if (p.equals(runner.item)) {
         return false;
       }
-      if (birthGreater(p, runner.item)) {
+      if (birthGreater(p, runner.item)) { // Helper method to check if p's birthdate is greater than the runner
         if (runner.right == null) {
           runner.right = new Node(p);
           return true;

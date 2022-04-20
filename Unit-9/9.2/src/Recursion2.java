@@ -8,6 +8,22 @@ public class Recursion2 {
     }
 
 
+    public boolean strCopies(String str, String sub, int n) {
+        //Given a string and a non-empty substring sub, compute recursively if at least n copies of sub appear in the string somewhere,
+        // possibly with overlapping. N will be non-negative.
+        if (n == 0) {
+            return true;
+        }
+        if (str.length() < sub.length()) {
+            return false;
+        }
+        if (str.substring(0, sub.length()).equals(sub)) {
+            return strCopies(str.substring(sub.length()), sub, n - 1);
+        }
+        return strCopies(str.substring(1), sub, n);
+    }
+
+
     public boolean groupSum(int start, int[] nums, int target) {
         // Base Case
         if (start >= nums.length) {
@@ -16,6 +32,7 @@ public class Recursion2 {
         // Recursive Case
         return groupSum(start + 1, nums, target - nums[start]) || groupSum(start + 1, nums, target);
     }
+
     /*
     Given an array of ints, is it possible to choose a group of some of the ints,
     beginning at the start index, such that the group sums to the given target?
@@ -40,7 +57,7 @@ public class Recursion2 {
             return target == 0;
         }
 
-        if(nums[start] % 5 == 0) {
+        if (nums[start] % 5 == 0) {
             if (start + 1 < nums.length && nums[start + 1] == 1) {
                 return groupSum5(start + 2, nums, target - nums[start]);
             }
@@ -62,7 +79,6 @@ public class Recursion2 {
         // Recursive Case
         return groupNoAdj(start + 2, nums, target - nums[start]) || groupNoAdj(start + 1, nums, target);
     }
-
 
 
     //Given an array of ints, is it possible to choose a group of
@@ -88,16 +104,13 @@ public class Recursion2 {
         return groupSumClump(i, nums, target - nums[start]) || groupSumClump(i, nums, target);
     }
 
-  
 
-
-
-    public static  int equationSolver() {
-       double a = 3*Math.pow(-2,4);
-       double b = -6*Math.pow(-2,3);
-       double c = -5*-2;
-       double d = a + b + c+10;
-       return (int) d;
-  }
+    public static int equationSolver() {
+        double a = 3 * Math.pow(-2, 4);
+        double b = -6 * Math.pow(-2, 3);
+        double c = -5 * -2;
+        double d = a + b + c + 10;
+        return (int) d;
+    }
 
 }
