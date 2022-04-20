@@ -38,9 +38,11 @@ public class OBJParser {
                     continue;
                 }
                 String command = tokens[0];
+
+                Vertex3 vertex;
                 switch (command) {
                     case "o" -> obj.name = tokens[1];
-                    case "v" -> obj.vertices = parseVerts(tokens);
+                    case "v" -> obj.vertices.add(parseVert(tokens));
                     case "vn" -> obj.normals = Arrays.copyOfRange(tokens, 1, tokens.length);
                     case "f" -> obj.faces = Arrays.copyOfRange(tokens, 1, tokens.length);
                     case "g" -> obj.group = tokens[1];
@@ -56,22 +58,20 @@ public class OBJParser {
     }
 
 
-    private List<Vertex3> parseVerts(String[] tokens) {
-        List<Vertex3> verts = new ArrayList<>();
-        Vertex3 vertex = Arrays.stream(Arrays.stream(tokens).skip(1).mapToDouble(Float::parseFloat).toArray()).mapToObj(Vertex3::new).reduce(new Vertex3(), (a, b) -> {
-            a.x += b.x;
-            a.y += b.y;
-            a.z += b.z;
-            return a;
-        });
-        verts.add(vertex);
-        return verts;
+    private Vertex3 parseVert(String[] tokens) {
+        return Arrays.stream(Arrays.stream(tokens).skip(1).mapToDouble(Float::parseFloat).toArray()).mapToObj(Vertex3::new).reduce(new Vertex3(), (a, b) -> {
+                a.x += b.x;
+                a.y += b.y;
+                a.z += b.z;
+                return a;
+            });
     }
 
     public static void main(String[] args) {
         OBJParser parser = new OBJParser();
         OBJ obj = parser.parse("C:\\Users\\aubte\\Desktop\\Cube.obj");
         System.out.println(obj.name);
+        System.out.println(obj.vertices.get(7));
         // System.out.println(Arrays.toString(obj.vertices));
 
     }

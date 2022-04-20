@@ -7,13 +7,15 @@ import java.util.Arrays;
 
 public class OBJRenderer implements GLEventListener {
     private final GLU glu = new GLU();
-
+    OBJ obj;
+    private float rtri = 0.0f;
 
 
     @Override
     public void init(GLAutoDrawable drawable) {
         OBJParser parser = new OBJParser();
-        OBJ obj = parser.parse("C:\\Users\\aubte\\Desktop\\Cube.obj");
+       obj = parser.parse("C:\\Users\\aubte\\Desktop\\Cube.obj");
+
 
         final GL2 gl = drawable.getGL().getGL2();
         gl.glShadeModel( GL2.GL_SMOOTH );
@@ -32,21 +34,16 @@ public class OBJRenderer implements GLEventListener {
     @Override
     public void display(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
-        gl.glClear( GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT );
-        gl.glLoadIdentity();
-
-        gl.glTranslatef( 0f, 0f, -5f );
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+        gl.glLoadIdentity(); // Reset The View
+        gl.glTranslatef( -0.5f,0.0f,-6.0f ); // Move the triangle
+        gl.glRotatef( rtri, 0.0f, 1.0f, 0.0f );
         gl.glBegin( GL2.GL_TRIANGLES );
-        gl.glColor3f( 0.0f, 1.0f, 0.0f );
-      //  gl.glVertex3f( 1.0f, 2.0f, 0.0f ); // Top
-
-        gl.glColor3f( 0.0f, 0.0f, 1.0f );
-       // gl.glVertex3f( -1.0f, -1.0f, -1.0f ); // Left
-
-        gl.glColor3f( 0.0f, 1.0f, 0.0f );
-        //gl.glVertex3f( -1.0f, -1.0f, 1.0f ); // Right
-
-
+        for(Vertex3 v : obj.vertices) {
+            gl.glColor3f( 0.0f, 1.0f, 0.0f );
+            System.out.println(v.x + " " + v.y + " " + v.z);
+            gl.glVertex3f( v.x, v.y, v.z );
+        }
         gl.glEnd();
         gl.glFlush();
     }
