@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group 'me.allusive'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.testng:testng:7.5'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    implementation group: 'org.jogamp.gluegen', name: 'gluegen-rt-main', version: '2.3.2'
+    implementation group: 'org.jogamp.jogl', name: 'jogl-all-main', version: '2.3.2'
+    runtimeClasspath(
+        'org.jogamp.gluegen:gluegen-rt-main',
+        'org.jogamp.jogl:jogl-all-main'
+    )
+}
+
