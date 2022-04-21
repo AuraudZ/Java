@@ -26,8 +26,6 @@ public class Main {
             }
         });
 
-        // Frame to open a file
-
 
         jframe.getContentPane().add(gljpanel, BorderLayout.CENTER);
         jframe.setSize(640, 480);
