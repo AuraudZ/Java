@@ -16,7 +16,7 @@ public class MainMenu extends JPanel {
 
 
       public MainMenu() {
-            gljpanel.addGLEventListener(new Line3D());
+            gljpanel.addGLEventListener(new Cube());
             startButton = new JButton("Start");
             exitButton = new JButton("Exit");
             setLayout(new GridLayout(2,1));
@@ -26,12 +26,12 @@ public class MainMenu extends JPanel {
             startButton.addActionListener(e -> {
                   JFrame frame = (JFrame) SwingUtilities.getRoot(startButton);
                   frame.getContentPane().removeAll();
+                  frame.setSize(800, 600);
                   frame.getContentPane().add(gljpanel);
                   gljpanel.requestFocusInWindow();
 
                   FPSAnimator animator = new FPSAnimator(gljpanel, 60);
                   animator.start();
-                  frame.setSize(800, 600);
                   frame.pack();
             });
 

@@ -8,25 +8,17 @@ public class OBJParser {
 
     private List<Vertex3> vertices = new ArrayList<>();
 
+    public static void main(String[] args) throws IOException {
+        OBJParser parser = new OBJParser();
+        OBJ obj = parser.parse("C:\\Users\\aubte\\Desktop\\Cube.obj");
+        System.out.println(obj.name);
+        System.out.println(obj.vertices.get(7));
+        // System.out.println(Arrays.toString(obj.vertices));
 
-    static class Face {
-        int[] v;
-
-        Face(int[] v) {
-            this.v = v;
-        }
-
-        @Override
-        public String toString() {
-            return "Face{" +
-                    "v=" + Arrays.toString(v) +
-                    '}';
-        }
     }
 
     public OBJ parse(String filename) throws IOException {
         OBJ obj = new OBJ();
-
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             String line;
             while ((line = reader.readLine()) != null) {
@@ -64,13 +56,19 @@ public class OBJParser {
             });
     }
 
-    public static void main(String[] args) throws IOException {
-        OBJParser parser = new OBJParser();
-        OBJ obj = parser.parse("C:\\Users\\aubte\\Desktop\\Cube.obj");
-        System.out.println(obj.name);
-        System.out.println(obj.vertices.get(7));
-        // System.out.println(Arrays.toString(obj.vertices));
+    static class Face {
+        int[] v;
 
+        Face(int[] v) {
+            this.v = v;
+        }
+
+        @Override
+        public String toString() {
+            return "Face{" +
+                    "v=" + Arrays.toString(v) +
+                    '}';
+        }
     }
 
 

@@ -2,6 +2,8 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.util.glsl.sdk.CompileShaderNVidia;
+
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -48,6 +50,7 @@ public class OBJRenderer implements GLEventListener {
             gl.glColor3f( 0.0f, 1.0f, 0.0f );
             System.out.println(v.x + " " + v.y + " " + v.z);
             gl.glVertex3f( v.x, v.y, v.z );
+
         }
         gl.glEnd();
         gl.glFlush();
