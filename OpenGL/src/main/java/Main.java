@@ -14,9 +14,6 @@ public class Main {
     public static void main(String[] args) {
         GLProfile glprofile = GLProfile.getDefault();
         GLCapabilities glcapabilities = new GLCapabilities(glprofile);
-        GLJPanel gljpanel = new GLJPanel(glcapabilities);
-
-        gljpanel.addGLEventListener(new OBJRenderer());
 
         final JFrame jframe = new JFrame("One Triangle Swing GLJPanel");
         jframe.addWindowListener(new WindowAdapter() {
@@ -26,8 +23,7 @@ public class Main {
             }
         });
 
-
-        jframe.getContentPane().add(gljpanel, BorderLayout.CENTER);
+        jframe.getContentPane().add(new MainMenu(), BorderLayout.CENTER);
         jframe.setSize(640, 480);
         jframe.setVisible(true);
 

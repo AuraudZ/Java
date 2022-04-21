@@ -24,9 +24,9 @@ public class OBJParser {
         }
     }
 
-    public OBJ parse(String filename) {
+    public OBJ parse(String filename) throws IOException {
         OBJ obj = new OBJ();
-        try {
+
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             String line;
             while ((line = reader.readLine()) != null) {
@@ -51,9 +51,6 @@ public class OBJParser {
                 }
             }
             reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return obj;
     }
 
@@ -67,7 +64,7 @@ public class OBJParser {
             });
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         OBJParser parser = new OBJParser();
         OBJ obj = parser.parse("C:\\Users\\aubte\\Desktop\\Cube.obj");
         System.out.println(obj.name);

@@ -3,6 +3,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.glu.GLU;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 public class OBJRenderer implements GLEventListener {
@@ -14,7 +15,11 @@ public class OBJRenderer implements GLEventListener {
     @Override
     public void init(GLAutoDrawable drawable) {
         OBJParser parser = new OBJParser();
-       obj = parser.parse("C:\\Users\\aubte\\Desktop\\Cube.obj");
+        try {
+            obj = parser.parse("C:\\Users\\aubte\\Desktop\\Cube.obj");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         final GL2 gl = drawable.getGL().getGL2();
