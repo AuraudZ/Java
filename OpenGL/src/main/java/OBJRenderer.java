@@ -131,6 +131,20 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             pitch = 70;
         if(pitch<=-60)
             pitch=-60;
+
+        if(forward) {
+            camX += (float) Math.sin(Math.toRadians(yaw)) * 0.1f;
+        }
+        if(backward) {
+            camX -= (float) Math.sin(Math.toRadians(yaw)) * 0.1f;
+        }
+        if(left) {
+            camZ += (float) Math.cos(Math.toRadians(yaw)) * 0.1f;
+        }
+        if(right) {
+            camZ -= (float) Math.cos(Math.toRadians(yaw)) * 0.1f;
+        }
+
         GL2 gl = GLContext.getCurrentGL().getGL2();
         gl.glRotatef(-pitch,1.0f,0.0f,0.0f); // Along X axis
         gl.glRotatef(-yaw,0.0f,1.0f,0.0f);    //Along Y axis
