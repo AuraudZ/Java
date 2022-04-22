@@ -3,6 +3,7 @@ import de.javagl.obj.ObjData;
 import de.javagl.obj.ObjReader;
 import de.javagl.obj.ObjUtils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +19,11 @@ public class OBJParser {
 
     public static void main(String[] args) {
         try {
-            InputStream objInputStream = new FileInputStream("C:\\Users\\aubte\\Desktop\\cube.obj");
+            // Print the file path to the console
+            String cwd =  System.getProperty("user.dir");
+            System.out.println(cwd);
+            File objFile = new File(cwd+ "/src/main/resources/objs/cube.obj");
+            InputStream objInputStream = new FileInputStream(objFile);
             obj = ObjUtils.convertToRenderable(
                     ObjReader.read(objInputStream));
             IntBuffer indices = ObjData.getFaceVertexIndices(obj);

@@ -2,14 +2,17 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.glu.GLU;
-import de.javagl.obj.*;
+import de.javagl.obj.Obj;
+import de.javagl.obj.ObjData;
 import de.javagl.obj.ObjReader;
 import de.javagl.obj.ObjUtils;
 
-import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -31,12 +34,12 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener {
     @Override
     public void init(GLAutoDrawable drawable) {
         GL2 gl = drawable.getGL().getGL2();
-
+        String cwd =  System.getProperty("user.dir");
         File vertexShader = new File("shaders/default.vs");
         File fragmentShader = new File("shaders/default.fs");
 
         try {
-            InputStream objInputStream = new FileInputStream("C:\\Users\\aubte\\Desktop\\cube2.obj");
+            InputStream objInputStream = new FileInputStream(cwd+ "/src/main/resources/objs/cube.obj");
             obj = ObjUtils.convertToRenderable(
                     ObjReader.read(objInputStream));
             IntBuffer indices = ObjData.getFaceVertexIndices(obj);
@@ -112,8 +115,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener {
         xrot += y;
         yrot += x;
         zrot += z;
-
-
         rtri += 0.5f;
     }
 
