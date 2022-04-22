@@ -1,5 +1,6 @@
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLContext;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.glu.GLU;
 import de.javagl.obj.Obj;
@@ -7,6 +8,8 @@ import de.javagl.obj.ObjData;
 import de.javagl.obj.ObjReader;
 import de.javagl.obj.ObjUtils;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
@@ -16,12 +19,13 @@ import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class OBJRenderer implements GLEventListener, MouseMotionListener {
+public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyListener {
     private final GLU glu = new GLU();
     private float rtri = 0.0f;
-    private float xrot = 0.0f;
-    private float yrot = 0.0f;
-    private float zrot = 0.0f;
+
+    private float camX, camZ;
+
+    float yaw , pitch;
     Obj obj;
 
 
@@ -74,11 +78,10 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener {
         gl.glEnable(GL2.GL_DEPTH_TEST);
         gl.glDepthFunc(GL2.GL_LEQUAL);
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
-
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity(); // Reset The View
         gl.glTranslatef(-0.5f, 0.0f, -6.0f); // Move the triangle
-        gl.glRotatef(rtri, xrot, yrot, zrot);
+        camera();
         gl.glBegin(GL2.GL_TRIANGLES);
 
 
@@ -109,17 +112,70 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener {
     @Override
     public void mouseDragged(MouseEvent e) {
         // Convert e.getX() and e.getY() to a float between -1 and 1 and apply that to a rotation in to allow up and down roation
-        float x = (float) e.getX() / (float) e.getComponent().getWidth() * 2 - 1;
-        float y = (float) e.getY() / (float) e.getComponent().getHeight() * 2 - 1;
-        float z = (float) e.getY() / (float) e.getComponent().getHeight() * 2 - 1 + e.getX() / (float) e.getComponent().getWidth() * 2 - 1;
-        xrot += y;
-        yrot += x;
-        zrot += z;
-        rtri += 0.5f;
+        float x = (float) e.getX();
+        float y = (float) e.getY();
+        int width = e.getComponent().getWidth();
+        int height = e.getComponent().getHeight();
+        int dev_x,dev_y;
+        dev_x = (int) ((width/2)-x);
+        dev_y = (int) ((height/2)-y);
+
+        /* apply the changes to pitch and yaw*/
+        yaw+=(float)dev_x/10.0;
+        pitch+=(float)dev_y/10.0;
+
+    }
+
+    private void camera() {
+        if(pitch>=70)
+            pitch = 70;
+        if(pitch<=-60)
+            pitch=-60;
+        GL2 gl = GLContext.getCurrentGL().getGL2();
+        gl.glRotatef(-pitch,1.0f,0.0f,0.0f); // Along X axis
+        gl.glRotatef(-yaw,0.0f,1.0f,0.0f);    //Along Y axis
+        gl.glTranslatef(-camX,0.0f,-camZ);  //new code
+
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
 
     }
+
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        char key = e.getKeyChar();
+        if(key == 'w'){
+
+        }
+    }
+    boolean forward,backward,left,right;
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()){
+            case KeyEvent.VK_W:
+                forward = true;
+                break;
+            case KeyEvent.VK_S:
+                backward = true;
+                break;
+            case KeyEvent.VK_A:
+                left = true;
+                break;
+            case KeyEvent.VK_D:
+                right = true;
+                break;
+        }
+    }
+
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+
+
 }
