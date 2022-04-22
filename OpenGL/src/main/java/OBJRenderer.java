@@ -5,7 +5,10 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.glsl.sdk.CompileShaderNVidia;
 
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 public class OBJRenderer implements GLEventListener {
@@ -13,24 +16,24 @@ public class OBJRenderer implements GLEventListener {
     OBJ obj;
     private float rtri = 0.0f;
 
-
     @Override
     public void init(GLAutoDrawable drawable) {
-        OBJParser parser = new OBJParser();
+
+
         try {
-            obj = parser.parse("C:\\Users\\aubte\\Desktop\\Cube.obj");
-        } catch (IOException e) {
+            InputStream objInputStream =
+                    new FileInputStream("./data/simpleSample.obj");
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-
         final GL2 gl = drawable.getGL().getGL2();
-        gl.glShadeModel( GL2.GL_SMOOTH );
-        gl.glClearColor( 0f, 0f, 0f, 0f );
-        gl.glClearDepth( 1.0f );
-        gl.glEnable( GL2.GL_DEPTH_TEST );
-        gl.glDepthFunc( GL2.GL_LEQUAL );
-        gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST );
+        gl.glShadeModel(GL2.GL_SMOOTH);
+        gl.glClearColor(0f, 0f, 0f, 0f);
+        gl.glClearDepth(1.0f);
+        gl.glEnable(GL2.GL_DEPTH_TEST);
+        gl.glDepthFunc(GL2.GL_LEQUAL);
+        gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
     }
 
     @Override
@@ -41,20 +44,30 @@ public class OBJRenderer implements GLEventListener {
     @Override
     public void display(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
+
+        gl.glShadeModel(GL2.GL_SMOOTH);
+        gl.glClearColor(0f, 0f, 0f, 0f);
+        gl.glClearDepth(1.0f);
+        gl.glEnable(GL2.GL_DEPTH_TEST);
+        gl.glDepthFunc(GL2.GL_LEQUAL);
+        gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
+
+
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity(); // Reset The View
-        gl.glTranslatef( -0.5f,0.0f,-6.0f ); // Move the triangle
-        gl.glRotatef( rtri, 0.0f, 1.0f, 0.0f );
-        gl.glBegin( GL2.GL_TRIANGLES );
-        for(Vertex3 v : obj.vertices) {
-            gl.glColor3f( 0.0f, 1.0f, 0.0f );
-            System.out.println(v.x + " " + v.y + " " + v.z);
-            gl.glVertex3f( v.x, v.y, v.z );
+        gl.glTranslatef(-0.5f, 0.0f, -6.0f); // Move the triangle
+        gl.glRotatef(rtri, 0.0f, 1.0f, 0.0f);
 
-        }
+
+        gl.glBegin(GL2.GL_QUADS);
+        // Front Face
+        gl.glColor3f(1.0f, 0.0f, 0.0f);
+
         gl.glEnd();
-        gl.glFlush();
+        rtri += 0.2f;
+
     }
+
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {

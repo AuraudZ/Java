@@ -29,7 +29,6 @@ public class MainMenu extends JPanel {
                   frame.setSize(800, 600);
                   frame.getContentPane().add(gljpanel);
                   gljpanel.requestFocusInWindow();
-
                   FPSAnimator animator = new FPSAnimator(gljpanel, 60);
                   animator.start();
                   frame.pack();

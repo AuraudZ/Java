@@ -15,5 +15,6 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     implementation group: 'org.jogamp.gluegen', name: 'gluegen-rt-main', version: '2.3.2'
     implementation group: 'org.jogamp.jogl', name: 'jogl-all-main', version: '2.3.2'
+    implementation "de.javagl:obj:0.3.0"
 }
 

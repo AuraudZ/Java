@@ -7,8 +7,8 @@ public class OBJ {
     public String group;
     public String smooth;
     public List<Vertex3> vertices;
-    public String[] normals;
-    public String[] faces;
+    public List<Vertex3> normals;
+    public String faces;
 
 
     public OBJ() {
@@ -17,8 +17,8 @@ public class OBJ {
         this.group = "";
         this.smooth = "";
         this.vertices = new ArrayList<Vertex3>();
-        this.normals = new String[0];
-        this.faces = new String[0];
+        this.normals = new ArrayList<Vertex3>();
+        this.faces = String.valueOf(new ArrayList<OBJParser.Face>());
     }
 
 
