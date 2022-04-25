@@ -2,6 +2,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
+import com.jogamp.opengl.util.glsl.*;
 import de.javagl.obj.Obj;
 import de.javagl.obj.ObjData;
 import de.javagl.obj.ObjReader;
@@ -21,7 +22,12 @@ import java.nio.IntBuffer;
 public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyListener {
   private static final float TO_RADIANS = (float) (Math.PI / 180.0f);
   private final GLU glu = new GLU();
-  Camera camera = new Camera();
+
+  ShaderProgram program = new ShaderProgram();
+  ShaderUtil shaderUtil;
+
+
+
   float yaw, pitch;
   Obj obj;
   FloatBuffer vertices;
@@ -33,9 +39,22 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
   @Override
   public void init(GLAutoDrawable drawable) {
+
+
+
     GL2 gl = drawable.getGL().getGL2();
 
-    File vertexShader = new File("shaders/default.vs");
+    char[] vertexShaderSource = null;
+    char[] fragmentShaderSource = null;
+    String[] shaderList = { "shaders/fragment.glsl", "shaders/shader.frag" };
+    vertexShaderSource = readShaderSource("vertex.glsl");
+    fragmentShaderSource = readShaderSource(cwd+ "/src/main/resources/fragment.glsl");
+    ShaderCode frag = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER,1,this.getClass(),shaderList,false);
+    program.add(frag);
+    ShaderCode vert = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER,1,this.getClass(),shaderList,false);
+    System.out.println(cwd + "/src/main/resources/fragment.glsl");
+
+
     File fragmentShader = new File("shaders/default.fs");
 
     try {
@@ -55,6 +74,22 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     gl.glEnable(GL2.GL_DEPTH_TEST);
     gl.glDepthFunc(GL2.GL_LEQUAL);
     gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
+  }
+
+  private char[] readShaderSource(String s) {
+    StringBuilder sb = new StringBuilder();
+    try {
+      BufferedReader reader = new BufferedReader(new FileReader(s));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        sb.append(line).append("\n");
+      }
+      reader.close();
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+    return sb.toString().toCharArray();
   }
 
   @Override
