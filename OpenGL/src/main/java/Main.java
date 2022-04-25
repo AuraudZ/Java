@@ -1,3 +1,4 @@
+import com.jogamp.opengl.FPSCounter;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.awt.GLJPanel;
@@ -18,6 +19,7 @@ public class Main {
         OBJRenderer objrenderer = new OBJRenderer();
         gljpanel.addGLEventListener(objrenderer);
         gljpanel.addMouseMotionListener(objrenderer);
+        gljpanel.addKeyListener(objrenderer);
         FPSAnimator animator = new FPSAnimator(gljpanel, 60);
         final JFrame jframe = new JFrame("One Triangle Swing GLJPanel");
         jframe.addWindowListener(new WindowAdapter() {

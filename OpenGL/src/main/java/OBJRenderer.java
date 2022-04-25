@@ -21,52 +21,37 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     private static final float TO_RADIANS = (float) (Math.PI / 180.0f);
     private final GLU glu = new GLU();
     private float camX, camZ;
+    Camera camera = new Camera();
     float yaw, pitch;
     Obj obj;
 
     static class Camera {
-        float x;
-        float y;
-        float z;
-        float yaw;
-        float pitch;
-        float roll;
-        float speed;
-        float mouseSensitivity;
+       Vector2f u;
+       Vector2f v;
 
-        void move(float dx, float dy, float dz) {
-            x += dx;
-            y += dy;
-            z += dz;
-        }
+       Camera() {
+           u = new Vector2f(1, 0);
+           v = new Vector2f(0, 1);
+       }
 
-        void rotate(float dx, float dy) {
-            yaw += dx;
-            pitch += dy;
-        }
+       Camera(Vector2f u, Vector2f v) {
+           this.u = u;
+           this.v = v;
+       }
 
-        void update() {
-            float xOffset = (float) (speed * Math.sin(yaw));
-            float zOffset = (float) (speed * Math.cos(yaw));
-            move(xOffset, 0, zOffset);
-        }
+    }
 
-        Camera(float x, float y, float z, float yaw, float pitch, float roll, float speed, float mouseSensitivity) {
+    static class Vector2f {
+        float x, y;
+        Vector2f(float x, float y) {
             this.x = x;
             this.y = y;
-            this.z = z;
-            this.yaw = yaw;
-            this.pitch = pitch;
-            this.roll = roll;
-            this.speed = speed;
-            this.mouseSensitivity = mouseSensitivity;
         }
     }
 
     FloatBuffer vertices;
     FloatBuffer texCoords;
     FloatBuffer normals;
-    Camera camera = new Camera(0, 0, 0, 0, 0, 0, 0.05f, 0.1f);
     String cwd = System.getProperty("user.dir");
 
     @Override
@@ -110,7 +95,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
         camera();
-
+        gl.glTranslatef(0, -1, -5);
         gl.glEnableClientState(GL2ES1.GL_TEXTURE_COORD_ARRAY);
         gl.glTexCoordPointer(2, GL2.GL_FLOAT, 0, texCoords);
 
@@ -138,12 +123,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glEnd();
         gl.glDisable(GL2.GL_TEXTURE_2D);
 
-        gl.glBegin(GL2.GL_TRIANGLES);
-        gl.glColor3f(1.0f, 0.0f, 0.0f);
-        for (int i =0; i< vertices.capacity(); i+=3) {
-            gl.glVertex3f(vertices.get(i), vertices.get(i+1), vertices.get(i+2));
-        }
-        gl.glEnd();
     }
 
 
@@ -172,12 +151,26 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        // Using gluLookAt
+        int width = e.getComponent().getWidth();
+        int height = e.getComponent().getHeight();
+        float oldX = e.getX();
+        float oldY = e.getY();
 
-      camera.x = e.getX();
-      camera.y = e.getY();
-      camera.z = 0;
+        float angleX = 0.0f;
+        float angleY = 0.0f;
+        // Change the cordinates of the mouse to be based on the center of the screen
+        float x = e.getX();
+        float y = e.getY();
+        x = x - width / 2;
+        y = y - height / 2;
+        // Calculate the angle of the mouse movement
+        angleX = (float) (x * 180.0 / width);
+        angleY = (float) (y * 180.0 / height);
+        // Rotate the camera
+        pitch = pitch + angleX;
+        yaw = yaw + angleY;
 
+        System.out.println(angleX + " " + angleY);
     }
 
 
@@ -189,8 +182,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         if (pitch <= -60)
             pitch = -60;
         if (forward) {
-            camX += Math.cos((yaw + 90) * TO_RADIANS) / 5.0;
-            camZ -= Math.sin((yaw + 90) * TO_RADIANS) / 5.0;
+            camX = (float) (camX + Math.sin(Math.toRadians(yaw)) * 0.1);
+            camZ = (float) (camZ - Math.cos(Math.toRadians(yaw)) * 0.1);
         }
         if (backward) {
             camX += Math.cos((yaw + 90 + 180) * TO_RADIANS) / 5.0;
@@ -208,8 +201,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         GL2 gl = GLContext.getCurrentGL().getGL2();
         gl.glRotatef(-pitch, 1.0f, 0.0f, 0.0f); // Along X axis
         gl.glRotatef(-yaw, 0.0f, 1.0f, 0.0f);    //Along Y axis
-        //glu.gluLookAt(camX, 0, camZ, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
+        gl.glTranslatef(-camX, 1, -camZ);
     }
 
     @Override
@@ -222,20 +215,34 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     @Override
     public void keyTyped(KeyEvent e) {
+        char key = e.getKeyChar();
+        if (key == 'w')
+            forward = true;
+        if (key == 's')
+            backward = true;
+        if (key == 'a')
+            left = true;
+        if (key == 'd')
+            right = true;
 
-
+        System.out.println(key);
     }
 
     boolean forward, backward, left, right;
 
     @Override
     public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_W -> forward = true;
-            case KeyEvent.VK_S -> backward = true;
-            case KeyEvent.VK_A -> left = true;
-            case KeyEvent.VK_D -> right = true;
-        }
+        char key = e.getKeyChar();
+        if (key == 'w')
+            forward = false;
+        if (key == 's')
+            backward = false;
+        if (key == 'a')
+            left = false;
+        if (key == 'd')
+            right = false;
+
+        System.out.println(key);
     }
 
 
