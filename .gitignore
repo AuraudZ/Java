@@ -29,7 +29,10 @@
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
-
+.gradle
+.gradle/**
+gradlew.bat
+gradlew
 
 
 # Gradle and Maven with auto-import
