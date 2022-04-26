@@ -207,12 +207,12 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         if (forward) {
             x += cameraSpeed * cameraFront[0];
-            y += cameraSpeed * cameraFront[1];
+
             z += cameraSpeed * cameraFront[2];
         }
         if (backward) {
             x -= cameraSpeed * cameraFront[0];
-            y -= cameraSpeed * cameraFront[1];
+
             z -= cameraSpeed * cameraFront[2];
         }
 
