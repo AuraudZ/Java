@@ -2,6 +2,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.Matrix4;
 import com.jogamp.opengl.math.VectorUtil;
+import com.jogamp.opengl.util.TimeFrameI;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.glsl.ShaderUtil;
 import com.jogamp.opengl.util.texture.Texture;
@@ -41,6 +42,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     boolean forward, backward, left, right, reset;
     private float camX, camZ;
 
+    float dealtaTime = 0.0f;
+    float lastFrame = 0.0f;
     @Override
     public void init(GLAutoDrawable drawable) {
 
@@ -92,6 +95,9 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     @Override
     public void display(GLAutoDrawable drawable) {
 
+     lastFrame= drawable.getAnimator().getLastFPS();
+
+        dealtaTime = drawable.getAnimator().getLastFPS();
         GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
@@ -128,9 +134,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glEnable(GL2.GL_LIGHT0);
         gl.glEnable(GL2.GL_NORMALIZE);
 
-        float[] ambientLight = {0.1f, 5.f, 0.f, 0f}; // weak RED ambient
-        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambientLight, 0);
-
+        float[] ambientLight = {4.1f, 0.1f, 0.f, 0f}; // weak RED ambient
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, ambientLight, 0);
     }
 
     private Texture loadTexture(String file) throws GLException, IOException {
@@ -166,8 +171,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         lastY = (float) e.getComponent().getHeight() / 2;
 
         float sensitivity = 0.05f;
-        xoffset *= sensitivity;
-        yoffset *= sensitivity;
+        xoffset *= sensitivity  ;
+        yoffset *= sensitivity ;
 
 
         yaw += xoffset;
@@ -215,8 +220,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
             z -= cameraSpeed * cameraFront[2];
         }
-
-        System.out.println(x + " " + y + " " + z);
         if (left) {
             // Cross the front vector with the world up vector to get the right vector
             float[] right = new float[3];
