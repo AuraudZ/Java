@@ -34,7 +34,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
   FloatBuffer texCoords;
   FloatBuffer normals;
   String cwd = System.getProperty("user.dir");
-  boolean forward, backward, left, right;
+  boolean forward, backward, left, right, reset;
   private float camX, camZ;
 
   @Override
@@ -47,20 +47,11 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     char[] vertexShaderSource = null;
     char[] fragmentShaderSource = null;
     String[] shaderList = { "shaders/fragment.glsl", "shaders/shader.frag" };
-    vertexShaderSource = readShaderSource("vertex.glsl");
-    fragmentShaderSource = readShaderSource(cwd+ "/src/main/resources/fragment.glsl");
-    ShaderCode frag = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER,1,this.getClass(),shaderList,false);
-    program.add(frag);
-    ShaderCode vert = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER,1,this.getClass(),shaderList,false);
     System.out.println(cwd + "/src/main/resources/fragment.glsl");
-
-
-    File fragmentShader = new File("shaders/default.fs");
 
     try {
       InputStream objInputStream = new FileInputStream(cwd + "/src/main/resources/objs/cube.obj");
       obj = ObjUtils.convertToRenderable(ObjReader.read(objInputStream));
-      IntBuffer indices = ObjData.getFaceVertexIndices(obj);
       vertices = ObjData.getVertices(obj);
       texCoords = ObjData.getTexCoords(obj, 2);
       normals = ObjData.getNormals(obj);
@@ -104,7 +95,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     camera();
     gl.glEnableClientState(GL2ES1.GL_TEXTURE_COORD_ARRAY);
     gl.glTexCoordPointer(2, GL2.GL_FLOAT, 0, texCoords);
-    gl.glPushMatrix();
 
     Texture texture = null;
     if (texture == null) {
@@ -130,9 +120,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     texture.disable(gl);
     gl.glEnd();
     gl.glDisable(GL2.GL_TEXTURE_2D);
-    gl.glPopMatrix();
 
-    gl.glPushMatrix();
     gl.glEnable(GL2.GL_LIGHTING);
     gl.glEnable(GL2.GL_LIGHT0);
     gl.glEnable(GL2.GL_NORMALIZE);
@@ -140,14 +128,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     float[] ambientLight = {0.1f, 5.f, 0.f, 0f}; // weak RED ambient
     gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambientLight, 0);
 
-    gl.glBegin(GL2.GL_TRIANGLES);
-    for (int i = 0; i < vertices.capacity(); i += 3) {
-      gl.glColor3d(1.0, 1.0, 1.0);
-      gl.glNormal3f(normals.get(i), normals.get(i + 1), normals.get(i + 2));
-      gl.glVertex3f(vertices.get(i), vertices.get(i + 1), vertices.get(i + 2));
-    }
-    gl.glEnd();
-    gl.glPopMatrix();
   }
 
   private Texture loadTexture(String file) throws GLException, IOException {
@@ -165,7 +145,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     gl.glViewport(0, 0, width, height);
     gl.glMatrixMode(GL2.GL_PROJECTION);
     gl.glLoadIdentity();
-    glu.gluPerspective(45.0f, h, 1.0, 20.0);
+    glu.gluPerspective(90.0f, h, 1.0, 20.0);
     gl.glMatrixMode(GL2.GL_MODELVIEW);
     gl.glLoadIdentity();
     glu.gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
@@ -208,6 +188,12 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
       camX = (float) (camX + Math.sin(Math.toRadians(yaw + 90)) * 0.1);
       camZ = (float) (camZ - Math.cos(Math.toRadians(yaw + 90)) * 0.1);
     }
+    if(reset) {
+        camX = 0;
+        camZ = 5;
+        pitch = 0;
+        yaw = 0;
+    }
 
     GL2 gl = GLContext.getCurrentGL().getGL2();
     gl.glRotatef(-pitch, 1.0f, 0.0f, 0.0f); // Along X axis
@@ -229,6 +215,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     if (key == 's') backward = true;
     if (key == 'a') left = true;
     if (key == 'd') right = true;
+    if(key == 'r') reset = true;
 
     System.out.println(key);
   }
@@ -241,7 +228,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     if (key == 'a') left = false;
     if (key == 'd') right = false;
 
-    System.out.println(key);
   }
 
   @Override
@@ -260,17 +246,11 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
       right = false;
     }
     if (key == 'r') {
-      reset();
+     reset = false;
     }
   }
 
-  void reset() {
-    // Reset the camera
-    camX = 0.0f;
-    camZ = 0.0f;
-    pitch = 0.0f;
-    yaw = 0.0f;
-  }
+
 
   static class Camera {
     Vector2f u;
