@@ -1,8 +1,8 @@
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.math.Matrix4;
 import com.jogamp.opengl.math.VectorUtil;
-import com.jogamp.opengl.util.TimeFrameI;
+import com.jogamp.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.glsl.ShaderUtil;
 import com.jogamp.opengl.util.texture.Texture;
@@ -13,12 +13,15 @@ import de.javagl.obj.ObjReader;
 import de.javagl.obj.ObjUtils;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.*;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.text.NumberFormat;
 
 public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyListener {
     private static final float TO_RADIANS = (float) (Math.PI / 180.0f);
@@ -43,18 +46,15 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     private float camX, camZ;
 
     float dealtaTime = 0.0f;
+    TextRenderer textRenderer;
     float lastFrame = 0.0f;
+
     @Override
     public void init(GLAutoDrawable drawable) {
 
+        textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
 
         GL2 gl = drawable.getGL().getGL2();
-
-        char[] vertexShaderSource = null;
-        char[] fragmentShaderSource = null;
-        String[] shaderList = {"shaders/fragment.glsl", "shaders/shader.frag"};
-        System.out.println(cwd + "/src/main/resources/fragment.glsl");
-
         try {
             InputStream objInputStream = new FileInputStream(cwd + "/src/main/resources/objs/cube.obj");
             obj = ObjUtils.convertToRenderable(ObjReader.read(objInputStream));
@@ -65,6 +65,16 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             e.printStackTrace();
         }
 
+
+
+        String vexterShaderPath = cwd + "/vertex.vert";
+        String fragmentShaderPath = cwd + "/fragment.frag";
+
+        String shaderBasePath = cwd + "/src/main/resources/shaders/";
+        ShaderData shaderData = new ShaderData(gl, shaderBasePath,vexterShaderPath, fragmentShaderPath);
+
+
+
         gl.glShadeModel(GL2.GL_SMOOTH);
         gl.glClearColor(0f, 0f, 0f, 0f);
         gl.glClearDepth(1.0f);
@@ -73,7 +83,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
     }
 
-    private char[] readShaderSource(String s) {
+    private String[] readShaderSource(String s) {
         StringBuilder sb = new StringBuilder();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(s));
@@ -85,7 +95,15 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return sb.toString().toCharArray();
+        return sb.toString().split("\n");
+    }
+
+    private CharSequence[][] readShaderSource(String[] s) {
+        CharSequence[][] shaderSource = new CharSequence[s.length][];
+        for (int i = 0; i < s.length; i++) {
+            shaderSource[i] = readShaderSource(s[i]);
+        }
+        return shaderSource;
     }
 
     @Override
@@ -95,13 +113,28 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     @Override
     public void display(GLAutoDrawable drawable) {
 
-     lastFrame= drawable.getAnimator().getLastFPS();
+        lastFrame = drawable.getAnimator().getLastFPS();
 
         dealtaTime = drawable.getAnimator().getLastFPS();
         GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
 
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+        gl.glLoadIdentity();
+        gl.glDisable(GL2.GL_DEPTH_TEST);
+        gl.glDisable(GL2.GL_LIGHTING);
+        textRenderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
+        gl.glColor3f(255, 255, 255);
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(2);
+        textRenderer.draw("FPS: " + nf.format(lastFrame), 10, 10);
+        textRenderer.draw("Camera Position: " + nf.format(cameraPos[0]) + " " + nf.format(cameraPos[1]) + " " + nf.format(cameraPos[2]), 10, 30);
+        textRenderer.draw("Camera Rotation: " + nf.format(cameraFront[0]) + " " + nf.format(cameraFront[1]) + " " + nf.format(cameraFront[2]), 10, 50);
+        textRenderer.endRendering();
+        textRenderer.flush();
+
+        gl.glEnable(GL2.GL_DEPTH_TEST);
         gl.glEnableClientState(GL2ES1.GL_TEXTURE_COORD_ARRAY);
         gl.glTexCoordPointer(2, GL2.GL_FLOAT, 0, texCoords);
 
@@ -113,29 +146,14 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
                 e.printStackTrace();
             }
         }
-        texture.enable(gl);
-        texture.bind(gl);
         camera();
-        gl.glBegin(GL2.GL_QUADS);
-        gl.glTexCoord2f(0.0f, 0.0f);
-        gl.glVertex3f(-50.0f, -5.0f, -50.0f);
-        gl.glTexCoord2f(25.0f, 0.0f);
-        gl.glVertex3f(50.0f, -5.0f, -50.0f);
-        gl.glTexCoord2f(25.0f, 25.0f);
-        gl.glVertex3f(50.0f, -5.0f, 50.0f);
-        gl.glTexCoord2f(0.0f, 25.0f);
-        gl.glVertex3f(-50.0f, -5.0f, 50.0f);
 
-        texture.disable(gl);
-        gl.glEnd();
-        gl.glDisable(GL2.GL_TEXTURE_2D);
 
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(GL2.GL_LIGHT0);
         gl.glEnable(GL2.GL_NORMALIZE);
 
-        float[] ambientLight = {4.1f, 0.1f, 0.f, 0f}; // weak RED ambient
-        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, ambientLight, 0);
+
     }
 
     private Texture loadTexture(String file) throws GLException, IOException {
@@ -171,8 +189,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         lastY = (float) e.getComponent().getHeight() / 2;
 
         float sensitivity = 0.05f;
-        xoffset *= sensitivity  ;
-        yoffset *= sensitivity ;
+        xoffset *= sensitivity;
+        yoffset *= sensitivity;
 
 
         yaw += xoffset;
@@ -201,6 +219,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         // Set the camera's direction
         cameraFront = dir;
 
+        camX = cameraPos[0];
+        camZ = cameraPos[2];
     }
 
     float cameraSpeed = 5.1f;
@@ -299,6 +319,4 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             reset = false;
         }
     }
-
-
 }

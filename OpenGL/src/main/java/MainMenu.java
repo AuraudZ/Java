@@ -16,7 +16,7 @@ public class MainMenu extends JPanel {
 
 
       public MainMenu() {
-            gljpanel.addGLEventListener(new Cube());
+            gljpanel.addGLEventListener(new OBJRenderer());
             startButton = new JButton("Start");
             exitButton = new JButton("Exit");
             setLayout(new GridLayout(2,1));
