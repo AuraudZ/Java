@@ -113,7 +113,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glLoadIdentity();
         gl.glDisable(GL2.GL_DEPTH_TEST);
         gl.glDisable(GL2.GL_LIGHTING);
-        textRenderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight(), true);
         gl.glColor3f(255, 255, 255);
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(2);
@@ -122,13 +121,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         float screenHeight = drawable.getSurfaceHeight();
 
         gl.glColor3f(0, 0, 0);
-        textRenderer.draw("FPS: " + fps, 10, 10);
         float[] cameraPos = camera.getPosition();
         float[] cameraFront = camera.getDirection();
-        textRenderer.draw("Camera Position: " + nf.format(cameraPos[0]) + " " + nf.format(cameraPos[1]) + " " + nf.format(cameraPos[2]), 10, 30);
-        textRenderer.draw("Camera Rotation: " + nf.format(cameraFront[0]) + " " + nf.format(cameraFront[1]) + " " + nf.format(cameraFront[2]), 10, 50);
-        textRenderer.endRendering();
-        textRenderer.flush();
         camera.setMove(move);
 
         camera.move(0.5f, mouseX, mouseY, screenWidth, screenHeight,move);
@@ -156,13 +150,21 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         GLUquadric quadric = glu.gluNewQuadric();
         gl.glColor3f(1, 0, 0);
-        gl.glTranslatef(0, 0, 5);
+
+        gl.glTranslatef(cameraPos[0], 0, cameraPos[2]);
         glu.gluQuadricDrawStyle(quadric, GLU.GLU_LINE);
         glu.gluSphere(quadric, 1, 32, 32);
 
         gl.glEnd();
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(GL2.GL_LIGHT0);
+        textRenderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight(), true);
+        gl.glColor3f(0,0,0);
+        textRenderer.draw("FPS: " + fps, 10, 10);
+        textRenderer.draw("Camera Position: " + nf.format(cameraPos[0]) + " " + nf.format(cameraPos[1]) + " " + nf.format(cameraPos[2]), 10, 30);
+        textRenderer.draw("Camera Rotation: " + nf.format(cameraFront[0]) + " " + nf.format(cameraFront[1]) + " " + nf.format(cameraFront[2]), 10, 50);
+        textRenderer.endRendering();
+        textRenderer.flush();
 
 
     }
