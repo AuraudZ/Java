@@ -36,6 +36,8 @@ public class Camera {
     boolean backward = false;
     boolean left = false;
     boolean right = false;
+    boolean jump = false;
+    boolean reset = false;
 
     /*
     This is horrible.
@@ -45,6 +47,8 @@ public class Camera {
         backward = move[1];
         left = move[2];
         right = move[3];
+        reset = move[4];
+        jump = move[5];
     }
 
 
@@ -75,6 +79,19 @@ public class Camera {
 
             position[0] += speed * right[0];
             position[2] += speed * right[2];
+        }
+        float gravity = -0.1f;
+        if (jump) {
+            position[1] += speed;
+
+        }
+        if (reset) {
+            position[0] = 0.0f;
+            position[1] = 0.0f;
+            position[2] = 0.0f;
+            front[0] = 0.0f;
+            front[1] = 0.0f;
+            front[2] = 0.0f;
         }
 
 

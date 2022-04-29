@@ -23,6 +23,7 @@ import java.io.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.text.NumberFormat;
+import java.time.Instant;
 
 public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyListener {
     private final GLU glu = new GLU();
@@ -37,7 +38,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     FloatBuffer texCoords;
     FloatBuffer normals;
     String cwd = System.getProperty("user.dir");
-    boolean[] move = new boolean[4];
+    boolean[] move = new boolean[6];
     boolean forward, backward, left, right, reset;
 
     float dealtaTime = 0.0f;
@@ -47,11 +48,12 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     @Override
     public void init(GLAutoDrawable drawable) {
 
-
         textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
 
         GL2 gl = drawable.getGL().getGL2();
         camera = new Camera(gl, glu);
+        String vertShaderPath = cwd + "/src/main/java/shaders/vertex.glsl";
+        String fragShaderPath = cwd + "/src/main/java/shaders/fragment.glsl";
 
         try {
             InputStream objInputStream = new FileInputStream(cwd + "/src/main/resources/objs/cube.obj");
@@ -104,7 +106,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         double fps = drawable.getAnimator().getTotalFPS();
         lastFrame = drawable.getAnimator().getLastFPS();
         dealtaTime = drawable.getAnimator().getLastFPS() - lastFrame;
-        double currentTime = java.time.Instant.now().getEpochSecond();
+        double currentTime = Instant.now().getEpochSecond();
         GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
@@ -141,20 +143,29 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         gl.glEnable(GL2.GL_TEXTURE_2D);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureObject());
-
-
-        Box box = new Box(0,0,0,gl);
+        int vertexShader;
+        int fragmentShader;
+        vertexShader = gl.glCreateShader(GL2.GL_VERTEX_SHADER);
+        gl.glShaderSource(vertexShader, 1, readShaderSource(cwd+"/src/main/resources/shaders/vertex.vert"), null, 0);
+        gl.glCompileShader(vertexShader);
+        fragmentShader = gl.glCreateShader(GL2.GL_FRAGMENT_SHADER);
+        gl.glShaderSource(fragmentShader, 1, readShaderSource(cwd +"/src/main/resources/shaders/fragment.frag"), null, 0);
+        int shaderProgram = gl.glCreateProgram();
+        Box box = new Box(0.f,0.f,0.f,0.1f,0.1f,0.1f,gl);
         box.draw(gl);
+        box.move(camera.front[0],camera.front[1],camera.front[2]);
 
+        gl.glAttachShader(shaderProgram, vertexShader);
+        gl.glAttachShader(shaderProgram, fragmentShader);
+        gl.glLinkProgram(shaderProgram);
+        gl.glUseProgram(shaderProgram);
+        gl.glDeleteShader(vertexShader);
+        gl.glDeleteShader(fragmentShader);
         gl.glBegin(GL2.GL_QUADS);
-
         GLUquadric quadric = glu.gluNewQuadric();
-        gl.glColor3f(1, 0, 0);
-
         gl.glTranslatef(cameraPos[0], 0, cameraPos[2]);
         glu.gluQuadricDrawStyle(quadric, GLU.GLU_LINE);
         glu.gluSphere(quadric, 1, 32, 32);
-
         gl.glEnd();
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(GL2.GL_LIGHT0);
@@ -217,7 +228,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         if (key == 's') move[1] = true;
         if (key == 'a') move[2] = true;
         if (key == 'd') move[3] = true;
-        if (key == 'r') reset = true;
+        if (key == 'r') move[4] = true;
+        if(key == 'v') move[5] = true;
     }
 
     @Override
@@ -245,7 +257,10 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             move[3] = false;
         }
         if (key == 'r') {
-            reset = false;
+            move[4] = false;
+        }
+        if(key == 'v') {
+            move[5] = false;
         }
     }
 }
