@@ -4,6 +4,7 @@ import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.math.VectorUtil;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.glsl.ShaderUtil;
 import com.jogamp.opengl.util.texture.Texture;
@@ -25,10 +26,17 @@ import java.nio.IntBuffer;
 import java.text.NumberFormat;
 import java.time.Instant;
 
+import static com.jogamp.opengl.GL2ES2.GL_FRAGMENT_SHADER;
+import static com.jogamp.opengl.GL2ES2.GL_VERTEX_SHADER;
+import static com.jogamp.opengl.glu.GLU.*;
+
+
 public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyListener {
+
+    private Shader program;
     private final GLU glu = new GLU();
 
-    ShaderProgram program = new ShaderProgram();
+    private GL2 gl;
     ShaderUtil shaderUtil;
 
     Camera camera;
@@ -45,33 +53,13 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     TextRenderer textRenderer;
     float lastFrame = 0.0f;
 
+
     @Override
     public void init(GLAutoDrawable drawable) {
 
         textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
-
         GL2 gl = drawable.getGL().getGL2();
         camera = new Camera(gl, glu);
-        String vertShaderPath = cwd + "/src/main/java/shaders/vertex.glsl";
-        String fragShaderPath = cwd + "/src/main/java/shaders/fragment.glsl";
-
-        try {
-            InputStream objInputStream = new FileInputStream(cwd + "/src/main/resources/objs/cube.obj");
-            obj = ObjUtils.convertToRenderable(ObjReader.read(objInputStream));
-            vertices = ObjData.getVertices(obj);
-            texCoords = ObjData.getTexCoords(obj, 2);
-            normals = ObjData.getNormals(obj);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        String vexterShaderPath = cwd + "/vertex.vert";
-        String fragmentShaderPath = cwd + "/fragment.frag";
-
-        String shaderBasePath = cwd + "/src/main/resources/shaders/";
-        //   ShaderData shaderData = new ShaderData(gl, shaderBasePath,vexterShaderPath, fragmentShaderPath);
-
 
         gl.glShadeModel(GL2.GL_SMOOTH);
         gl.glClearColor(1f, 1f, 1f, 0f);
@@ -96,88 +84,38 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         return sb.toString().split("\n");
     }
 
+    private float[] vertexData = {
+            -1, -1, 1, 0, 0,
+            +0, +2, 0, 0, 1,
+            +1, -1, 0, 1, 0};
+
     @Override
     public void dispose(GLAutoDrawable drawable) {
     }
 
     @Override
     public void display(GLAutoDrawable drawable) {
-        drawable.getAnimator().getUpdateFPSFrames();
-        double fps = drawable.getAnimator().getTotalFPS();
-        lastFrame = drawable.getAnimator().getLastFPS();
-        dealtaTime = drawable.getAnimator().getLastFPS() - lastFrame;
-        double currentTime = Instant.now().getEpochSecond();
+
         GL2 gl = drawable.getGL().getGL2();
+        float width = drawable.getSurfaceWidth();
+        float height = drawable.getSurfaceHeight();
+        camera.move(0.5f,mouseX,mouseY,width,height,move);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
-
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glLoadIdentity();
-        gl.glDisable(GL2.GL_DEPTH_TEST);
-        gl.glDisable(GL2.GL_LIGHTING);
-        gl.glColor3f(255, 255, 255);
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMaximumFractionDigits(2);
-
-        float screenWidth = drawable.getSurfaceWidth();
-        float screenHeight = drawable.getSurfaceHeight();
-
-        gl.glColor3f(0, 0, 0);
-        float[] cameraPos = camera.getPosition();
-        float[] cameraFront = camera.getDirection();
-        camera.setMove(move);
-
-        camera.move(0.5f, mouseX, mouseY, screenWidth, screenHeight,move);
-        gl.glEnable(GL2.GL_DEPTH_TEST);
-        gl.glEnableClientState(GL2ES1.GL_TEXTURE_COORD_ARRAY);
-        gl.glTexCoordPointer(2, GL2.GL_FLOAT, 0, texCoords);
-
-        Texture texture = null;
-        if (texture == null) {
-            try {
-                texture = loadTexture(cwd + "/src/main/resources/textures/cube.png");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        gl.glEnable(GL2.GL_TEXTURE_2D);
-        gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureObject());
-        int vertexShader;
-        int fragmentShader;
-        vertexShader = gl.glCreateShader(GL2.GL_VERTEX_SHADER);
-        gl.glShaderSource(vertexShader, 1, readShaderSource(cwd+"/src/main/resources/shaders/vertex.vert"), null, 0);
-        gl.glCompileShader(vertexShader);
-        fragmentShader = gl.glCreateShader(GL2.GL_FRAGMENT_SHADER);
-        gl.glShaderSource(fragmentShader, 1, readShaderSource(cwd +"/src/main/resources/shaders/fragment.frag"), null, 0);
-        int shaderProgram = gl.glCreateProgram();
-        Box box = new Box(0.f,0.f,0.f,0.1f,0.1f,0.1f,gl);
-        box.draw(gl);
-        box.move(camera.front[0],camera.front[1],camera.front[2]);
-
-        gl.glAttachShader(shaderProgram, vertexShader);
-        gl.glAttachShader(shaderProgram, fragmentShader);
-        gl.glLinkProgram(shaderProgram);
-        gl.glUseProgram(shaderProgram);
-        gl.glDeleteShader(vertexShader);
-        gl.glDeleteShader(fragmentShader);
-        gl.glBegin(GL2.GL_QUADS);
-        GLUquadric quadric = glu.gluNewQuadric();
-        gl.glTranslatef(cameraPos[0], 0, cameraPos[2]);
-        glu.gluQuadricDrawStyle(quadric, GLU.GLU_LINE);
-        glu.gluSphere(quadric, 1, 32, 32);
+        gl.glBegin(GL2.GL_TRIANGLES);
+        gl.glColor3f(1, 0, 0);
+        glu.gluSphere(glu.gluNewQuadric(), 0.5f, 32, 32);
         gl.glEnd();
-        gl.glEnable(GL2.GL_LIGHTING);
-        gl.glEnable(GL2.GL_LIGHT0);
-        textRenderer.beginRendering(drawable.getSurfaceWidth(), drawable.getSurfaceHeight(), true);
-        gl.glColor3f(0,0,0);
-        textRenderer.draw("FPS: " + fps, 10, 10);
-        textRenderer.draw("Camera Position: " + nf.format(cameraPos[0]) + " " + nf.format(cameraPos[1]) + " " + nf.format(cameraPos[2]), 10, 30);
-        textRenderer.draw("Camera Rotation: " + nf.format(cameraFront[0]) + " " + nf.format(cameraFront[1]) + " " + nf.format(cameraFront[2]), 10, 50);
+
+        String cameraString = "Camera: " + camera.position[0] + " " + camera.position[1] + " " + camera.position[2];
+        String cameraRot = "Rot: " + camera.front[0] + " " + camera.front[1] + " " + camera.front[2];
+
+        textRenderer.beginRendering((int) width, (int) height);
+        textRenderer.setColor(Color.BLACK);
+
+        textRenderer.draw(cameraString, 10, 10);
+        textRenderer.draw(cameraRot, 10, 30);
         textRenderer.endRendering();
-        textRenderer.flush();
-
-
     }
 
     private Texture loadTexture(String file) throws GLException, IOException {
@@ -229,7 +167,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         if (key == 'a') move[2] = true;
         if (key == 'd') move[3] = true;
         if (key == 'r') move[4] = true;
-        if(key == 'v') move[5] = true;
+        if (key == 'v') move[5] = true;
     }
 
     @Override
@@ -259,8 +197,10 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         if (key == 'r') {
             move[4] = false;
         }
-        if(key == 'v') {
+        if (key == 'v') {
             move[5] = false;
         }
     }
+
+
 }

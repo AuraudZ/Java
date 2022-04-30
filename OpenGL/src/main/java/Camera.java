@@ -1,4 +1,7 @@
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.GL3;
+import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.VectorUtil;
 
@@ -53,7 +56,6 @@ public class Camera {
 
 
     public void move(float speed, float screenX, float screenY, float screenWidth, float screenHeight, boolean[] move) {
-
         if (forward) {
             position[0] += speed*front[0];
             position[2] -= speed*front[2];
