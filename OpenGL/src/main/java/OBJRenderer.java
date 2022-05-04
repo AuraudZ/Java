@@ -1,182 +1,297 @@
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
-import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.glu.GLUquadric;
-import com.jogamp.opengl.math.VectorUtil;
-import com.jogamp.opengl.util.Animator;
-import com.jogamp.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
+import com.jogamp.opengl.util.GLArrayDataServer;
+import com.jogamp.opengl.util.PMVMatrix;
+import com.jogamp.opengl.util.TileRendererBase;
 import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
-import com.jogamp.opengl.util.glsl.ShaderUtil;
-import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureIO;
-import de.javagl.obj.Obj;
-import de.javagl.obj.ObjData;
-import de.javagl.obj.ObjReader;
-import de.javagl.obj.ObjUtils;
+import com.jogamp.opengl.util.glsl.ShaderState;
+import de.javagl.obj.*;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.text.NumberFormat;
-import java.time.Instant;
-
-import static com.jogamp.opengl.GL2ES2.GL_FRAGMENT_SHADER;
-import static com.jogamp.opengl.GL2ES2.GL_VERTEX_SHADER;
-import static com.jogamp.opengl.glu.GLU.*;
-
 
 public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyListener {
-
-    private Shader program;
-    private final GLU glu = new GLU();
-
-    private GL2 gl;
-    ShaderUtil shaderUtil;
-
-    Camera camera;
-
-    Obj obj;
-    FloatBuffer vertices;
+    private ShaderState st;
+    private PMVMatrix pmvMatrix;
+    private GLUniformData pmvMatrixUniform;
+    private GLUniformData timeUni;
+    private GLArrayDataServer vertices;
+    private long millisOffset;
+    FloatBuffer OBJvertices;
     FloatBuffer texCoords;
     FloatBuffer normals;
-    String cwd = System.getProperty("user.dir");
+    IntBuffer indices;
+
+    private GLArrayDataServer colors;
+    Obj obj;
+    private long t0;
+    private int swapInterval = 0;
+    private float aspect = 1.0f;
+    private boolean doRotate = false;
+    private boolean verbose = true;
+    private boolean clearBuffers = true;
+    private TileRendererBase tileRendererInUse = null;
+    private boolean doRotateBeforePrinting;
     boolean[] move = new boolean[6];
+
+
+    public OBJRenderer() {
+        this.swapInterval = 1;
+    }
+
+    FloatBuffer timeBuffer;
+
     boolean forward, backward, left, right, reset;
 
-    float dealtaTime = 0.0f;
-    TextRenderer textRenderer;
-    float lastFrame = 0.0f;
-
-
-    @Override
-    public void init(GLAutoDrawable drawable) {
-
-        textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
-        GL2 gl = drawable.getGL().getGL2();
-        camera = new Camera(gl, glu);
-
-        gl.glShadeModel(GL2.GL_SMOOTH);
-        gl.glClearColor(1f, 1f, 1f, 0f);
-        gl.glClearDepth(1.0f);
-        gl.glEnable(GL2.GL_DEPTH_TEST);
-        gl.glDepthFunc(GL2.GL_LEQUAL);
-        gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
+    public void setAspect(final float aspect) {
+        this.aspect = aspect;
     }
 
-    private String[] readShaderSource(String s) {
-        StringBuilder sb = new StringBuilder();
+    float mouseX = 0.0f;
+    float mouseY = 0.0f;
+    Camera camera;
+
+    @Override
+    public void init(final GLAutoDrawable glad) {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(s));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-            reader.close();
-        } catch (IOException e) {
+            InputStream is = new FileInputStream("./models/cube.obj");
+            obj = ObjUtils.convertToRenderable(
+                    ObjReader.read(is));
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
-        return sb.toString().split("\n");
-    }
 
-    private float[] vertexData = {
-            -1, -1, 1, 0, 0,
-            +0, +2, 0, 0, 1,
-            +1, -1, 0, 1, 0};
+        indices = ObjData.getFaceVertexIndices(obj);
+        texCoords = ObjData.getTexCoords(obj, 2);
+        OBJvertices = ObjData.getVertices(obj);
+
+
+        if (verbose) {
+            System.err.println(Thread.currentThread() + " RedSquareES2.init: tileRendererInUse "
+                    + tileRendererInUse);
+        }
+        final GL2ES2 gl = glad.getGL().getGL2ES2();
+
+        if (verbose) {
+            System.err.println("RedSquareES2 init on " + Thread.currentThread());
+            System.err.println("Chosen GLCapabilities: " + glad.getChosenGLCapabilities());
+            System.err.println("INIT GL IS: " + gl.getClass().getName());
+            System.err.println(JoglVersion.getGLStrings(gl, null, false).toString());
+        }
+        if (!gl.hasGLSL()) {
+            System.err.println("No GLSL available, no rendering.");
+            return;
+        }
+        st = new ShaderState();
+        st.setVerbose(true);
+        final ShaderCode vp0 = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, this.getClass(),
+                "shader", "shader/bin", "RedSquareShader", true);
+        final ShaderCode fp0 = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, this.getClass(),
+                "shader", "shader/bin", "RedSquareShader", true);
+        vp0.defaultShaderCustomization(gl, true, true);
+        fp0.defaultShaderCustomization(gl, true, true);
+        final ShaderProgram sp0 = new ShaderProgram();
+        sp0.add(gl, vp0, System.err);
+        sp0.add(gl, fp0, System.err);
+        st.attachShaderProgram(gl, sp0, true);
+
+        // setup mgl_PMVMatrix
+        pmvMatrix = new PMVMatrix();
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+        pmvMatrix.glLoadIdentity();
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+        pmvMatrix.glLoadIdentity();
+
+        timeBuffer = Buffers.newDirectFloatBuffer(1);
+        pmvMatrixUniform = new GLUniformData("mgl_PMVMatrix", 4, 4, pmvMatrix.glGetPMvMatrixf()); // P,
+        timeUni = new GLUniformData("iGlobalTime", 0.0f);
+
+        st.ownUniform(pmvMatrixUniform);
+        st.uniform(gl, pmvMatrixUniform);
+
+     //   st.ownUniform(timeUni);
+
+        // Allocate Vertex Array
+        vertices = GLArrayDataServer.createGLSL("mgl_Vertex", 3, GL.GL_FLOAT, false, 4,
+                GL.GL_STATIC_DRAW);
+        vertices.put(OBJvertices);
+        vertices.seal(gl, true);
+        st.ownAttribute(vertices, true);
+        vertices.enableBuffer(gl, false);
+
+        // OpenGL Render Settings
+        gl.glEnable(GL.GL_DEPTH_TEST);
+        st.useProgram(gl, false);
+
+        t0 = System.currentTimeMillis();
+        if (verbose) {
+            System.err.println(Thread.currentThread() + " RedSquareES2.init FIN");
+        }
+
+        camera = new Camera(gl, pmvMatrix);
+        camera.setMove(move);
+        millisOffset = System.currentTimeMillis();
+    }
 
     @Override
-    public void dispose(GLAutoDrawable drawable) {
+    public void display(final GLAutoDrawable glad) {
+        final long t1 = System.currentTimeMillis();
+        final GL2ES2 gl = glad.getGL().getGL2ES2();
+        int width = glad.getSurfaceWidth();
+        int height = glad.getSurfaceHeight();
+        timeUni.setData((System.currentTimeMillis() - millisOffset) / 1000.0f);
+       // st.uniform(gl, timeUni);
+        System.out.println("Render Matrix: "+ pmvMatrix.toString());
+        if (clearBuffers) {
+            if (null != tileRendererInUse) {
+                gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+            } else {
+                gl.glClearColor(0, 0, 0, 0);
+            }
+            gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        }
+        if (!gl.hasGLSL()) {
+            return;
+        }
+        st.useProgram(gl, true);
+        // One rotation every four seconds
+        camera.move(1,mouseX,mouseY,width,height);
+
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+        pmvMatrix.glLoadIdentity();
+        pmvMatrix.glTranslatef(0, 0, -10);
+        // pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+        // camera.move(1, mouseX, mouseY, width, height, move);
+
+        if (doRotate) {
+            final float ang = ((t1 - t0) * 360.0F) / 4000.0F;
+            pmvMatrix.glRotatef(ang, 0, 0, 1);
+            pmvMatrix.glRotatef(ang, 0, 1, 0);
+        }
+        st.uniform(gl, pmvMatrixUniform);
+
+        // Draw a square
+        vertices.enableBuffer(gl, true);
+
+        gl.glDrawArrays(GL.GL_TRIANGLES, 0, indices.capacity());
+        vertices.enableBuffer(gl, false);
+        st.useProgram(gl, false);
+
     }
 
     @Override
-    public void display(GLAutoDrawable drawable) {
-
-        GL2 gl = drawable.getGL().getGL2();
-        float width = drawable.getSurfaceWidth();
-        float height = drawable.getSurfaceHeight();
-        camera.move(0.5f,mouseX,mouseY,width,height,move);
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
-        gl.glLoadIdentity();
-        gl.glBegin(GL2.GL_TRIANGLES);
-        gl.glColor3f(1, 0, 0);
-        glu.gluSphere(glu.gluNewQuadric(), 0.5f, 32, 32);
-        gl.glEnd();
-
-        String cameraString = "Camera: " + camera.position[0] + " " + camera.position[1] + " " + camera.position[2];
-        String cameraRot = "Rot: " + camera.front[0] + " " + camera.front[1] + " " + camera.front[2];
-
-        textRenderer.beginRendering((int) width, (int) height);
-        textRenderer.setColor(Color.BLACK);
-
-        textRenderer.draw(cameraString, 10, 10);
-        textRenderer.draw(cameraRot, 10, 30);
-        textRenderer.endRendering();
+    public void reshape(final GLAutoDrawable glad, final int x, final int y, final int width,
+            final int height) {
+        final GL2ES2 gl = glad.getGL().getGL2ES2();
+        gl.setSwapInterval(swapInterval);
+        reshapeImpl(gl, x, y, width, height, width, height);
     }
 
-    private Texture loadTexture(String file) throws GLException, IOException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        ImageIO.write(ImageIO.read(new File(file)), "png", os);
-        InputStream fis = new ByteArrayInputStream(os.toByteArray());
-        return TextureIO.newTexture(fis, true, TextureIO.PNG);
+
+
+    void reshapeImpl(final GL2ES2 gl, final int tileX, final int tileY, final int tileWidth,
+            final int tileHeight, final int imageWidth, final int imageHeight) {
+        if (verbose) {
+            System.err.println(Thread.currentThread() + " RedSquareES2.reshape " + tileX + "/"
+                    + tileY + " " + tileWidth + "x" + tileHeight + " of " + imageWidth + "x"
+                    + imageHeight + ", swapInterval " + swapInterval + ", drawable 0x"
+                    + Long.toHexString(gl.getContext().getGLDrawable().getHandle())
+                    + ", tileRendererInUse " + tileRendererInUse);
+        }
+        // Thread.dumpStack();
+        if (!gl.hasGLSL()) {
+            return;
+        }
+
+        st.useProgram(gl, true);
+        // Set location in front of camera
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+        pmvMatrix.glLoadIdentity();
+
+        // compute projection parameters 'normal' perspective
+        final float fovy = 45f;
+        final float aspect2 = ((float) imageWidth / (float) imageHeight) / aspect;
+        final float zNear = 1f;
+        final float zFar = 100f;
+
+        // compute projection parameters 'normal' frustum
+        final float top = (float) Math.tan(fovy * ((float) Math.PI) / 360.0f) * zNear;
+        final float bottom = -1.0f * top;
+        final float left = aspect2 * bottom;
+        final float right = aspect2 * top;
+        final float w = right - left;
+        final float h = top - bottom;
+
+        // compute projection parameters 'tiled'
+        final float l = left + tileX * w / imageWidth;
+        final float r = l + tileWidth * w / imageWidth;
+        final float b = bottom + tileY * h / imageHeight;
+        final float t = b + tileHeight * h / imageHeight;
+
+        pmvMatrix.glFrustumf(l, r, b, t, zNear, zFar);
+        // pmvMatrix.glOrthof(-4.0f, 4.0f, -4.0f, 4.0f, 1.0f, 100.0f);
+        st.uniform(gl, pmvMatrixUniform);
+        st.useProgram(gl, false);
+
+        System.err.println(Thread.currentThread() + " RedSquareES2.reshape FIN");
     }
 
     @Override
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        final GL2 gl = drawable.getGL().getGL2();
-        if (height <= 0) height = 1;
-        final float h = (float) width / (float) height;
-        gl.glViewport(0, 0, width, height);
-        gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glLoadIdentity();
-        glu.gluPerspective(90.0f, h, 1.0, 20.0);
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glLoadIdentity();
-        glu.gluLookAt(0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-    }
-
-
-    float lastX, lastY;
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        float lastX = e.getX();
-        float lastY = e.getY();
-
-        mouseX = lastX;
-        mouseY = lastY;
-
-    }
-
-    float cameraSpeed = 0.5f;
-    float mouseX, mouseY;
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
+    public void dispose(final GLAutoDrawable glad) {
+        if (verbose) {
+            System.err.println(Thread.currentThread() + " RedSquareES2.dispose: tileRendererInUse "
+                    + tileRendererInUse);
+        }
+        final GL2ES2 gl = glad.getGL().getGL2ES2();
+        if (!gl.hasGLSL()) {
+            return;
+        }
+        st.destroy(gl);
+        st = null;
+        pmvMatrix = null;
+        if (verbose) {
+            System.err.println(Thread.currentThread() + " RedSquareES2.dispose FIN");
+        }
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
         char key = e.getKeyChar();
-        if (key == 'w') move[0] = true;
-        if (key == 's') move[1] = true;
-        if (key == 'a') move[2] = true;
-        if (key == 'd') move[3] = true;
-        if (key == 'r') move[4] = true;
-        if (key == 'v') move[5] = true;
+        if (key == 'w')
+            move[0] = true;
+        if (key == 's')
+            move[1] = true;
+        if (key == 'a')
+            move[2] = true;
+        if (key == 'd')
+            move[3] = true;
+        if (key == 'r')
+            move[4] = true;
+        if (key == 'v')
+            move[5] = true;
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         char key = e.getKeyChar();
-        if (key == 'w') forward = true;
-        if (key == 's') backward = true;
-        if (key == 'a') left = true;
-        if (key == 'd') right = true;
+        if (key == 'w')
+            forward = true;
+        if (key == 's')
+            backward = true;
+        if (key == 'a')
+            left = true;
+        if (key == 'd')
+            right = true;
     }
 
     @Override
@@ -203,4 +318,20 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     }
 
 
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        float lastX = e.getX();
+        float lastY = e.getY();
+
+
+        System.out.println("mouseDragged: " + lastX + " " + lastY);
+        mouseX = lastX;
+        mouseY = lastY;
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
+    }
 }

@@ -1,37 +1,37 @@
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GL2GL3;
-import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.VectorUtil;
+import com.jogamp.opengl.util.PMVMatrix;
 
 public class Camera {
     private static final float TO_RADIANS = (float) (Math.PI / 180.0f);
-    float[] position = {0.0f, 0.0f, 0.0f};
+    float[] position = {0.0f, 0.0f, 5.0f};
     float[] up = {0.0f, 1.0f, 0.0f};
     float[] front = {0.0f, 0.0f, -1.0f};
-    float fov = 90.0f;
+    float fov = 40.0f;
     float near = 0.1f;
     float far = 1000.0f;
     float aspect = 1.0f;
-    GL2 gl;
-    GLU glu;
+    GL2ES2 gl;
+    PMVMatrix pmvMatrix;
     float lastX, lastY;
     float[] posPlusFront = new float[3];
 
-    public Camera(GL2 gl, GLU glu) {
+
+
+    public Camera(GL2ES2 gl, PMVMatrix pmvMatrix) {
         this.gl = gl;
-        this.glu = glu;
-        VectorUtil.normalizeVec3(front);
+        this.pmvMatrix = pmvMatrix;
     }
 
     public void update() {
-        gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glLoadIdentity();
-        glu.gluPerspective(fov, aspect, near, far);
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glLoadIdentity();
-        glu.gluLookAt(position[0], position[1], position[2], posPlusFront[0], posPlusFront[1], posPlusFront[2], up[0], up[1], up[2]);
+        pmvMatrix.glMatrixMode(GL2.GL_PROJECTION);
+        pmvMatrix.glLoadIdentity();
+        pmvMatrix.gluPerspective(fov, aspect, near, far);
+        pmvMatrix.glMatrixMode(GL2.GL_MODELVIEW);
+        pmvMatrix.glLoadIdentity();
+        //pmvMatrix.gluLookAt(position[0], position[1], position[2], posPlusFront[0], posPlusFront[1],
+        //        posPlusFront[2], up[0], up[1], up[2]);
     }
 
 
@@ -43,7 +43,7 @@ public class Camera {
     boolean reset = false;
 
     /*
-    This is horrible.
+     * This is horrible.
      */
     public void setMove(boolean[] move) {
         forward = move[0];
@@ -55,14 +55,15 @@ public class Camera {
     }
 
 
-    public void move(float speed, float screenX, float screenY, float screenWidth, float screenHeight, boolean[] move) {
+    public void move(float speed, float screenX, float screenY, float screenWidth,
+                     float screenHeight) {
         if (forward) {
-            position[0] += speed*front[0];
-            position[2] -= speed*front[2];
+            position[0] += speed * front[0];
+            position[2] -= speed * front[2];
         }
         if (backward) {
-            position[0] -= speed*front[0];
-            position[2] += speed*front[2];
+            position[0] -= speed * front[0];
+            position[2] += speed * front[2];
         }
         if (left) {
             float[] right = new float[3];
@@ -135,7 +136,11 @@ public class Camera {
         front = dir;
         VectorUtil.addVec3(posPlusFront, front, position);
 
+      //  System.out.println("posPlusFront: " + posPlusFront[0] + ", " + posPlusFront[1] + ", " + posPlusFront[2]);
         update();
+        pmvMatrix.gluLookAt(position[0], position[1], position[2], posPlusFront[0], posPlusFront[1], posPlusFront[2], up[0], up[1], up[2]);
+        System.out.println("Cam Matrix: "+pmvMatrix.toString());
+        System.out.println();
     }
 
     public float[] getPosition() {
@@ -144,5 +149,9 @@ public class Camera {
 
     public float[] getDirection() {
         return front;
+    }
+
+    public PMVMatrix getPMvMatrixf() {
+        return pmvMatrix;
     }
 }
