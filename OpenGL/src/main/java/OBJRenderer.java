@@ -4,11 +4,13 @@ import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.util.GLArrayDataServer;
 import com.jogamp.opengl.util.PMVMatrix;
 import com.jogamp.opengl.util.TileRendererBase;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.glsl.ShaderState;
 import de.javagl.obj.*;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 
 public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyListener {
     private ShaderState st;
@@ -25,6 +28,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     private GLUniformData pmvMatrixUniform;
     private GLUniformData timeUni;
     private GLArrayDataServer vertices;
+    private TextRenderer textRenderer;
+
     private long millisOffset;
     FloatBuffer OBJvertices;
     FloatBuffer texCoords;
@@ -36,7 +41,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     private long t0;
     private int swapInterval = 0;
     private float aspect = 1.0f;
-    private boolean doRotate = false;
+    private boolean doRotate = true;
     private boolean verbose = true;
     private boolean clearBuffers = true;
     private TileRendererBase tileRendererInUse = null;
@@ -45,7 +50,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
 
     public OBJRenderer() {
-        this.swapInterval = 1;
+        this.swapInterval = 60;
     }
 
     FloatBuffer timeBuffer;
@@ -62,6 +67,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     @Override
     public void init(final GLAutoDrawable glad) {
+        textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
         try {
             InputStream is = new FileInputStream("./models/cube.obj");
             obj = ObjUtils.convertToRenderable(
@@ -149,9 +155,10 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         final GL2ES2 gl = glad.getGL().getGL2ES2();
         int width = glad.getSurfaceWidth();
         int height = glad.getSurfaceHeight();
+
         timeUni.setData((System.currentTimeMillis() - millisOffset) / 1000.0f);
        // st.uniform(gl, timeUni);
-        System.out.println("Render Matrix: "+ pmvMatrix.toString());
+        //System.out.println("Render Matrix: "+ pmvMatrix.toString());
         if (clearBuffers) {
             if (null != tileRendererInUse) {
                 gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
@@ -163,10 +170,15 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         if (!gl.hasGLSL()) {
             return;
         }
+        camera.move(1,mouseX,mouseY,width,height);
+        camera.update();
         st.useProgram(gl, true);
         // One rotation every four seconds
-        camera.move(1,mouseX,mouseY,width,height);
-
+        textRenderer.setColor(Color.white);
+        textRenderer.beginRendering(width,height,true);
+        textRenderer.draw("Camera Position: " + Arrays.toString(camera.getPosition()), 10, height - 20);
+        textRenderer.draw("Camera Direction: " + Arrays.toString(camera.getDirection()), 10, height - 40);
+        textRenderer.endRendering();
         pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
         pmvMatrix.glTranslatef(0, 0, -10);
@@ -186,7 +198,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glDrawArrays(GL.GL_TRIANGLES, 0, indices.capacity());
         vertices.enableBuffer(gl, false);
         st.useProgram(gl, false);
-
     }
 
     @Override
@@ -244,6 +255,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         st.useProgram(gl, false);
 
         System.err.println(Thread.currentThread() + " RedSquareES2.reshape FIN");
+        System.out.println(doRotate);
     }
 
     @Override
@@ -314,6 +326,9 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         }
         if (key == 'v') {
             move[5] = false;
+        }
+        if(key == 'x') {
+            doRotate = !doRotate;
         }
     }
 

@@ -139,8 +139,7 @@ public class Camera {
       //  System.out.println("posPlusFront: " + posPlusFront[0] + ", " + posPlusFront[1] + ", " + posPlusFront[2]);
         update();
         pmvMatrix.gluLookAt(position[0], position[1], position[2], posPlusFront[0], posPlusFront[1], posPlusFront[2], up[0], up[1], up[2]);
-        System.out.println("Cam Matrix: "+pmvMatrix.toString());
-        System.out.println();
+      //  System.out.println("Cam Matrix: "+pmvMatrix.toString());
     }
 
     public float[] getPosition() {

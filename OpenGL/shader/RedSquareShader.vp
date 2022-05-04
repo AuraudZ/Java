@@ -17,5 +17,5 @@ void main(void)
 {
     localPos = mgl_Vertex.xyz;
     frontColor=mgl_Color;
-    gl_Position = mgl_PMVMatrix[0] * mgl_PMVMatrix[1] * mgl_Vertex * r;
+    gl_Position = mgl_PMVMatrix[0] * mgl_PMVMatrix[1] * mgl_Vertex;
 }
