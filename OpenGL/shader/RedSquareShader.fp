@@ -6,9 +6,17 @@ out vec4 mgl_FragColor;
 #endif
 uniform float iGlobalTime;
 varying vec4 frontColor;
+float near = 0.1;
+float far  = 100.0;
 
-void main (void)
+float LinearizeDepth(float depth)
 {
-    vec4 color = sin(iGlobalTime) * frontColor;
-    mgl_FragColor = color;
+    float z = depth * 2.0 - 1.0; // back to NDC
+    return (2.0 * near * far) / (far + near - z * (far - near));
+}
+
+void main()
+{
+   // float depth = LinearizeDepth(gl_FragCoord.z) / far;
+    mgl_FragColor = vec4(1,1,1, 1.0);
 }
