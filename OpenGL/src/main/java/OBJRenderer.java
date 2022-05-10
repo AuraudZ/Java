@@ -55,7 +55,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     private boolean clearBuffers = false;
     private float deltaTime = 0.0f;
     private float time = 0.0f;
-
+    private Hud hud;
     private String[] cubeMapFiles = {
             "textures/skybox/right.jpg",
             "textures/skybox/left.jpg",
@@ -86,12 +86,14 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     @Override
     public void init(final GLAutoDrawable glad) {
-        final GL2ES2 gl = glad.getGL().getGL2ES2();
+        final GL4bc gl = glad.getGL().getGL4bc();
 
         final ShaderCode cubeMapVP = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, this.getClass(),
                 "shader", "shader/bin", "cubemap", true);
         final ShaderCode cubeMapFP = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, this.getClass(),
                 "shader", "shader/bin", "cubemap", true);
+        hud = new Hud(gl);
+
 
         pmvMatrix = new PMVMatrix();
         pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
@@ -102,8 +104,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         skyBoxVertices = GLArrayDataServer.createGLSL("aPos", 3, GL.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
         FloatBuffer skyBoxVerticesBuffer = Buffers.newDirectFloatBuffer(Cube.skyboxVertices);
         skyBoxVertices.put(skyBoxVerticesBuffer);
-        skyBoxVertices.seal(gl,true);
-        skyBoxVertices.enableBuffer(gl,false);
+        skyBoxVertices.seal(gl, true);
+        skyBoxVertices.enableBuffer(gl, false);
 
         cubeMapVP.defaultShaderCustomization(gl, true, true);
         cubeMapFP.defaultShaderCustomization(gl, true, true);
@@ -118,6 +120,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glEnable(GL.GL_DEPTH_TEST);
         cubeMapSt.useProgram(gl, false);
         t0 = System.currentTimeMillis();
+        camera = new Camera();
         if (verbose) {
             System.err.println(Thread.currentThread() + " RedSquareES2.init FIN");
         }
@@ -126,33 +129,51 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     @Override
     public void display(final GLAutoDrawable glad) {
-        final GL2ES2 gl = glad.getGL().getGL2ES2();
+        final GL4bc gl = glad.getGL().getGL4bc();
 
-        if (clearBuffers) {
-            if (null != tileRendererInUse) {
-                gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
-            } else {
-                gl.glClearColor(0, 0, 0, 0);
-            }
-            gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-        }
         if (!gl.hasGLSL()) {
             return;
         }
+        //Hud rendering
+       // hud.drawBox(100, 100, 10, 10, 0, 255, 255, 255);
+        //hud.cleanUp();
 
-        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-        pmvMatrix.glLoadIdentity();
-        pmvMatrix.glTranslatef(0, 0, -10);
-        skyBoxVertices.enableBuffer(gl, true);
-        gl.glDrawArrays(GL.GL_TRIANGLES, 0, 36);
-        skyBoxVertices.enableBuffer(gl, false);
+        int randX = (int) (Math.random() * 100);
+        int randY = (int) (Math.random() * 100);
+
+
+
+
+
+        hud.drawBox(randX, randY, 10, 10, 0, 255, 255, 255);
+        hud.cleanUp();
+        camera.processMouseMovement(mouseX, mouseY,true);
+        gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+        gl.glLoadIdentity();
+        gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+        gl.glLoadIdentity();
+        gl.glColor3f(1.0f, 1.0f, 1.0f);
+        gl.glBegin(GL2.GL_QUADS);
+        gl.glVertex2f(randX, randY);
+        gl.glVertex2f(randX + 10, randY);
+        gl.glVertex2f(randX + 10, randY + 10);
+        gl.glVertex2f(randX, randY + 10);
+        gl.glEnd();
+
 
     }
 
     @Override
     public void reshape(final GLAutoDrawable glad, final int x, final int y, final int width,
                         final int height) {
-
+        final GL4bc gl = glad.getGL().getGL4bc();
+        final float aspect = (float) width / (float) height;
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+        pmvMatrix.glLoadIdentity();
+        pmvMatrix.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+        pmvMatrix.glLoadIdentity();
+        pmvMatrix.glTranslatef(0.0f, 0.0f, -5.0f);
     }
 
 
@@ -166,6 +187,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         if (!gl.hasGLSL()) {
             return;
         }
+
         cubeMapSt.destroy(gl);
         cubeMapSt = null;
         pmvMatrix = null;

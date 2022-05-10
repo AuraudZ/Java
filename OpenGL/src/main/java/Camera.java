@@ -55,6 +55,18 @@ public class Camera {
     }
 
 
+    Camera() {
+        this.position = new float[]{0.0f, 0.0f, 0.0f};
+        this.front = new float[]{0.0f, 0.0f, -1.0f};
+        this.up = new float[]{0.0f, 1.0f, 0.0f};
+        this.yaw = YAW;
+        this.pitch = PITCH;
+        this.zoom = ZOOM;
+        this.movementSpeed = SPEED;
+        this.mouseSensitivity = SENSITIVITY;
+        updateCameraVectors();
+    }
+
     Camera(float[] position, float[] front, float[] up, float yaw, float pitch, float zoom, float movementSpeed, float mouseSensitivity) {
         this.position = position;
         this.front = front;
