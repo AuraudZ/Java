@@ -1,10 +1,10 @@
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.GL4;
-import com.jogamp.opengl.GL4bc;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.math.VectorUtil;
 import com.jogamp.opengl.util.PMVMatrix;
+
+import java.nio.FloatBuffer;
 
 public class Camera {
 
@@ -13,6 +13,7 @@ public class Camera {
   private final float SPEED = 2.5f;
   private final float SENSITIVITY = 0.1f;
   private final float ZOOM = 45.0f;
+  private GLU glu = new GLU();
   float[] position = new float[] {0.0f, 0.0f, 0.0f};
   float[] front = new float[] {0.0f, 0.0f, -1.0f};
   float[] up = new float[] {0.0f, 1.0f, 0.0f};
@@ -25,6 +26,7 @@ public class Camera {
   float movementSpeed;
   float mouseSensitivity;
   private GL4bc gl;
+
   Camera(GL4bc gl) {
     this.gl = gl;
     position = new float[] {0.0f, 0.0f, 0.0f};
@@ -37,6 +39,7 @@ public class Camera {
     mouseSensitivity = SENSITIVITY;
     updateCameraVectors();
   }
+
   Camera() {
     this.position = new float[] {0.0f, 0.0f, 0.0f};
     this.front = new float[] {0.0f, 0.0f, -1.0f};
@@ -69,10 +72,13 @@ public class Camera {
     updateCameraVectors();
   }
 
-  public float[] GetViewMatrix() {
-    float[] matrix = new float[16];
+  public void GetViewMatrix() {
+    float[] viewMatrix = new float[16];
     float[] tmp = new float[16];
-    return FloatUtil.makeLookAt(matrix, 0, position, 0, front, 0, up, 0, tmp);
+    FloatUtil.makeLookAt(viewMatrix,0, position,0, posPlusFront,0, up,0,tmp);
+    gl.glMatrixMode(GL4bc.GL_MODELVIEW);
+    gl.glLoadIdentity();
+
   }
 
   private void updateCameraVectors() {
@@ -83,16 +89,8 @@ public class Camera {
     VectorUtil.normalizeVec3(front);
     VectorUtil.normalizeVec3(VectorUtil.crossVec3(right, front, worldUp));
     VectorUtil.normalizeVec3(VectorUtil.crossVec3(up, right, front));
-    PMVMatrix tmpMatrix = new PMVMatrix();
-    tmpMatrix.glLoadIdentity();
-    tmpMatrix.glMatrixMode(GL4bc.GL_PROJECTION);
-    tmpMatrix.gluPerspective(90, 16 / 9, 1, 100);
-    tmpMatrix.glLoadIdentity();
-    tmpMatrix.glMatrixMode(GL4bc.GL_MODELVIEW);
-    VectorUtil.addVec3(posPlusFront,position,front);
-    tmpMatrix.gluLookAt(position[0], position[1], position[2], posPlusFront[0], posPlusFront[1], posPlusFront[2], up[0], up[1], up[2]);
-  }
 
+  }
 
   public float[] getPosition() {
     return position;
@@ -100,6 +98,11 @@ public class Camera {
 
   public float[] getFront() {
     return front;
+  }
+
+  public void processKeyboard(Movement direction) {
+    float velocity = movementSpeed * 0.01f;
+    processKeyboard(direction, velocity);
   }
 
   public void processKeyboard(Movement direction, float deltaTime) {

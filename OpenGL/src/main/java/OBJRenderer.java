@@ -120,7 +120,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glEnable(GL.GL_DEPTH_TEST);
         cubeMapSt.useProgram(gl, false);
         t0 = System.currentTimeMillis();
-        camera = new Camera();
+        camera = new Camera(gl);
         if (verbose) {
             System.err.println(Thread.currentThread() + " RedSquareES2.init FIN");
         }
@@ -137,30 +137,22 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         //Hud rendering
        // hud.drawBox(100, 100, 10, 10, 0, 255, 255, 255);
         //hud.cleanUp();
-
+        camera.processMouseMovement(xoffset, yoffset, true);
         int randX = (int) (Math.random() * 100);
         int randY = (int) (Math.random() * 100);
-
-
-
-
-
-        hud.drawBox(randX, randY, 10, 10, 0, 255, 255, 255);
-        hud.cleanUp();
-        camera.processMouseMovement(mouseX, mouseY,true);
         gl.glLoadIdentity();
         gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-        gl.glLoadIdentity();
-        gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-        gl.glLoadIdentity();
-        gl.glColor3f(1.0f, 1.0f, 1.0f);
-        gl.glBegin(GL2.GL_QUADS);
-        gl.glVertex2f(randX, randY);
-        gl.glVertex2f(randX + 10, randY);
-        gl.glVertex2f(randX + 10, randY + 10);
-        gl.glVertex2f(randX, randY + 10);
-        gl.glEnd();
+       pmvMatrix.glLoadIdentity();
+        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+        pmvMatrix.glLoadIdentity();
 
+        pmvMatrix.gluLookAt(camera.front[0], camera.front[1], camera.front[2],camera.posPlusFront[0], camera.posPlusFront[1], camera.posPlusFront[2],camera.up[0], camera.up[1], camera.up[2]);
+        gl.glColor3f(1.0f, 0.0f, 1.0f);
+        gl.glBegin(GL.GL_TRIANGLES);
+        gl.glVertex3f(-1.0f, -1.0f, 0.0f);
+        gl.glVertex3f(1.0f, -1.0f, 0.0f);
+        gl.glVertex3f(0.0f, 1.0f, 0.0f);
+        gl.glEnd();
 
     }
 
@@ -188,7 +180,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         if (!gl.hasGLSL()) {
             return;
         }
-
         cubeMapSt.destroy(gl);
         cubeMapSt = null;
         pmvMatrix = null;
@@ -200,18 +191,18 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     @Override
     public void keyTyped(KeyEvent e) {
         if (e.getKeyChar() == 'w') {
-            camera.processKeyboard(Camera.Movement.FORWARD, deltaTime);
+            camera.processKeyboard(Camera.Movement.FORWARD);
         }
         if (e.getKeyChar() == 's') {
-            camera.processKeyboard(Camera.Movement.BACKWARD, deltaTime);
+            camera.processKeyboard(Camera.Movement.BACKWARD);
         }
         if (e.getKeyChar() == 'a') {
-            camera.processKeyboard(Camera.Movement.LEFT, deltaTime);
+            camera.processKeyboard(Camera.Movement.LEFT);
         }
         if (e.getKeyChar() == 'd') {
-            camera.processKeyboard(Camera.Movement.RIGHT, deltaTime);
+            camera.processKeyboard(Camera.Movement.RIGHT);
         }
-
+        System.out.println(e.getKeyChar());
     }
 
     @Override
@@ -252,12 +243,16 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     float lastX;
     float lastY;
-
+    float xoffset;
+    float yoffset;
     @Override
     public void mouseDragged(MouseEvent e) {
-        lastX = e.getX();
-        lastY = e.getY();
-        camera.processMouseMovement(e.getX() - lastX, lastY - e.getY(), true);
+         xoffset = e.getX() - lastX;
+         yoffset = lastY - e.getY();
+
+        lastX = (float) e.getComponent().getWidth() / 2;
+        lastY = (float) e.getComponent().getHeight() / 2;
+        System.out.println(camera.front[0] + " " + camera.front[1] + " " + camera.front[2]);
     }
 
     @Override
