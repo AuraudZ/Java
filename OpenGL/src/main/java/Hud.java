@@ -25,11 +25,6 @@ public class Hud {
         gl.glPopMatrix();
         gl.glPopAttrib();
         gl.glEnable(GL2.GL_DEPTH_TEST);
-        gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glLoadIdentity();
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glLoadIdentity();
-
     }
 
 

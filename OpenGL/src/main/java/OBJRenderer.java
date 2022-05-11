@@ -148,6 +148,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         hud.drawBox(randX, randY, 10, 10, 0, 255, 255, 255);
         hud.cleanUp();
         camera.processMouseMovement(mouseX, mouseY,true);
+        gl.glLoadIdentity();
         gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
         gl.glLoadIdentity();
         gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
