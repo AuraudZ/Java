@@ -19,3 +19,5 @@ dependencies {
     implementation 'org.joml:joml:1.10.4'
 }
 
+sourceCompatibility = JavaVersion.VERSION_14
+targetCompatibility = JavaVersion.VERSION_14

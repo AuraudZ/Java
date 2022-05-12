@@ -1,154 +1,135 @@
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.math.FloatUtil;
-import com.jogamp.opengl.math.VectorUtil;
-import com.jogamp.opengl.util.PMVMatrix;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.nio.FloatBuffer;
 
 public class Camera {
 
-  private final float YAW = -90.0f;
-  private final float PITCH = 0.0f;
-  private final float SPEED = 2.5f;
-  private final float SENSITIVITY = 0.1f;
-  private final float ZOOM = 45.0f;
-  private GLU glu = new GLU();
-  float[] position = new float[] {0.0f, 0.0f, 0.0f};
-  float[] front = new float[] {0.0f, 0.0f, -1.0f};
-  float[] up = new float[] {0.0f, 1.0f, 0.0f};
-  float[] right = new float[] {1.0f, 0.0f, 0.0f};
-  float[] worldUp = new float[] {0.0f, 1.0f, 0.0f};
-  float[] posPlusFront = new float[3];
-  float yaw;
-  float pitch;
-  float zoom;
-  float movementSpeed;
-  float mouseSensitivity;
-  private GL4bc gl;
-
-  Camera(GL4bc gl) {
-    this.gl = gl;
-    position = new float[] {0.0f, 0.0f, 0.0f};
-    front = new float[] {0.0f, 0.0f, -1.0f};
-    up = new float[] {0.0f, 1.0f, 0.0f};
-    yaw = YAW;
-    pitch = PITCH;
-    zoom = ZOOM;
-    movementSpeed = SPEED;
-    mouseSensitivity = SENSITIVITY;
-    updateCameraVectors();
-  }
-
-  Camera() {
-    this.position = new float[] {0.0f, 0.0f, 0.0f};
-    this.front = new float[] {0.0f, 0.0f, -1.0f};
-    this.up = new float[] {0.0f, 1.0f, 0.0f};
-    this.yaw = YAW;
-    this.pitch = PITCH;
-    this.zoom = ZOOM;
-    this.movementSpeed = SPEED;
-    this.mouseSensitivity = SENSITIVITY;
-    updateCameraVectors();
-  }
-
-  Camera(
-      float[] position,
-      float[] front,
-      float[] up,
-      float yaw,
-      float pitch,
-      float zoom,
-      float movementSpeed,
-      float mouseSensitivity) {
-    this.position = position;
-    this.front = front;
-    this.up = up;
-    this.yaw = yaw;
-    this.pitch = pitch;
-    this.zoom = zoom;
-    this.movementSpeed = movementSpeed;
-    this.mouseSensitivity = mouseSensitivity;
-    updateCameraVectors();
-  }
-
-  public void GetViewMatrix() {
-    float[] viewMatrix = new float[16];
-    float[] tmp = new float[16];
-    FloatUtil.makeLookAt(viewMatrix,0, position,0, posPlusFront,0, up,0,tmp);
-    gl.glMatrixMode(GL4bc.GL_MODELVIEW);
-    gl.glLoadIdentity();
-
-  }
-
-  private void updateCameraVectors() {
-    float[] front = new float[3];
-    front[0] = (float) Math.cos(Math.toRadians(yaw)) * (float) Math.cos(Math.toRadians(pitch));
-    front[1] = (float) Math.sin(Math.toRadians(pitch));
-    front[2] = (float) Math.sin(Math.toRadians(yaw)) * (float) Math.cos(Math.toRadians(pitch));
-    VectorUtil.normalizeVec3(front);
-    VectorUtil.normalizeVec3(VectorUtil.crossVec3(right, front, worldUp));
-    VectorUtil.normalizeVec3(VectorUtil.crossVec3(up, right, front));
-
-  }
-
-  public float[] getPosition() {
-    return position;
-  }
-
-  public float[] getFront() {
-    return front;
-  }
-
-  public void processKeyboard(Movement direction) {
-    float velocity = movementSpeed * 0.01f;
-    processKeyboard(direction, velocity);
-  }
-
-  public void processKeyboard(Movement direction, float deltaTime) {
-    float velocity = movementSpeed * deltaTime;
-    if (direction == Movement.FORWARD) {
-      position[0] += front[0] * velocity;
-      position[1] += front[1] * velocity;
-      position[2] += front[2] * velocity;
+    private final float YAW = -90.0f;
+    private final float PITCH = 0.0f;
+    private final float SPEED = 2.5f;
+    private final float SENSITIVITY = 0.1f;
+    private final float ZOOM = 90.0f;
+    private GLU glu = new GLU();
+    Vector3f position;
+    Vector3f front;
+    Vector3f up;
+    Vector3f right = new Vector3f();
+    Vector3f worldUp = new Vector3f(0.0f, 1.0f, 0.0f);
+    float yaw;
+    float pitch;
+    float zoom;
+    float movementSpeed;
+    Matrix4f view = new Matrix4f();
+    Matrix4f projection = new Matrix4f();
+    float mouseSensitivity;
+    private GL4bc gl;
+    public Matrix4f getProjectionMatrix() {
+        projection.setPerspective(zoom, 1.0f, 0.01f, 100.0f);
+        return projection;
     }
-    if (direction == Movement.BACKWARD) {
-      position[0] -= front[0] * velocity;
-      position[1] -= front[1] * velocity;
-      position[2] -= front[2] * velocity;
-    }
-    if (direction == Movement.LEFT) {
-      position[0] -= right[0] * velocity;
-      position[1] -= right[1] * velocity;
-      position[2] -= right[2] * velocity;
-    }
-    if (direction == Movement.RIGHT) {
-      position[0] += right[0] * velocity;
-      position[1] += right[1] * velocity;
-      position[2] += right[2] * velocity;
-    }
-  }
 
-  public void processMouseMovement(float xoffset, float yoffset, boolean constrainPitch) {
-    xoffset *= mouseSensitivity;
-    yoffset *= mouseSensitivity;
-    yaw += xoffset;
-    pitch += yoffset;
-    if (constrainPitch) {
-      if (pitch > 89.0f) {
-        pitch = 89.0f;
-      }
-      if (pitch < -89.0f) {
-        pitch = -89.0f;
-      }
+    public Matrix4f getViewMatrix() {
+        view.lookAt(position, position.add(front), up);
+        return view;
     }
-    updateCameraVectors();
-  }
 
-  public enum Movement {
-    FORWARD,
-    BACKWARD,
-    LEFT,
-    RIGHT,
-  }
+    public Matrix4f getProjectPlusViewMatrix() {
+        Matrix4f projection = getProjectionMatrix();
+        Matrix4f view = getViewMatrix();
+        Matrix4f projectionView = new Matrix4f();
+        projectionView.mul(projection, view);
+        return projectionView;
+    }
+
+
+
+    public void cleanUp(GL4bc gl) {
+        gl.glPopMatrix();
+    }
+
+    Camera(GL4bc gl) {
+        this.gl = gl;
+        position = new Vector3f(0.0f, 0.0f, 10.0f);
+        front = new Vector3f(0.0f, 0.0f, -1.0f);
+        up = new Vector3f(0.0f, 1.0f, 0.0f);
+        yaw = YAW;
+        pitch = PITCH;
+        zoom = ZOOM;
+        movementSpeed = SPEED;
+        mouseSensitivity = SENSITIVITY;
+        updateCameraVectors();
+    }
+
+
+
+    private void updateCameraVectors() {
+        Vector3f front = new Vector3f();
+        front.x = (float) Math.cos(Math.toRadians(yaw)) * (float) Math.cos(Math.toRadians(pitch));
+        front.y = (float) Math.sin(Math.toRadians(pitch));
+        front.z = (float) Math.sin(Math.toRadians(yaw)) * (float) Math.cos(Math.toRadians(pitch));
+        front.normalize();
+        right = front.cross(worldUp).normalize();
+        up = right.cross(front).normalize();
+        view.setPerspective(zoom, 1.0f, 0.01f, 100.0f);
+        view.lookAt(position, front, up);
+    }
+
+    public float getZoom() {
+        return zoom;
+    }
+
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    public Vector3f getFront() {
+        return front;
+    }
+
+    public void processKeyboard(Movement direction) {
+        float velocity = movementSpeed * 0.01f;
+        processKeyboard(direction, velocity);
+    }
+
+    public void processKeyboard(Movement direction, float deltaTime) {
+        float velocity = movementSpeed * deltaTime;
+        if (direction == Movement.FORWARD) {
+          position.add(front.mul(velocity));
+        }
+        if (direction == Movement.BACKWARD) {
+          position.sub(front.mul(velocity));
+        }
+        if (direction == Movement.LEFT) {
+          position.sub(right.mul(velocity));
+        }
+        if (direction == Movement.RIGHT) {
+          position.add(right.mul(velocity));
+        }
+    }
+
+    public void processMouseMovement(float xoffset, float yoffset, boolean constrainPitch) {
+        xoffset *= mouseSensitivity;
+        yoffset *= mouseSensitivity;
+        yaw += xoffset;
+        pitch += yoffset;
+        if (constrainPitch) {
+            if (pitch > 89.0f) {
+                pitch = 89.0f;
+            }
+            if (pitch < -89.0f) {
+                pitch = -89.0f;
+            }
+        }
+        updateCameraVectors();
+    }
+
+    public enum Movement {
+        FORWARD,
+        BACKWARD,
+        LEFT,
+        RIGHT,
+    }
 }

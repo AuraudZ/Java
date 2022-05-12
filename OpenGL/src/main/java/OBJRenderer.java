@@ -1,6 +1,7 @@
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
+import com.jogamp.opengl.math.Matrix4;
 import com.jogamp.opengl.util.GLArrayDataServer;
 import com.jogamp.opengl.util.PMVMatrix;
 import com.jogamp.opengl.util.TileRendererBase;
@@ -13,6 +14,8 @@ import de.javagl.obj.Obj;
 import de.javagl.obj.ObjData;
 import de.javagl.obj.ObjReader;
 import de.javagl.obj.ObjUtils;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -45,6 +48,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     FloatBuffer texCoords;
     FloatBuffer normals;
     IntBuffer indices;
+
 
     Obj obj;
     private long t0;
@@ -110,6 +114,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         cubeMapVP.defaultShaderCustomization(gl, true, true);
         cubeMapFP.defaultShaderCustomization(gl, true, true);
 
+
+
         cubeMapSt = new ShaderState();
         final ShaderProgram cubeMapProgram = new ShaderProgram();
         cubeMapProgram.add(cubeMapVP);
@@ -134,24 +140,20 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         if (!gl.hasGLSL()) {
             return;
         }
-        //Hud rendering
-       // hud.drawBox(100, 100, 10, 10, 0, 255, 255, 255);
-        //hud.cleanUp();
-        camera.processMouseMovement(xoffset, yoffset, true);
-        int randX = (int) (Math.random() * 100);
-        int randY = (int) (Math.random() * 100);
-        gl.glLoadIdentity();
-        gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-       pmvMatrix.glLoadIdentity();
-        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-        pmvMatrix.glLoadIdentity();
-        pmvMatrix.gluLookAt(camera.front[0], camera.front[1], camera.front[2],camera.posPlusFront[0], camera.posPlusFront[1], camera.posPlusFront[2],camera.up[0], camera.up[1], camera.up[2]);
-        gl.glColor3f(1.0f, 0.0f, 1.0f);
-        gl.glBegin(GL.GL_TRIANGLES);
-        gl.glVertex3f(-1.0f, -1.0f, 0.0f);
-        gl.glVertex3f(1.0f, -1.0f, 0.0f);
-        gl.glVertex3f(0.0f, 1.0f, 0.0f);
-        gl.glEnd();
+
+        int mat4Location;
+        cubeMapSt.useProgram(gl, true);
+        mat4Location = cubeMapSt.getUniformLocation(gl, "u_MVPMatrix");
+
+
+        FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
+        new Matrix4f().perspective((float) Math.toRadians(45.0f), 1.0f, 0.01f, 100.0f)
+                .lookAt(0.0f, 0.0f, 10.0f,
+                        0.0f, 0.0f, 0.0f,
+                        0.0f, 1.0f, 0.0f).get(fb);
+        gl.glUniformMatrix4fv(mat4Location, 1, false, fb);
+
+
 
     }
 
@@ -165,6 +167,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         pmvMatrix.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
         pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
+
         pmvMatrix.glTranslatef(0.0f, 0.0f, -5.0f);
     }
 
@@ -244,14 +247,14 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     float lastY;
     float xoffset;
     float yoffset;
+
     @Override
     public void mouseDragged(MouseEvent e) {
-         xoffset = e.getX() - lastX;
-         yoffset = lastY - e.getY();
+        xoffset = e.getX() - lastX;
+        yoffset = lastY - e.getY();
 
         lastX = (float) e.getComponent().getWidth() / 2;
         lastY = (float) e.getComponent().getHeight() / 2;
-        System.out.println(camera.front[0] + " " + camera.front[1] + " " + camera.front[2]);
     }
 
     @Override
