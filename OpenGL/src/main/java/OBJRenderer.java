@@ -33,13 +33,8 @@ import java.nio.IntBuffer;
 import java.util.Arrays;
 
 public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyListener {
-    private ShaderState st;
     private ShaderState cubeMapSt;
     private PMVMatrix pmvMatrix;
-    private GLUniformData pmvMatrixUniform;
-    private GLUniformData timeUni;
-    private GLUniformData cubeMapUniform;
-    private GLArrayDataServer vertices;
     private GLArrayDataServer skyBoxVertices;
     private TextRenderer textRenderer;
 
@@ -91,7 +86,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     @Override
     public void init(final GLAutoDrawable glad) {
         final GL4bc gl = glad.getGL().getGL4bc();
-
+        textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
         final ShaderCode cubeMapVP = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, this.getClass(),
                 "shader", "shader/bin", "cubemap", true);
         final ShaderCode cubeMapFP = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, this.getClass(),
@@ -123,13 +118,15 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         cubeMapSt.attachShaderProgram(gl, cubeMapProgram, true);
 
 
-        gl.glEnable(GL.GL_DEPTH_TEST);
-        cubeMapSt.useProgram(gl, false);
+
         t0 = System.currentTimeMillis();
         camera = new Camera(gl);
         if (verbose) {
             System.err.println(Thread.currentThread() + " RedSquareES2.init FIN");
         }
+        gl.glClearColor(0, 0, 0, 1);
+        gl.glEnable(GL2ES2.GL_DEPTH_TEST);
+        cubeMapSt.useProgram(gl, false);
 
     }
 
@@ -141,18 +138,26 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             return;
         }
 
-        int mat4Location;
         cubeMapSt.useProgram(gl, true);
-        mat4Location = cubeMapSt.getUniformLocation(gl, "u_MVPMatrix");
+       int mat4Location = cubeMapSt.getUniformLocation(gl, "u_MVPMatrix");
 
-
+        camera.processMouseMovement(mouseX, mouseY,true);
         FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
         new Matrix4f().perspective((float) Math.toRadians(45.0f), 1.0f, 0.01f, 100.0f)
-                .lookAt(0.0f, 0.0f, 10.0f,
-                        0.0f, 0.0f, 0.0f,
-                        0.0f, 1.0f, 0.0f).get(fb);
+                .lookAt(camera.front,camera.front.add(camera.position),camera.up).get(fb);
         gl.glUniformMatrix4fv(mat4Location, 1, false, fb);
 
+        gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4);
+
+        cubeMapSt.useProgram(gl, false);
+
+        System.out.println(camera.front);
+        textRenderer.beginRendering(glad.getSurfaceWidth(), glad.getSurfaceHeight());
+        textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        textRenderer.draw(String.valueOf(camera.front.x), 20, 20);
+        textRenderer.draw(String.valueOf(camera.front.y), 20, 40);
+        textRenderer.draw(String.valueOf(camera.front.z), 20, 60);
+        textRenderer.endRendering();
 
 
     }
@@ -167,7 +172,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         pmvMatrix.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
         pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
-
         pmvMatrix.glTranslatef(0.0f, 0.0f, -5.0f);
     }
 
