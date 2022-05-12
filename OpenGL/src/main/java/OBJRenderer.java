@@ -145,7 +145,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
        pmvMatrix.glLoadIdentity();
         pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
         pmvMatrix.glLoadIdentity();
-
         pmvMatrix.gluLookAt(camera.front[0], camera.front[1], camera.front[2],camera.posPlusFront[0], camera.posPlusFront[1], camera.posPlusFront[2],camera.up[0], camera.up[1], camera.up[2]);
         gl.glColor3f(1.0f, 0.0f, 1.0f);
         gl.glBegin(GL.GL_TRIANGLES);
