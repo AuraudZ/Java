@@ -9,6 +9,8 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.glsl.ShaderState;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
 import com.jogamp.opengl.util.texture.TextureState;
 import de.javagl.obj.Obj;
 import de.javagl.obj.ObjData;
@@ -64,7 +66,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             "textures/skybox/back.jpg"
     };
     private TileRendererBase tileRendererInUse = null;
-    private boolean doRotateBeforePrinting;
     boolean[] move = new boolean[6];
 
     public OBJRenderer() {
@@ -74,6 +75,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     FloatBuffer timeBuffer;
 
     boolean forward, backward, left, right, reset;
+    Texture cubeMapTexture = null;
 
     public void setAspect(final float aspect) {
         this.aspect = aspect;
@@ -94,11 +96,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         hud = new Hud(gl);
 
 
-        pmvMatrix = new PMVMatrix();
-        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-        pmvMatrix.glLoadIdentity();
-        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-        pmvMatrix.glLoadIdentity();
 
         skyBoxVertices = GLArrayDataServer.createGLSL("aPos", 3, GL.GL_FLOAT, false, 4, GL.GL_STATIC_DRAW);
         FloatBuffer skyBoxVerticesBuffer = Buffers.newDirectFloatBuffer(Cube.skyboxVertices);
@@ -106,18 +103,25 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         skyBoxVertices.seal(gl, true);
         skyBoxVertices.enableBuffer(gl, false);
 
+        try {
+            cubeMapTexture = TextureIO.newTexture(new File("textures/skybox/right.jpg"), true);
+        }
+        catch (final IOException e) {
+            e.printStackTrace();
+        }
+        gl.glBindTexture(GL.GL_TEXTURE_2D, cubeMapTexture.getTextureObject(gl));
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
         cubeMapVP.defaultShaderCustomization(gl, true, true);
         cubeMapFP.defaultShaderCustomization(gl, true, true);
-
-
 
         cubeMapSt = new ShaderState();
         final ShaderProgram cubeMapProgram = new ShaderProgram();
         cubeMapProgram.add(cubeMapVP);
         cubeMapProgram.add(cubeMapFP);
         cubeMapSt.attachShaderProgram(gl, cubeMapProgram, true);
-
-
 
         t0 = System.currentTimeMillis();
         camera = new Camera(gl);
@@ -138,28 +142,49 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             return;
         }
 
-        cubeMapSt.useProgram(gl, true);
-       int mat4Location = cubeMapSt.getUniformLocation(gl, "u_MVPMatrix");
 
-        camera.processMouseMovement(mouseX, mouseY,true);
-        FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
-        new Matrix4f().perspective((float) Math.toRadians(45.0f), 1.0f, 0.01f, 100.0f)
-                .lookAt(camera.front,camera.front.add(camera.position),camera.up).get(fb);
-        gl.glUniformMatrix4fv(mat4Location, 1, false, fb);
-
-        gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4);
-
-        cubeMapSt.useProgram(gl, false);
-
-        System.out.println(camera.front);
         textRenderer.beginRendering(glad.getSurfaceWidth(), glad.getSurfaceHeight());
         textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+
         textRenderer.draw(String.valueOf(camera.front.x), 20, 20);
         textRenderer.draw(String.valueOf(camera.front.y), 20, 40);
         textRenderer.draw(String.valueOf(camera.front.z), 20, 60);
         textRenderer.endRendering();
 
 
+        Matrix4f modelMatrix = new Matrix4f();
+        Matrix4f viewMatrix = new Matrix4f();
+        Matrix4f projectionMatrix = new Matrix4f();
+        int height = glad.getSurfaceHeight();
+        int width = glad.getSurfaceWidth();
+        cubeMapSt.useProgram(gl, true);
+        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+        gl.glClearColor(0, 0, 0, 1);
+        modelMatrix = modelMatrix.rotate((float) Math.toRadians(-55.0f), 1.0f, 0.0f, 0.0f);
+        viewMatrix = viewMatrix.translate(0.0f, 0.0f, -3.0f);
+        projectionMatrix = projectionMatrix.perspective((float) Math.toRadians(45.0f), (float) width / (float) height, 0.1f, 100.0f);
+
+        int modelLoc = cubeMapSt.getUniformLocation(gl, "model");
+        int viewLoc = cubeMapSt.getUniformLocation(gl, "view");
+
+        int projectionLoc = cubeMapSt.getUniformLocation(gl, "projection");
+
+        float[] matrixBuffer = new float[16];
+        gl.glUniformMatrix4fv(modelLoc, 1, false, modelMatrix.get(matrixBuffer), 0);
+        gl.glUniformMatrix4fv(viewLoc, 1, false, viewMatrix.get(matrixBuffer), 0);
+        gl.glUniformMatrix4fv(projectionLoc, 1, false, projectionMatrix.get(matrixBuffer), 0);
+
+        gl.glActiveTexture(GL.GL_TEXTURE0);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, cubeMapTexture.getTextureObject());
+        gl.glUniform1i(cubeMapSt.getUniformLocation(gl, "cubeMap"), 0);
+        skyBoxVertices.bindBuffer(gl, true);
+        skyBoxVertices.enableBuffer(gl, true);
+        System.out.println(skyBoxVertices.isVBO());
+        System.exit(0);
+        gl.glDrawElements(GL.GL_TRIANGLES, skyBoxVertices.getElementCount(), GL.GL_UNSIGNED_INT, 0);
+
+        skyBoxVertices.enableBuffer(gl, false);
+        cubeMapSt.useProgram(gl, false);
     }
 
     @Override
@@ -167,13 +192,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
                         final int height) {
         final GL4bc gl = glad.getGL().getGL4bc();
         final float aspect = (float) width / (float) height;
-        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-        pmvMatrix.glLoadIdentity();
-        pmvMatrix.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-        pmvMatrix.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-        pmvMatrix.glLoadIdentity();
-        pmvMatrix.glTranslatef(0.0f, 0.0f, -5.0f);
-    }
+        }
 
 
     @Override
