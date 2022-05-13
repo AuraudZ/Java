@@ -16,10 +16,10 @@ public class Main {
         GLProfile glprofile = GLProfile.getDefault();
         GLCapabilities glcapabilities = new GLCapabilities(glprofile);
         GLJPanel gljpanel = new GLJPanel(glcapabilities);
-        OBJRenderer objrenderer = new OBJRenderer();
+        RedSquare objrenderer = new RedSquare();
         gljpanel.addGLEventListener(objrenderer);
-        gljpanel.addMouseMotionListener(objrenderer);
-        gljpanel.addKeyListener(objrenderer);
+        //gljpanel.addMouseMotionListener(objrenderer);
+        //gljpanel.addKeyListener(objrenderer);
         FPSAnimator animator = new FPSAnimator(gljpanel, 500);
         final JFrame jframe = new JFrame("One Triangle Swing GLJPanel");
         jframe.addWindowListener(new WindowAdapter() {
