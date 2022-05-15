@@ -55,6 +55,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     private float aspect = 1.0f;
     private boolean doRotate = true;
     private boolean verbose = true;
+
+    private  GLArrayDataClient vertexBuffer;
     private ShaderState st;
     private boolean clearBuffers = false;
     private float deltaTime = 0.0f;
@@ -94,20 +96,20 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
 
         hud = new Hud(gl);
-        initShaders(gl);
-
+        //initShaders(gl);
+/*
         st.useProgram(gl, true);
-        GLArrayDataClient vertices = GLArrayDataClient.createGLSL("mgl_Vertex", 3, gl.GL_FLOAT, false, 4);
+        vertexBuffer = GLArrayDataClient.createGLSL("mgl_Vertex", 3, gl.GL_FLOAT, false, 4);
         {
             // Fill them up
-            FloatBuffer verticeb = (FloatBuffer)vertices.getBuffer();
+            FloatBuffer verticeb = (FloatBuffer)vertexBuffer.getBuffer();
             verticeb.put(-2);  verticeb.put(  2);  verticeb.put( 0);
             verticeb.put( 2);  verticeb.put(  2);  verticeb.put( 0);
             verticeb.put(-2);  verticeb.put( -2);  verticeb.put( 0);
             verticeb.put( 2);  verticeb.put( -2);  verticeb.put( 0);
         }
-        vertices.seal(gl, true);
-        vertices.bindBuffer(gl,true);
+        vertexBuffer.seal(gl, true);
+        vertexBuffer.bindBuffer(gl,true);
 
         try {
             cubeMapTexture = TextureIO.newTexture(new File("textures/skybox/right.jpg"), true);
@@ -121,6 +123,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
 
+*/
+
 
         t0 = System.currentTimeMillis();
         camera = new Camera(gl);
@@ -129,7 +133,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         }
         gl.glClearColor(0, 0, 0, 1);
         gl.glEnable(GL2ES2.GL_DEPTH_TEST);
-        st.useProgram(gl, false);
+        //st.useProgram(gl, false);
 
     }
 
@@ -146,57 +150,47 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         program.add(vp);
         program.add(fp);
 
-        st.attachShaderProgram(gl, program, true);
-        st.useProgram(gl, true);
+    //    st.attachShaderProgram(gl, program, true);
+   //     st.useProgram(gl, false);
     }
 
     @Override
     public void display(final GLAutoDrawable glad) {
         final GL4bc gl = glad.getGL().getGL4bc();
 
-        if (!gl.hasGLSL()) {
-            return;
-        }
-
-
         textRenderer.beginRendering(glad.getSurfaceWidth(), glad.getSurfaceHeight());
         textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         textRenderer.draw("Hello World", 10, glad.getSurfaceHeight() - 20);
         textRenderer.endRendering();
+        if (!gl.hasGLSL()) {
+            return;
+        }
 
-
-        Matrix4f modelMatrix = new Matrix4f();
-        Matrix4f viewMatrix = new Matrix4f();
-        Matrix4f projectionMatrix = new Matrix4f();
-        int height = glad.getSurfaceHeight();
-        int width = glad.getSurfaceWidth();
-        st.useProgram(gl, true);
+        //t.useProgram(gl, true);
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-        gl.glClearColor(0, 0, 0, 1);
-        modelMatrix = modelMatrix.rotate((float) Math.toRadians(-55.0f), 1.0f, 0.0f, 0.0f);
-        viewMatrix = viewMatrix.translate(0.0f, 0.0f, -3.0f);
-        projectionMatrix = projectionMatrix.perspective((float) Math.toRadians(45.0f), (float) width / (float) height, 0.1f, 100.0f);
 
-        int modelLoc = st.getUniformLocation(gl, "model");
-        int viewLoc = st.getUniformLocation(gl, "view");
+        gl.glEnable(GL.GL_CULL_FACE);
+      //
+        //  st.useProgram(gl, false);
 
-        int projectionLoc = st.getUniformLocation(gl, "projection");
+        gl.glClearColor(1,1,1,1);
+        gl.glBegin(GL4bc.GL_QUADS);
+        gl.glColor3f(0, 1, 1);
+        gl.glVertex3f(-2, 2, 0);
+        gl.glColor3f(0, 1, 1);
+        gl.glVertex3f(2, 2, 0);
+        gl.glColor3f(0, 1, 1);
+        gl.glVertex3f(2, -2, 0);
+        gl.glColor3f(0, 1, 1);
+        gl.glVertex3f(-2, -2, 0);
+        gl.glEnd();
 
-        float[] matrixBuffer = new float[16];
-        gl.glUniformMatrix4fv(modelLoc, 1, false, modelMatrix.get(matrixBuffer), 0);
-        gl.glUniformMatrix4fv(viewLoc, 1, false, viewMatrix.get(matrixBuffer), 0);
-        gl.glUniformMatrix4fv(projectionLoc, 1, false, projectionMatrix.get(matrixBuffer), 0);
 
-        gl.glActiveTexture(GL.GL_TEXTURE0);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, cubeMapTexture.getTextureObject());
 
-        gl.glUniform1i(st.getUniformLocation(gl, "skybox"), 0);
-        //gl.glVertexAttribLPointer(0, 3, GL.GL_FLOAT, 0, 0);
-        gl.glDrawElements(GL_TRIANGLES, 6, GL.GL_STATIC_DRAW, 0);
 
-        // System.exit(0);
-        st.useProgram(gl, false);
+
+
     }
 
     @Override
@@ -217,7 +211,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         if (!gl.hasGLSL()) {
             return;
         }
-        st.destroy(gl);
+        //st.destroy(gl);
         st = null;
         pmvMatrix = null;
         if (verbose) {
