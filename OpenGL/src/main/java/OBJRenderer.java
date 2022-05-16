@@ -100,7 +100,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     }
 
     private void initShaders(final GL4bc gl) {
-        st = new ShaderState();
         final ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, this.getClass(),
                 "shader", "shader/bin", "shader", true);
         final ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, this.getClass(),
@@ -108,10 +107,12 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         vp.defaultShaderCustomization(gl, true, true);
         fp.defaultShaderCustomization(gl, true, true);
         final ShaderProgram program = new ShaderProgram();
+        program.init(gl);
         program.add(vp);
         program.add(fp);
-        program.init(gl);
-        program.link(gl, System.out);
+        if(!program.link(gl, System.out)) {
+            System.err.println("Could not link program: ");
+        }
         shaderProgramID = program.id();
 
     }
@@ -156,6 +157,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glBindVertexArray(vVAO_ID);
         gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
 
+        gl.glUseProgram(0);
 
 
     }
@@ -178,8 +180,9 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         if (!gl.hasGLSL()) {
             return;
         }
-        st.destroy(gl);
-        st = null;
+
+        gl.glDeleteProgram(shaderProgramID);
+
 
     }
 
