@@ -1,4 +1,6 @@
 import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.GLArrayDataClient;
 import com.jogamp.opengl.util.PMVMatrix;
 import com.jogamp.opengl.util.glsl.ShaderCode;
@@ -6,6 +8,7 @@ import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.glsl.ShaderState;
 import com.jogamp.opengl.util.glsl.ShaderUtil;
 
+import javax.swing.*;
 import java.nio.FloatBuffer;
 
 public class RedSquare implements GLEventListener {
@@ -185,5 +188,19 @@ public class RedSquare implements GLEventListener {
     gl.glDrawArrays(gl.GL_TRIANGLE_STRIP, 0, 4);
 
     st.useProgram(gl, false);
+  }
+
+  public static void main(String[] args) {
+    JFrame frame = new JFrame("RedSquare");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setSize(640, 480);
+    frame.setLocation(100, 100);
+    GLProfile glprofile = GLProfile.getDefault();
+    GLCapabilities glcapabilities = new GLCapabilities(glprofile);
+    GLJPanel canvas = new GLJPanel(glcapabilities);
+    canvas.addGLEventListener(new RedSquare());
+    frame.add(canvas);
+    frame.setVisible(true);
+
   }
 }
