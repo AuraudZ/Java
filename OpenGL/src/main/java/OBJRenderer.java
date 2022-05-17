@@ -59,9 +59,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     }
 
     FloatBuffer timeBuffer;
-    int[] vao = new int[1];
-    int[] vbo = new int[1];
-    int[] ebo = new int[1];
+
     boolean forward, backward, left, right, reset;
     Texture cubeMapTexture = null;
     Buffer vb;
@@ -78,6 +76,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     int fragShaderID;
 
     public int vVAO_ID;
+    int vbo;
+    int vao;
     public IntBuffer vVAO;
 
     private int shaderProgramID;
@@ -91,15 +91,43 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         final GL4bc gl = glad.getGL().getGL4bc();
         textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
         initShaders(gl);
-        initBuffers(gl);
+
+
+        IntBuffer vacantNameBuffer = IntBuffer.allocate(2);
+        gl.glGenBuffers(1, vacantNameBuffer);
+        int bufferIndex = vacantNameBuffer.get();
+
+        FloatBuffer triangleVertexBuffer = Buffers.newDirectFloatBuffer(triangleVertices);
+        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, bufferIndex);
+        gl.glBufferData(GL2.GL_ARRAY_BUFFER, triangleVertexBuffer.capacity() * 4, triangleVertexBuffer, GL2.GL_STATIC_DRAW);
+
+
+
+        FloatBuffer fb = Buffers.newDirectFloatBuffer(triangleVertices);
+
+        vVAO = Buffers.newDirectIntBuffer(1);
+        vVAO.put(vao);
+        gl.glGenVertexArrays(1, vVAO);
+        gl.glBindVertexArray(vao);
+
+        gl.glGenBuffers(1, IntBuffer.wrap(new int[]{vbo}));
+        gl.glBindBuffer(GL4bc.GL_ARRAY_BUFFER, vbo);
+        int size  = triangleVertices.length * Buffers.SIZEOF_FLOAT;
+        gl.glBufferData(GL4bc.GL_ARRAY_BUFFER, size, fb, GL4bc.GL_STATIC_DRAW);
+
+        gl.glVertexAttribLPointer(0, 3, GL4bc.GL_FLOAT, 0, 0);
+        gl.glEnableVertexAttribArray(0);
+        gl.glUseProgram(shaderProgramID);
+
+
 
     }
 
     private void initShaders(final GL4bc gl) {
         final ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, this.getClass(),
-                "shader", "shader/bin", "shader", true);
+                "shader", "shader/bin", "triangle", true);
         final ShaderCode fp = ShaderCode.create(gl, GL2ES2.GL_FRAGMENT_SHADER, this.getClass(),
-                "shader", "shader/bin", "shader", true);
+                "shader", "shader/bin", "triangle", true);
         vp.defaultShaderCustomization(gl, true, true);
         fp.defaultShaderCustomization(gl, true, true);
         final ShaderProgram program = new ShaderProgram();
@@ -107,9 +135,14 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         program.add(vp);
         program.add(fp);
+        System.out.println("GLSL version: " + gl.glGetString(GL4bc.GL_SHADING_LANGUAGE_VERSION));
         if (!program.link(gl, System.out)) {
             System.err.println("Could not link program: ");
         }
+        if(gl.glGetError() != GL4bc.GL_NO_ERROR) {
+            System.err.println("Error: " + gl.glGetError());
+        }
+
         shaderProgramID = program.program();
         vertShaderID = vp.id();
         fragShaderID = fp.id();
@@ -120,53 +153,25 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     Inits the VAO and VBO buffers we need to draw with "core" mode OpenGL
      */
     private void initBuffers(final GL4bc gl) {
-
-        FloatBuffer vVertFloatBuffer = Buffers.newDirectFloatBuffer(triangleVertices);
-        // Create a new Vertex Array Object in memory and select it (bind)
-        vVAO = Buffers.newDirectIntBuffer(1);
-        vVBO = Buffers.newDirectIntBuffer(1);
-
-        gl.glGenVertexArrays(1, vVAO);
-        vVAO_ID = vVAO.get();
-
-        gl.glGenBuffers(1, vVBO);
-        vVBO_ID = vVBO.get();
-
-        gl.glBindVertexArray(vVAO_ID);
-        gl.glBindBuffer(GL2ES2.GL_ARRAY_BUFFER, vVBO_ID);
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, vVertFloatBuffer.capacity() * Buffers.SIZEOF_FLOAT, vVertFloatBuffer, GL.GL_STATIC_DRAW);
-
-
-        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 3 * 4 /*sizeof(float)*/, 0);
-        gl.glEnableVertexAttribArray(0);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        gl.glBindVertexArray(0);
-
-
     }
 
     @Override
     public void display(final GLAutoDrawable glad) {
         final GL4bc gl = glad.getGL().getGL4bc();
 
-        gl.glClear(GL4.GL_COLOR_BUFFER_BIT | GL4.GL_DEPTH_BUFFER_BIT);
-
         gl.glUseProgram(shaderProgramID);
-
+        gl.glClear(GL4.GL_COLOR_BUFFER_BIT | GL4.GL_DEPTH_BUFFER_BIT);
         gl.glBindVertexArray(vVAO_ID);
-
         gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
-        System.out.println(gl.glGetError());
-
+        if(gl.glGetError() != GL4bc.GL_NO_ERROR) {
+            System.err.println("Error: " + gl.glGetError());
+        }
 
         textRenderer.beginRendering(glad.getSurfaceWidth(), glad.getSurfaceHeight());
         textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         textRenderer.draw("Hello World", 10, glad.getSurfaceHeight() - 20);
         textRenderer.endRendering();
-
-        System.out.println(gl.glGetError());
-
 
     }
 
