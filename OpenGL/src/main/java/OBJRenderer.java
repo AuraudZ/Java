@@ -85,6 +85,19 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     float mouseY = 0.0f;
     Camera camera;
 
+
+    // VBO related variables
+    int vertices = 3; // Triangle vertices
+
+    int vertex_size = 3; // X,Y,Z
+    int color_size = 3; // R, G, B
+
+    private FloatBuffer vertex_data;
+    private FloatBuffer color_data;
+
+    private int[] vbo_vertex_handle = new int[1];
+    private int[] vbo_color_handle = new int[1];
+
     @Override
     public void init(final GLAutoDrawable glad) {
 
@@ -93,30 +106,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         initShaders(gl);
 
 
-        IntBuffer vacantNameBuffer = IntBuffer.allocate(2);
-        gl.glGenBuffers(1, vacantNameBuffer);
-        int bufferIndex = vacantNameBuffer.get();
-
-        FloatBuffer triangleVertexBuffer = Buffers.newDirectFloatBuffer(triangleVertices);
-        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, bufferIndex);
-        gl.glBufferData(GL2.GL_ARRAY_BUFFER, triangleVertexBuffer.capacity() * 4, triangleVertexBuffer, GL2.GL_STATIC_DRAW);
-
-
-
-        FloatBuffer fb = Buffers.newDirectFloatBuffer(triangleVertices);
-
-        vVAO = Buffers.newDirectIntBuffer(1);
-        vVAO.put(vao);
-        gl.glGenVertexArrays(1, vVAO);
-        gl.glBindVertexArray(vao);
-
-        gl.glGenBuffers(1, IntBuffer.wrap(new int[]{vbo}));
-        gl.glBindBuffer(GL4bc.GL_ARRAY_BUFFER, vbo);
-        int size  = triangleVertices.length * Buffers.SIZEOF_FLOAT;
-        gl.glBufferData(GL4bc.GL_ARRAY_BUFFER, size, fb, GL4bc.GL_STATIC_DRAW);
-
-        gl.glVertexAttribLPointer(0, 3, GL4bc.GL_FLOAT, 0, 0);
-        gl.glEnableVertexAttribArray(0);
+        initBuffers(gl);
         gl.glUseProgram(shaderProgramID);
 
 
@@ -153,6 +143,32 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     Inits the VAO and VBO buffers we need to draw with "core" mode OpenGL
      */
     private void initBuffers(final GL4bc gl) {
+        vertex_data = Buffers.newDirectFloatBuffer(vertices * vertex_size);
+        // vertex_data = FloatBuffer.allocate(vertices * vertex_size);
+        vertex_data.put(new float[] { 0.0f, 1.0f, 0f });
+        vertex_data.put(new float[] { -1.0f, -1.0f, 0f });
+        vertex_data.put(new float[] { 1.0f, -1.0f, 0f });
+        vertex_data.flip();
+
+        color_data = Buffers.newDirectFloatBuffer(vertices * color_size);
+        // color_data = FloatBuffer.allocate(vertices * color_size);
+        color_data.put(new float[] { 1f, 0f, 0f });
+        color_data.put(new float[] { 0f, 1f, 0f });
+        color_data.put(new float[] { 0f, 0f, 1f });
+        color_data.flip();
+
+        gl.glGenBuffers(1, vbo_vertex_handle, 0);
+        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vbo_vertex_handle[0]);
+
+        gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertices * vertex_size * Buffers.SIZEOF_FLOAT, vertex_data,
+                GL2.GL_STATIC_DRAW);
+        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
+
+        gl.glGenBuffers(1, vbo_color_handle, 0);
+        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vbo_color_handle[0]);
+        gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertices * vertex_size * Buffers.SIZEOF_FLOAT, color_data,
+                GL2.GL_STATIC_DRAW);
+        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
     }
 
     @Override
@@ -161,8 +177,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         gl.glUseProgram(shaderProgramID);
         gl.glClear(GL4.GL_COLOR_BUFFER_BIT | GL4.GL_DEPTH_BUFFER_BIT);
-        gl.glBindVertexArray(vVAO_ID);
-        gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
+        renderVBO(gl);
         if(gl.glGetError() != GL4bc.GL_NO_ERROR) {
             System.err.println("Error: " + gl.glGetError());
         }
@@ -173,6 +188,22 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         textRenderer.draw("Hello World", 10, glad.getSurfaceHeight() - 20);
         textRenderer.endRendering();
 
+    }
+
+    private void renderVBO(final GL4bc gl) {
+        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vbo_vertex_handle[0]);
+        gl.glVertexPointer(vertex_size, GL2.GL_FLOAT, 0, 0);
+
+        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vbo_color_handle[0]);
+        gl.glColorPointer(color_size, GL2.GL_FLOAT, 0, 0);
+
+        gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+        gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
+
+        gl.glDrawArrays(GL2.GL_TRIANGLES, 0, vertices);
+
+        gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
+        gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
     }
 
     @Override
