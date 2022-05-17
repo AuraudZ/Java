@@ -95,14 +95,22 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     private FloatBuffer vertex_data;
     private FloatBuffer color_data;
 
+    private FloatBuffer index_data;
+
+    private IntBuffer element_data;
+
     private int[] vbo_vertex_handle = new int[1];
     private int[] vbo_color_handle = new int[1];
+
+    private int[] ebo_vertex_handle = new int[1];
+    private int[] ebo_index_handle = new int[1];
 
     @Override
     public void init(final GLAutoDrawable glad) {
 
         final GL4bc gl = glad.getGL().getGL4bc();
         textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
+        camera = new Camera(gl);
         initShaders(gl);
 
 
@@ -139,17 +147,39 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     }
 
 
+    float[] elementVert = {
+            // first triangle
+            0.5f,  0.5f, 0.0f,  // top right
+            0.5f, -0.5f, 0.0f,  // bottom right
+            -0.5f,  0.5f, 0.0f,  // top left
+            // second triangle
+            0.5f, -0.5f, 0.0f,  // bottom right
+            -0.5f, -0.5f, 0.0f,  // bottom left
+            -0.5f,  0.5f, 0.0f   // top left
+    };
+
+     int[] indices = {  // note that we start from 0!
+            0, 1, 3,   // first triangle
+            1, 2, 3    // second triangle
+    };
+
     /*
     Inits the VAO and VBO buffers we need to draw with "core" mode OpenGL
      */
     private void initBuffers(final GL4bc gl) {
-        vertex_data = Buffers.newDirectFloatBuffer(vertices * vertex_size);
+        vertex_data = Buffers.newDirectFloatBuffer(indices.length * vertex_size);
         // vertex_data = FloatBuffer.allocate(vertices * vertex_size);
-        vertex_data.put(new float[] { 0.0f, 1.0f, 0f });
-        vertex_data.put(new float[] { -1.0f, -1.0f, 0f });
-        vertex_data.put(new float[] { 1.0f, -1.0f, 0f });
+        vertex_data.put(elementVert);
         vertex_data.flip();
 
+        element_data = Buffers.newDirectIntBuffer(indices.length);
+        element_data.put(indices);
+        element_data.flip();
+
+
+
+
+        float[] temp = new float[16];
         color_data = Buffers.newDirectFloatBuffer(vertices * color_size);
         // color_data = FloatBuffer.allocate(vertices * color_size);
         color_data.put(new float[] { 1f, 0f, 0f });
@@ -159,10 +189,14 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         gl.glGenBuffers(1, vbo_vertex_handle, 0);
         gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vbo_vertex_handle[0]);
-
-        gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertices * vertex_size * Buffers.SIZEOF_FLOAT, vertex_data,
+        gl.glBufferData(GL2.GL_ARRAY_BUFFER, (long) vertices * vertex_size * Buffers.SIZEOF_FLOAT, vertex_data,
                 GL2.GL_STATIC_DRAW);
-        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
+        gl.glGenBuffers(1, ebo_vertex_handle, 0);
+        gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, ebo_vertex_handle[0]);
+
+        gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, (long) indices.length * Buffers.SIZEOF_INT, element_data,
+                        GL2.GL_STATIC_DRAW);
+
 
         gl.glGenBuffers(1, vbo_color_handle, 0);
         gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vbo_color_handle[0]);
@@ -175,12 +209,12 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     public void display(final GLAutoDrawable glad) {
         final GL4bc gl = glad.getGL().getGL4bc();
 
+        camera.front = new Vector3f(0f, 0f, -1f);
         gl.glUseProgram(shaderProgramID);
         gl.glClear(GL4.GL_COLOR_BUFFER_BIT | GL4.GL_DEPTH_BUFFER_BIT);
+        gl.glTranslatef(0.0f, 0.0f, -1.0f);
         renderVBO(gl);
-        if(gl.glGetError() != GL4bc.GL_NO_ERROR) {
-            System.err.println("Error: " + gl.glGetError());
-        }
+        gl.glUseProgram(0);
 
         textRenderer.beginRendering(glad.getSurfaceWidth(), glad.getSurfaceHeight());
         textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -190,7 +224,11 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     }
 
+
+
     private void renderVBO(final GL4bc gl) {
+        Matrix4f cam = camera.getProjectionMatrix();
+        gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "transform"), 1, false, cam.get(new float[16]), 0);
         gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vbo_vertex_handle[0]);
         gl.glVertexPointer(vertex_size, GL2.GL_FLOAT, 0, 0);
 
@@ -199,11 +237,13 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
         gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
+        gl.glEnableClientState(GL2.GL_ELEMENT_ARRAY_BUFFER);
 
-        gl.glDrawArrays(GL2.GL_TRIANGLES, 0, vertices);
+        gl.glDrawElements(GL2.GL_TRIANGLES, indices.length, GL2.GL_UNSIGNED_INT, 0);
 
         gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
         gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+        gl.glDisableClientState(GL2.GL_ELEMENT_ARRAY_BUFFER);
     }
 
     @Override
