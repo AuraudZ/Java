@@ -40,8 +40,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     private TextRenderer textRenderer;
 
-
-
     private boolean doRotate = true;
     private boolean verbose = true;
     private ShaderState st;
@@ -70,11 +68,14 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     float[] triangleVertices = {
             -1.0f, -1.0f, -1.0f,
             1.0f, -1.0f, -1.0f,
-            0.0f,  1.0f,  0.0f,
+            0.0f, 1.0f, 0.0f,
     };
 
     public int vVBO_ID;
     public IntBuffer vVBO;
+
+    int vertShaderID;
+    int fragShaderID;
 
     public int vVAO_ID;
     public IntBuffer vVAO;
@@ -89,11 +90,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         final GL4bc gl = glad.getGL().getGL4bc();
         textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
-        if (!gl.hasGLSL()) {
-            System.err.println("No GLSL support, exiting.");
-            System.exit(1);
-        }
-
         initShaders(gl);
         initBuffers(gl);
 
@@ -108,13 +104,15 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         fp.defaultShaderCustomization(gl, true, true);
         final ShaderProgram program = new ShaderProgram();
         program.init(gl);
+
         program.add(vp);
         program.add(fp);
-        if(!program.link(gl, System.out)) {
+        if (!program.link(gl, System.out)) {
             System.err.println("Could not link program: ");
         }
-        shaderProgramID = program.id();
-
+        shaderProgramID = program.program();
+        vertShaderID = vp.id();
+        fragShaderID = fp.id();
     }
 
 
@@ -123,9 +121,10 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
      */
     private void initBuffers(final GL4bc gl) {
 
+        FloatBuffer vVertFloatBuffer = Buffers.newDirectFloatBuffer(triangleVertices);
         // Create a new Vertex Array Object in memory and select it (bind)
-        vVAO = GLBuffers.newDirectIntBuffer(1);
-        vVBO = GLBuffers.newDirectIntBuffer(1);
+        vVAO = Buffers.newDirectIntBuffer(1);
+        vVBO = Buffers.newDirectIntBuffer(1);
 
         gl.glGenVertexArrays(1, vVAO);
         vVAO_ID = vVAO.get();
@@ -135,29 +134,38 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         gl.glBindVertexArray(vVAO_ID);
         gl.glBindBuffer(GL2ES2.GL_ARRAY_BUFFER, vVBO_ID);
-        gl.glBufferData(GL2ES2.GL_ARRAY_BUFFER, triangleVertices.length * 4L, GLBuffers.newDirectFloatBuffer(triangleVertices), GL2ES2.GL_STATIC_DRAW);
+        gl.glBufferData(GL.GL_ARRAY_BUFFER, vVertFloatBuffer.capacity() * Buffers.SIZEOF_FLOAT, vVertFloatBuffer, GL.GL_STATIC_DRAW);
+
+
+        gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 3 * 4 /*sizeof(float)*/, 0);
+        gl.glEnableVertexAttribArray(0);
+        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+        gl.glBindVertexArray(0);
+
 
     }
+
     @Override
     public void display(final GLAutoDrawable glad) {
         final GL4bc gl = glad.getGL().getGL4bc();
-        if (!gl.hasGLSL()) {
-            return;
-        }
+
+        gl.glClear(GL4.GL_COLOR_BUFFER_BIT | GL4.GL_DEPTH_BUFFER_BIT);
+
+        gl.glUseProgram(shaderProgramID);
+
+        gl.glBindVertexArray(vVAO_ID);
+
+        gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
+        System.out.println(gl.glGetError());
+
+
         textRenderer.beginRendering(glad.getSurfaceWidth(), glad.getSurfaceHeight());
         textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         textRenderer.draw("Hello World", 10, glad.getSurfaceHeight() - 20);
         textRenderer.endRendering();
 
-
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-        // Shader State stuff
-        gl.glUseProgram(shaderProgramID);
-        gl.glBindVertexArray(vVAO_ID);
-        gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
-
-        gl.glUseProgram(0);
+        System.out.println(gl.glGetError());
 
 
     }
@@ -165,9 +173,9 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     @Override
     public void reshape(final GLAutoDrawable glad, final int x, final int y, final int width,
                         final int height) {
-        final GL4bc gl = glad.getGL().getGL4bc();
-        final float aspect = (float) width / (float) height;
-        }
+
+
+    }
 
 
     @Override
@@ -181,9 +189,10 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             return;
         }
 
+        gl.glDetachShader(shaderProgramID, vertShaderID);
+        gl.glDetachShader(shaderProgramID, fragShaderID);
         gl.glDeleteProgram(shaderProgramID);
-
-
+        System.out.println("Deleted shader program " + shaderProgramID);
     }
 
     @Override
