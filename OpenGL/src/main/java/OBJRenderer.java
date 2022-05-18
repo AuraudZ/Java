@@ -56,6 +56,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     public OBJRenderer() {
     }
+
     float[] triangleVertices = {
             -1.0f, -1.0f, -1.0f,
             1.0f, -1.0f, -1.0f,
@@ -83,6 +84,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         final GL4bc gl = glad.getGL().getGL4bc();
         textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
         camera = new Camera(gl);
+        gl.glEnable(GL_TEXTURE_2D);
+        gl.glEnable(GL_DEPTH_TEST);
         initShaders(gl);
 
         try {
@@ -93,8 +96,10 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
 
         initBuffers(gl);
+        // Convert to MBs
+        double texMem = cube.getEstimatedMemorySize() / (1024.0 * 1024);
+        System.out.println("Tex Mem Size: " + texMem + " MB");
         gl.glUseProgram(shaderProgramID);
-        gl.glEnable(GL_DEPTH_TEST);
 
         gl.glUniform1i(gl.glGetUniformLocation(shaderProgramID, "tex"), 0);
 
@@ -175,7 +180,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     /*
     Inits the VAO and VBO buffers we need to draw with "core" mode OpenGL
      */
-  @Override
+    @Override
     public void display(final GLAutoDrawable glad) {
         final GL4bc gl = glad.getGL().getGL4bc();
         gl.glUseProgram(shaderProgramID);
@@ -188,7 +193,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         projection.setPerspective((float) Math.toRadians(45.0f), (float) width / height, 0.1f, 100.0f);
         projection.get(fb);
         int uniform_projection_matrix = gl.glGetUniformLocation(shaderProgramID, "projection");
-      //  gl.glUniformMatrix4fv(uniform_projection_matrix, 1, false, fb);
+        //  gl.glUniformMatrix4fv(uniform_projection_matrix, 1, false, fb);
         // view matrix
         FloatBuffer fb2 = Buffers.newDirectFloatBuffer(16);
         Matrix4f view;
@@ -196,7 +201,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         view.setLookAt(0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
         view.get(fb2);
         int uniform_view_matrix = gl.glGetUniformLocation(shaderProgramID, "view");
-      // gl.glUniformMatrix4fv(uniform_view_matrix, 1, false, fb2);
+        // gl.glUniformMatrix4fv(uniform_view_matrix, 1, false, fb2);
 
 
         // Model Matrix
@@ -205,7 +210,13 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         model.identity();
         model.get(fb3);
         int uniform_model_matrix = gl.glGetUniformLocation(shaderProgramID, "model");
-       // gl.glUniformMatrix4fv(uniform_model_matrix, 1, false, fb3);
+        // gl.glUniformMatrix4fv(uniform_model_matrix, 1, false, fb3);
+
+        gl.glActiveTexture(GL_TEXTURE0);
+        cube.bind(gl);
+        int uniform_texture = gl.glGetUniformLocation(shaderProgramID, "tex");
+        gl.glUniform1i(uniform_texture, 0);
+
         renderVBO(gl);
         gl.glUseProgram(0);
 
