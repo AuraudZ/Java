@@ -32,15 +32,15 @@ import java.io.InputStream;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.text.NumberFormat;
 import java.util.Arrays;
 
-import static com.jogamp.opengl.GL.GL_TRIANGLES;
+import static com.jogamp.opengl.GL.*;
 
 public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyListener {
 
     private TextRenderer textRenderer;
 
-    private boolean doRotate = true;
     private boolean verbose = true;
     private ShaderState st;
     private float deltaTime = 0.0f;
@@ -53,57 +53,29 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             "textures/skybox/back.jpg"
     };
     private TileRendererBase tileRendererInUse = null;
-    boolean[] move = new boolean[6];
 
     public OBJRenderer() {
     }
-
-    FloatBuffer timeBuffer;
-
-    boolean forward, backward, left, right, reset;
-    Texture cubeMapTexture = null;
-    Buffer vb;
     float[] triangleVertices = {
             -1.0f, -1.0f, -1.0f,
             1.0f, -1.0f, -1.0f,
             0.0f, 1.0f, 0.0f,
     };
 
-    public int vVBO_ID;
-    public IntBuffer vVBO;
-
     int vertShaderID;
     int fragShaderID;
 
-    public int vVAO_ID;
-    int vbo;
-    int vao;
-    public IntBuffer vVAO;
 
     private int shaderProgramID;
     float mouseX = 0.0f;
     float mouseY = 0.0f;
     Camera camera;
 
+    private int[] vbo_handle = new int[1];
 
-    // VBO related variables
-    int vertices = 3; // Triangle vertices
-
-    int vertex_size = 3; // X,Y,Z
-    int color_size = 3; // R, G, B
-
-    private FloatBuffer vertex_data;
-    private FloatBuffer color_data;
-
-    private FloatBuffer index_data;
-
-    private IntBuffer element_data;
-
-    private int[] vbo_vertex_handle = new int[1];
-    private int[] vbo_color_handle = new int[1];
-
-    private int[] ebo_vertex_handle = new int[1];
-    private int[] ebo_index_handle = new int[1];
+    private int[] vao_handle = new int[1];
+    private int[] ebo_handle = new int[1];
+    Texture cube;
 
     @Override
     public void init(final GLAutoDrawable glad) {
@@ -113,12 +85,32 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         camera = new Camera(gl);
         initShaders(gl);
 
+        try {
+            cube = loadTexture(gl, "textures/wood.jpg");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
 
         initBuffers(gl);
         gl.glUseProgram(shaderProgramID);
+        gl.glEnable(GL_DEPTH_TEST);
+
+        gl.glUniform1i(gl.glGetUniformLocation(shaderProgramID, "tex"), 0);
 
 
+    }
 
+    private Texture loadTexture(GL4bc gl, String fileName) throws IOException {
+        Texture texture = TextureIO.newTexture(new File(fileName), true);
+        gl.glActiveTexture(gl.GL_TEXTURE0);
+        texture.bind(gl);
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_S, gl.GL_REPEAT);
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_WRAP_T, gl.GL_REPEAT);
+        // set texture filtering parameters
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR);
+        gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR);
+        return texture;
     }
 
     private void initShaders(final GL4bc gl) {
@@ -130,127 +122,119 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         fp.defaultShaderCustomization(gl, true, true);
         final ShaderProgram program = new ShaderProgram();
         program.init(gl);
-
         program.add(vp);
         program.add(fp);
         System.out.println("GLSL version: " + gl.glGetString(GL4bc.GL_SHADING_LANGUAGE_VERSION));
         if (!program.link(gl, System.out)) {
             System.err.println("Could not link program: ");
         }
-        if(gl.glGetError() != GL4bc.GL_NO_ERROR) {
+        if (gl.glGetError() != GL4bc.GL_NO_ERROR) {
             System.err.println("Error: " + gl.glGetError());
         }
-
         shaderProgramID = program.program();
         vertShaderID = vp.id();
         fragShaderID = fp.id();
     }
 
 
-    float[] elementVert = {
-            // first triangle
-            0.5f,  0.5f, 0.0f,  // top right
-            0.5f, -0.5f, 0.0f,  // bottom right
-            -0.5f,  0.5f, 0.0f,  // top left
-            // second triangle
-            0.5f, -0.5f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,  // bottom left
-            -0.5f,  0.5f, 0.0f   // top left
+    float[] texArr = {
+            // positions      // colors          // texture coords
+            0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right
+            0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
+            -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f  // top left
     };
 
-     int[] indices = {  // note that we start from 0!
+
+    int[] indices = {  // note that we start from 0!
             0, 1, 3,   // first triangle
             1, 2, 3    // second triangle
     };
 
+    private void initBuffers(final GL4bc gl) {
+        gl.glGenVertexArrays(1, vao_handle, 0);
+        gl.glBindVertexArray(vao_handle[0]);
+
+        gl.glGenBuffers(1, IntBuffer.wrap(vbo_handle));
+        gl.glBindBuffer(GL_ARRAY_BUFFER, vbo_handle[0]);
+        gl.glBufferData(GL_ARRAY_BUFFER, texArr.length * 4, FloatBuffer.wrap(texArr), GL_STATIC_DRAW);
+
+        gl.glGenBuffers(1, IntBuffer.wrap(ebo_handle));
+        gl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_handle[0]);
+        gl.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, IntBuffer.wrap(indices), GL_STATIC_DRAW);
+
+        gl.glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * 4, 0);
+        gl.glEnableVertexAttribArray(0);
+        gl.glVertexAttribPointer(1, 3, GL_FLOAT, false, 8 * 4, 3 * 4);
+        gl.glEnableVertexAttribArray(1);
+        gl.glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * 4, 6 * 4);
+        gl.glEnableVertexAttribArray(2);
+    }
+
+
     /*
     Inits the VAO and VBO buffers we need to draw with "core" mode OpenGL
      */
-    private void initBuffers(final GL4bc gl) {
-        vertex_data = Buffers.newDirectFloatBuffer(indices.length * vertex_size);
-        // vertex_data = FloatBuffer.allocate(vertices * vertex_size);
-        vertex_data.put(elementVert);
-        vertex_data.flip();
-
-        element_data = Buffers.newDirectIntBuffer(indices.length);
-        element_data.put(indices);
-        element_data.flip();
-
-
-
-
-        float[] temp = new float[16];
-        color_data = Buffers.newDirectFloatBuffer(vertices * color_size);
-        // color_data = FloatBuffer.allocate(vertices * color_size);
-        color_data.put(new float[] { 1f, 0f, 0f });
-        color_data.put(new float[] { 0f, 1f, 0f });
-        color_data.put(new float[] { 0f, 0f, 1f });
-        color_data.flip();
-
-        gl.glGenBuffers(1, vbo_vertex_handle, 0);
-        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vbo_vertex_handle[0]);
-        gl.glBufferData(GL2.GL_ARRAY_BUFFER, (long) vertices * vertex_size * Buffers.SIZEOF_FLOAT, vertex_data,
-                GL2.GL_STATIC_DRAW);
-        gl.glGenBuffers(1, ebo_vertex_handle, 0);
-        gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, ebo_vertex_handle[0]);
-
-        gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, (long) indices.length * Buffers.SIZEOF_INT, element_data,
-                        GL2.GL_STATIC_DRAW);
-
-
-        gl.glGenBuffers(1, vbo_color_handle, 0);
-        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vbo_color_handle[0]);
-        gl.glBufferData(GL2.GL_ARRAY_BUFFER, vertices * vertex_size * Buffers.SIZEOF_FLOAT, color_data,
-                GL2.GL_STATIC_DRAW);
-        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, 0);
-    }
-
-    @Override
+  @Override
     public void display(final GLAutoDrawable glad) {
         final GL4bc gl = glad.getGL().getGL4bc();
-
-        camera.front = new Vector3f(0f, 0f, -1f);
         gl.glUseProgram(shaderProgramID);
+        int width = glad.getSurfaceWidth();
+        int height = glad.getSurfaceHeight();
         gl.glClear(GL4.GL_COLOR_BUFFER_BIT | GL4.GL_DEPTH_BUFFER_BIT);
-        gl.glTranslatef(0.0f, 0.0f, -1.0f);
+        // Projection Matrix
+        FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
+        Matrix4f projection = new Matrix4f();
+        projection.setPerspective((float) Math.toRadians(45.0f), (float) width / height, 0.1f, 100.0f);
+        projection.get(fb);
+        int uniform_projection_matrix = gl.glGetUniformLocation(shaderProgramID, "projection");
+      //  gl.glUniformMatrix4fv(uniform_projection_matrix, 1, false, fb);
+        // view matrix
+        FloatBuffer fb2 = Buffers.newDirectFloatBuffer(16);
+        Matrix4f view;
+        view = camera.getViewMatrix();
+        view.setLookAt(0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+        view.get(fb2);
+        int uniform_view_matrix = gl.glGetUniformLocation(shaderProgramID, "view");
+      // gl.glUniformMatrix4fv(uniform_view_matrix, 1, false, fb2);
+
+
+        // Model Matrix
+        FloatBuffer fb3 = Buffers.newDirectFloatBuffer(16);
+        Matrix4f model = new Matrix4f();
+        model.identity();
+        model.get(fb3);
+        int uniform_model_matrix = gl.glGetUniformLocation(shaderProgramID, "model");
+       // gl.glUniformMatrix4fv(uniform_model_matrix, 1, false, fb3);
         renderVBO(gl);
         gl.glUseProgram(0);
+
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(2);
+
+        String cameraPos = nf.format(camera.getPosition().x) + " " + nf.format(camera.getPosition().y) + " " + nf.format(camera.getPosition().z);
+        String cameraRot = nf.format(camera.pitch) + " " + nf.format(camera.yaw) + "";
 
         textRenderer.beginRendering(glad.getSurfaceWidth(), glad.getSurfaceHeight());
         textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         textRenderer.draw("Hello World", 10, glad.getSurfaceHeight() - 20);
+        textRenderer.draw("Camera Position: " + cameraPos, 10, glad.getSurfaceHeight() - 40);
+        textRenderer.draw("Camera Rotation: " + cameraRot, 10, glad.getSurfaceHeight() - 60);
         textRenderer.endRendering();
 
     }
 
 
-
-    private void renderVBO(final GL4bc gl) {
-        Matrix4f cam = camera.getProjectionMatrix();
-        gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "transform"), 1, false, cam.get(new float[16]), 0);
-        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vbo_vertex_handle[0]);
-        gl.glVertexPointer(vertex_size, GL2.GL_FLOAT, 0, 0);
-
-        gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vbo_color_handle[0]);
-        gl.glColorPointer(color_size, GL2.GL_FLOAT, 0, 0);
-
-        gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-        gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
-        gl.glEnableClientState(GL2.GL_ELEMENT_ARRAY_BUFFER);
-
-        gl.glDrawElements(GL2.GL_TRIANGLES, indices.length, GL2.GL_UNSIGNED_INT, 0);
-
-        gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
-        gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-        gl.glDisableClientState(GL2.GL_ELEMENT_ARRAY_BUFFER);
+    private void renderVBO(GL4bc gl) {
+        gl.glBindVertexArray(vao_handle[0]);
+        gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+        gl.glBindVertexArray(0);
     }
 
     @Override
     public void reshape(final GLAutoDrawable glad, final int x, final int y, final int width,
                         final int height) {
-
-
     }
 
 
@@ -300,28 +284,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     @Override
     public void keyReleased(KeyEvent e) {
-        char key = e.getKeyChar();
-        if (key == 'w') {
-            move[0] = false;
-        }
-        if (key == 's') {
-            move[1] = false;
-        }
-        if (key == 'a') {
-            move[2] = false;
-        }
-        if (key == 'd') {
-            move[3] = false;
-        }
-        if (key == 'r') {
-            move[4] = false;
-        }
-        if (key == 'v') {
-            move[5] = false;
-        }
-        if (key == 'x') {
-            doRotate = !doRotate;
-        }
     }
 
     float lastX;
@@ -336,6 +298,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         lastX = (float) e.getComponent().getWidth() / 2;
         lastY = (float) e.getComponent().getHeight() / 2;
+
+        camera.processMouseMovement(xoffset, yoffset, true);
     }
 
     @Override

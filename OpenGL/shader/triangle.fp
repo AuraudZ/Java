@@ -1,7 +1,8 @@
 
+in vec2 TexCoord;
 out vec4 out_color;
-uniform mat4 view;
+uniform sampler2D tex;
 void main() {
 
-    out_color = vec4(1.0, 1.0, 0.0, 1.0);
+    out_color = texture(tex, gl_FragCoord.xy);
 }

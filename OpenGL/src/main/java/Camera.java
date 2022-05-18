@@ -32,7 +32,8 @@ public class Camera {
     }
 
     public Matrix4f getViewMatrix() {
-        view.lookAt(position, position.add(front), up);
+        Vector3f tmp = new Vector3f(position);
+        view.lookAt(position, tmp.add(front), up);
         return view;
     }
 
@@ -45,10 +46,6 @@ public class Camera {
     }
 
 
-
-    public void cleanUp(GL4bc gl) {
-        gl.glPopMatrix();
-    }
 
     Camera(GL4bc gl) {
         this.gl = gl;
@@ -73,8 +70,6 @@ public class Camera {
         front.normalize();
         right = front.cross(worldUp).normalize();
         up = right.cross(front).normalize();
-        view.setPerspective(zoom, 1.0f, 0.01f, 100.0f);
-        view.lookAt(position, front, up);
     }
 
     public float getZoom() {
