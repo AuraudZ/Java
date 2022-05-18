@@ -195,7 +195,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         //glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
         trans.rotate(time,0,0,1).get(fb);
 
-        // Send it to the shader
 
         int transLoc = gl.glGetUniformLocation(shaderProgramID,"transform");
 
@@ -205,9 +204,20 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         cube.bind(gl);
         int uniform_texture = gl.glGetUniformLocation(shaderProgramID, "tex");
         gl.glUniform1i(uniform_texture, 0);
+        gl.glBindVertexArray(vao_handle[0]);
+        gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
 
-        renderVBO(gl);
-        gl.glUseProgram(0);
+        trans.identity();
+        trans.translate(-0.5f,0.5f,0);
+        float scaleAmount = (float) Math.sin(time);
+
+        trans.scale(scaleAmount,scaleAmount,scaleAmount).get(fb);
+        gl.glUniformMatrix4fv(transLoc,1,false,fb);
+        gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+
+        gl.glBindVertexArray(0);
+
+
 
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(2);
@@ -227,9 +237,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
 
     private void renderVBO(GL4bc gl) {
-        gl.glBindVertexArray(vao_handle[0]);
-        gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
-        gl.glBindVertexArray(0);
+         gl.glBindVertexArray(0);
     }
 
     @Override
