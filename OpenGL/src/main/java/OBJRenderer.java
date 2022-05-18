@@ -7,7 +7,11 @@ import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.glsl.ShaderState;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
+import jogamp.opengl.glu.nurbs.CArrayOfArcs;
 import org.joml.Matrix4f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -28,6 +32,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     private TextRenderer textRenderer;
 
+    private int width;
+    private int height;
     private boolean verbose = true;
     private ShaderState st;
     private float deltaTime = 0.0f;
@@ -64,6 +70,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         final GL4bc gl = glad.getGL().getGL4bc();
         textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
         camera = new Camera(gl);
+        width = glad.getSurfaceWidth();
+        height = glad.getSurfaceHeight();
         gl.glEnable(GL_TEXTURE_2D);
         gl.glEnable(GL_DEPTH_TEST);
         initShaders(gl);
@@ -97,6 +105,20 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR);
         return texture;
     }
+
+    private Vector3f[] cubePositions = {
+            new Vector3f(0.0f, 0.0f, 0.0f),
+            new Vector3f(2.0f, 5.0f, -15.0f),
+            new Vector3f(-1.5f, -2.2f, -2.5f),
+            new Vector3f(-3.8f, -2.0f, -12.3f),
+            new Vector3f(2.4f, -0.4f, -3.5f),
+            new Vector3f(-1.7f, 3.0f, -7.5f),
+            new Vector3f(1.3f, -2.0f, -2.5f),
+            new Vector3f(1.5f, 2.0f, -2.5f),
+            new Vector3f(1.5f, 0.2f, -1.5f),
+            new Vector3f(-1.3f, 1.0f, -1.5f)
+    };
+
 
     private void initShaders(final GL4bc gl) {
         final ShaderCode vp = ShaderCode.create(gl, GL2ES2.GL_VERTEX_SHADER, this.getClass(),
@@ -140,20 +162,32 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glGenVertexArrays(1, vao_handle, 0);
         gl.glBindVertexArray(vao_handle[0]);
 
+        // Create a new Vertex Buffer Object in memory and select it (bind) this is for the square of triangles
         gl.glGenBuffers(1, IntBuffer.wrap(vbo_handle));
         gl.glBindBuffer(GL_ARRAY_BUFFER, vbo_handle[0]);
         gl.glBufferData(GL_ARRAY_BUFFER, texArr.length * 4, FloatBuffer.wrap(texArr), GL_STATIC_DRAW);
 
-        gl.glGenBuffers(1, IntBuffer.wrap(ebo_handle));
-        gl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_handle[0]);
-        gl.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, IntBuffer.wrap(indices), GL_STATIC_DRAW);
+        gl.glGenBuffers(1, IntBuffer.wrap(vbo_handle));
+        gl.glBindBuffer(GL_ARRAY_BUFFER, vbo_handle[0]);
+        gl.glBufferData(GL_ARRAY_BUFFER, Cube.verticesCube.length * 4, FloatBuffer.wrap(Cube.verticesCube), GL_STATIC_DRAW);
 
-        gl.glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * 4, 0);
+
+        //  gl.glGenBuffers(1, IntBuffer.wrap(ebo_handle));
+        //gl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_handle[0]);
+        //gl.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, IntBuffer.wrap(indices), GL_STATIC_DRAW);
+
+      //  gl.glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * 4, 0);
+       // gl.glEnableVertexAttribArray(0);
+       // gl.glVertexAttribPointer(1, 3, GL_FLOAT, false, 8 * 4, 3 * 4);
+        //gl.glEnableVertexAttribArray(1);
+        //gl.glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * 4, 6 * 4);
+        //gl.glEnableVertexAttribArray(2);
+
+
+        gl.glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * Buffers.SIZEOF_FLOAT, 0);
         gl.glEnableVertexAttribArray(0);
-        gl.glVertexAttribPointer(1, 3, GL_FLOAT, false, 8 * 4, 3 * 4);
+        gl.glVertexAttribPointer(1, 2, GL_FLOAT, false, 5 * Buffers.SIZEOF_FLOAT, 3 * Buffers.SIZEOF_FLOAT);
         gl.glEnableVertexAttribArray(1);
-        gl.glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * 4, 6 * 4);
-        gl.glEnableVertexAttribArray(2);
     }
 
 
@@ -167,21 +201,24 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         int width = glad.getSurfaceWidth();
         int height = glad.getSurfaceHeight();
         float time = (float) System.currentTimeMillis();
+        gl.glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         gl.glClear(GL4.GL_COLOR_BUFFER_BIT | GL4.GL_DEPTH_BUFFER_BIT);
-        FloatBuffer matrixBuffer = Buffers.newDirectFloatBuffer(16);
-        Matrix4f model = new Matrix4f();
-//        model.rotate((float) Math.toRadians(-55.0f),1,0,0).get(matrixBuffer);
-
-        model.rotate((float) (time*Math.toRadians(50)),0.5f,1,0);
-        model.get(matrixBuffer);
         Matrix4f view = new Matrix4f();
+        float time2 = glad.getAnimator().getFPSStartTime();
         FloatBuffer matrixBuffer2 = Buffers.newDirectFloatBuffer(16);
+        float radius = 10.0f;
 
-        view.translate(0,0,-3).get(matrixBuffer2);
+       // view.lookAt(camX, 0, camZ, 0, 0, 0, 0, 1, 0).get(matrixBuffer2);
 
+        view.set(camera.getViewMatrix()).get(matrixBuffer2);
         Matrix4f projection = new Matrix4f();
         FloatBuffer matrixBuffer1 = Buffers.newDirectFloatBuffer(16);
-        projection.perspective((float) Math.toRadians(45.0f), (float) width / height, 0.1f, 100.0f).get(matrixBuffer1);
+        projection.perspective((float) Math.toRadians(90), (float) width / (float) height, 0.1f, 100.0f).get(matrixBuffer1);
+
+        FloatBuffer matrixBuffer = Buffers.newDirectFloatBuffer(16);
+        Matrix4f model = new Matrix4f();
+        model.rotate((float) Math.toRadians(-55.0f),1,0,0).get(matrixBuffer);
+        model.get(matrixBuffer);
         gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
         gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "view"), 1, false, matrixBuffer2);
         gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "projection"), 1, false, matrixBuffer1);
@@ -191,16 +228,27 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         int uniform_texture = gl.glGetUniformLocation(shaderProgramID, "tex");
         gl.glUniform1i(uniform_texture, 0);
         gl.glBindVertexArray(vao_handle[0]);
-        gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+
+        for(int i =0; i<cubePositions.length; i++){
+            Matrix4f model1 = new Matrix4f();
+            float angle = 20.0f * i;
+          //  camera.setFront(new Vector3f(0,0,1));
+            model1.translate(0,0,-5);
+            model1.rotate((float) Math.toRadians(angle), 1, 0.3f, 0.5f);
+            model1.get(matrixBuffer);
+            gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
+            gl.glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+
+        // gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
         gl.glBindVertexArray(0);
-
-
+        gl.glUseProgram(0);
 
         NumberFormat nf = NumberFormat.getInstance();
-        nf.setMaximumFractionDigits(2);
+        nf.setMaximumFractionDigits(5);
 
         String cameraPos = nf.format(camera.getPosition().x) + " " + nf.format(camera.getPosition().y) + " " + nf.format(camera.getPosition().z);
-        String cameraRot = nf.format(camera.pitch) + " " + nf.format(camera.yaw) + "";
+        String cameraRot = nf.format(camera.getYaw()) + " " + nf.format(camera.getPitch()) + "";
 
         textRenderer.beginRendering(glad.getSurfaceWidth(), glad.getSurfaceHeight());
         textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -216,7 +264,19 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     @Override
     public void reshape(final GLAutoDrawable glad, final int x, final int y, final int width,
                         final int height) {
+        GL4 gl = glad.getGL().getGL4();
+        Matrix4f view = new Matrix4f();
+        FloatBuffer matrixBuffer2 = Buffers.newDirectFloatBuffer(16);
+        view.lookAt(0.f,0.f,0.f,0.f,0.f,0.f,0.f,1.f,0.f).get(matrixBuffer2);
+        Matrix4f projection = new Matrix4f();
+        projection.perspective((float) Math.toRadians(90), (float) width / (float) height, 0.1f, 100.0f);
+        FloatBuffer matrixBuffer = Buffers.newDirectFloatBuffer(16);
+        projection.get(matrixBuffer);
+        gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "projection"), 1, false, matrixBuffer);
+        gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "view"), 1, false, matrixBuffer2);
+        gl.glViewport(0, 0, width, height);
     }
+
 
 
     @Override
@@ -250,16 +310,21 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         if (e.getKeyChar() == 'd') {
             camera.processKeyboard(Camera.Movement.RIGHT);
         }
+        if(e.getKeyChar() == 'r') {
+            camera.reset(Camera.Movement.RESET);
+        }
         System.out.println(e.getKeyChar());
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_W -> camera.processKeyboard(Camera.Movement.FORWARD, deltaTime);
-            case KeyEvent.VK_S -> camera.processKeyboard(Camera.Movement.BACKWARD, deltaTime);
-            case KeyEvent.VK_A -> camera.processKeyboard(Camera.Movement.LEFT, deltaTime);
-            case KeyEvent.VK_D -> camera.processKeyboard(Camera.Movement.RIGHT, deltaTime);
+            case KeyEvent.VK_W -> camera.processKeyboard(Camera.Movement.FORWARD);
+            case KeyEvent.VK_S -> camera.processKeyboard(Camera.Movement.BACKWARD);
+            case KeyEvent.VK_A -> camera.processKeyboard(Camera.Movement.LEFT);
+            case KeyEvent.VK_D -> camera.processKeyboard(Camera.Movement.RIGHT);
+            case KeyEvent.VK_R -> camera.reset(Camera.Movement.RESET);
+            case KeyEvent.VK_L -> lock = !lock;
         }
     }
 
@@ -268,25 +333,48 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     }
 
     float lastX;
+    boolean lock;
     float lastY;
     float xoffset;
     float yoffset;
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        xoffset = e.getX() - lastX;
-        yoffset = lastY - e.getY();
+        float xpos =e.getX();
+        float ypos= e.getY();
+        Robot r;
+        try {
+            r = new Robot();
+        } catch (AWTException ex) {
+            throw new RuntimeException(ex);
+        }
 
-        lastX = (float) e.getComponent().getWidth() / 2;
-        lastY = (float) e.getComponent().getHeight() / 2;
+        if(lock == true){
+            r.mouseMove(width/2,height/2);
+        }
 
-        camera.processMouseMovement(xoffset, yoffset, true);
+        float xoffset = xpos - lastX;
+        float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
+        lastX = xpos;
+        lastY = ypos;
+
+        boolean firstMouse = true;
+        if(firstMouse){
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
+
+        camera.processMouseMovement(xoffset, yoffset);
+
+
     }
+
+
 
     @Override
     public void mouseMoved(MouseEvent e) {
-
-    }
+       }
 
 
     int loadCubeMap(GL2ES2 gl, String[] filenames) {
