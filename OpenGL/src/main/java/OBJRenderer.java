@@ -80,7 +80,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     @Override
     public void init(final GLAutoDrawable glad) {
-
         final GL4bc gl = glad.getGL().getGL4bc();
         textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 24));
         camera = new Camera(gl);
@@ -89,7 +88,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         initShaders(gl);
 
         try {
-            cube = loadTexture(gl, "textures/wood.jpg");
+            cube = loadTexture(gl, "textures/block.png");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -186,31 +185,21 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glUseProgram(shaderProgramID);
         int width = glad.getSurfaceWidth();
         int height = glad.getSurfaceHeight();
+        float time = (float) System.currentTimeMillis();
         gl.glClear(GL4.GL_COLOR_BUFFER_BIT | GL4.GL_DEPTH_BUFFER_BIT);
-        // Projection Matrix
+
         FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
-        Matrix4f projection = new Matrix4f();
-        projection.setPerspective((float) Math.toRadians(45.0f), (float) width / height, 0.1f, 100.0f);
-        projection.get(fb);
-        int uniform_projection_matrix = gl.glGetUniformLocation(shaderProgramID, "projection");
-        //  gl.glUniformMatrix4fv(uniform_projection_matrix, 1, false, fb);
-        // view matrix
-        FloatBuffer fb2 = Buffers.newDirectFloatBuffer(16);
-        Matrix4f view;
-        view = camera.getViewMatrix();
-        view.setLookAt(0.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-        view.get(fb2);
-        int uniform_view_matrix = gl.glGetUniformLocation(shaderProgramID, "view");
-        // gl.glUniformMatrix4fv(uniform_view_matrix, 1, false, fb2);
+        Matrix4f trans = new Matrix4f();
 
+        trans.translate(0.5f, -0.5f, 0.0f);
+        //glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        trans.rotate(time,0,0,1).get(fb);
 
-        // Model Matrix
-        FloatBuffer fb3 = Buffers.newDirectFloatBuffer(16);
-        Matrix4f model = new Matrix4f();
-        model.identity();
-        model.get(fb3);
-        int uniform_model_matrix = gl.glGetUniformLocation(shaderProgramID, "model");
-        // gl.glUniformMatrix4fv(uniform_model_matrix, 1, false, fb3);
+        // Send it to the shader
+
+        int transLoc = gl.glGetUniformLocation(shaderProgramID,"transform");
+
+        gl.glUniformMatrix4fv(transLoc,1,false,fb);
 
         gl.glActiveTexture(GL_TEXTURE0);
         cube.bind(gl);
