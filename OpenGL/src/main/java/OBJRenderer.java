@@ -1,22 +1,13 @@
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
-import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
-import com.jogamp.opengl.math.Matrix4;
-import com.jogamp.opengl.util.*;
+import com.jogamp.opengl.util.TileRendererBase;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.glsl.ShaderCode;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.glsl.ShaderState;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
-import com.jogamp.opengl.util.texture.TextureState;
-import de.javagl.obj.Obj;
-import de.javagl.obj.ObjData;
-import de.javagl.obj.ObjReader;
-import de.javagl.obj.ObjUtils;
-import jogamp.opengl.util.glsl.GLSLArrayHandler;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -26,14 +17,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.text.NumberFormat;
-import java.util.Arrays;
 
 import static com.jogamp.opengl.GL.*;
 
@@ -57,19 +44,13 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     public OBJRenderer() {
     }
 
-    float[] triangleVertices = {
-            -1.0f, -1.0f, -1.0f,
-            1.0f, -1.0f, -1.0f,
-            0.0f, 1.0f, 0.0f,
-    };
 
     int vertShaderID;
     int fragShaderID;
 
 
     private int shaderProgramID;
-    float mouseX = 0.0f;
-    float mouseY = 0.0f;
+
     Camera camera;
 
     private int[] vbo_handle = new int[1];
@@ -187,18 +168,23 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         int height = glad.getSurfaceHeight();
         float time = (float) System.currentTimeMillis();
         gl.glClear(GL4.GL_COLOR_BUFFER_BIT | GL4.GL_DEPTH_BUFFER_BIT);
+        FloatBuffer matrixBuffer = Buffers.newDirectFloatBuffer(16);
+        Matrix4f model = new Matrix4f();
+//        model.rotate((float) Math.toRadians(-55.0f),1,0,0).get(matrixBuffer);
 
-        FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
-        Matrix4f trans = new Matrix4f();
+        model.rotate((float) (time*Math.toRadians(50)),0.5f,1,0);
+        model.get(matrixBuffer);
+        Matrix4f view = new Matrix4f();
+        FloatBuffer matrixBuffer2 = Buffers.newDirectFloatBuffer(16);
 
-        trans.translate(0.5f, -0.5f, 0.0f);
-        //glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        trans.rotate(time,0,0,1).get(fb);
+        view.translate(0,0,-3).get(matrixBuffer2);
 
-
-        int transLoc = gl.glGetUniformLocation(shaderProgramID,"transform");
-
-        gl.glUniformMatrix4fv(transLoc,1,false,fb);
+        Matrix4f projection = new Matrix4f();
+        FloatBuffer matrixBuffer1 = Buffers.newDirectFloatBuffer(16);
+        projection.perspective((float) Math.toRadians(45.0f), (float) width / height, 0.1f, 100.0f).get(matrixBuffer1);
+        gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
+        gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "view"), 1, false, matrixBuffer2);
+        gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "projection"), 1, false, matrixBuffer1);
 
         gl.glActiveTexture(GL_TEXTURE0);
         cube.bind(gl);
@@ -206,15 +192,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glUniform1i(uniform_texture, 0);
         gl.glBindVertexArray(vao_handle[0]);
         gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
-
-        trans.identity();
-        trans.translate(-0.5f,0.5f,0);
-        float scaleAmount = (float) Math.sin(time);
-
-        trans.scale(scaleAmount,scaleAmount,scaleAmount).get(fb);
-        gl.glUniformMatrix4fv(transLoc,1,false,fb);
-        gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
-
         gl.glBindVertexArray(0);
 
 
@@ -235,10 +212,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     }
 
-
-    private void renderVBO(GL4bc gl) {
-         gl.glBindVertexArray(0);
-    }
 
     @Override
     public void reshape(final GLAutoDrawable glad, final int x, final int y, final int width,
