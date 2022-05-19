@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.text.NumberFormat;
+import java.util.Vector;
 
 import static com.jogamp.opengl.GL.*;
 
@@ -64,6 +65,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     private int[] vao_handle = new int[1];
     private int[] ebo_handle = new int[1];
     Texture cube;
+    Texture face;
 
     @Override
     public void init(final GLAutoDrawable glad) {
@@ -74,10 +76,12 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         height = glad.getSurfaceHeight();
         gl.glEnable(GL_TEXTURE_2D);
         gl.glEnable(GL_DEPTH_TEST);
+        gl.glDepthFunc(GL_LESS);
         initShaders(gl);
 
         try {
-            cube = loadTexture(gl, "textures/block.png");
+            cube = loadTexture(gl, "textures/container.jpg");
+            face = loadTexture(gl, "textures/face.png");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -90,7 +94,12 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glUseProgram(shaderProgramID);
 
         gl.glUniform1i(gl.glGetUniformLocation(shaderProgramID, "tex"), 0);
-
+        Matrix4f projection = new Matrix4f();
+        projection.perspective((float) Math.toRadians(45), (float) width / (float) height, 0.1f, 100.0f);
+        FloatBuffer matrixBuffer = Buffers.newDirectFloatBuffer(16);
+        projection.get(matrixBuffer);
+        gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "projection"), 1, false, matrixBuffer);
+        gl.glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
     }
 
@@ -201,7 +210,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         int width = glad.getSurfaceWidth();
         int height = glad.getSurfaceHeight();
         float time = (float) System.currentTimeMillis();
-        gl.glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         gl.glClear(GL4.GL_COLOR_BUFFER_BIT | GL4.GL_DEPTH_BUFFER_BIT);
         Matrix4f view = new Matrix4f();
         float time2 = glad.getAnimator().getFPSStartTime();
@@ -212,11 +220,14 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         float randX = (float) (Math.random() * radius);
 
-        view = camera.getViewMatrix();
+
+        Vector3f camPos = camera.getPosition();
+        Vector3f camDir = camera.getUp();
+        Vector3f up = new Vector3f(0, 1, 0);
+        view.lookAt(camPos,camera.getPositionPlusFront(),up);
+       // view.set(camera.getViewMatrix());
+
         view.get(matrixBuffer2);
-        Matrix4f projection = new Matrix4f();
-        FloatBuffer matrixBuffer1 = Buffers.newDirectFloatBuffer(16);
-        projection.perspective((float) Math.toRadians(90), (float) width / (float) height, 0.1f, 100.0f).get(matrixBuffer1);
 
         FloatBuffer matrixBuffer = Buffers.newDirectFloatBuffer(16);
         Matrix4f model = new Matrix4f();
@@ -225,16 +236,28 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         model.get(matrixBuffer);
         gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
         gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "view"), 1, false, matrixBuffer2);
-        gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "projection"), 1, false, matrixBuffer1);
 
         gl.glActiveTexture(GL_TEXTURE0);
         cube.bind(gl);
+        gl.glActiveTexture(GL_TEXTURE1);
+        face.bind(gl);
+        int faceLoc = gl.glGetUniformLocation(shaderProgramID, "face");
         int uniform_texture = gl.glGetUniformLocation(shaderProgramID, "tex");
         gl.glUniform1i(uniform_texture, 0);
+        gl.glUniform1i(faceLoc, 1);
         gl.glBindVertexArray(vao_handle[0]);
 
-
-        gl.glDrawArrays(GL_TRIANGLES, 0, 36);
+        for(int i =0; i< cubePositions.length; i++){
+            float angle = 20.0f * i;
+            float x = (float) (Math.sin(angle) * randX);
+            float z = (float) (Math.cos(angle) * randX);
+            model.identity();
+            model.translate(cubePositions[i]);
+            model.rotate((float) Math.toRadians(angle), 1.0f, 0.3f, 0.5f);
+            model.get(matrixBuffer);
+            gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
+            gl.glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
 
         // gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);

@@ -25,11 +25,12 @@ public class Camera {
     private Matrix4f view;
 
     public Camera(GL4bc gl) {
-        this.position = new Vector3f(0, 0, 0);
+        this.position = new Vector3f(0, 0, -5);
         this.front = new Vector3f(0, 0, -1);
         this.up = new Vector3f(0, 1, 0);
         this.right = new Vector3f(0, 0, 0);
-        this.yaw = 0;
+        this.positionPlusFront = new Vector3f(position);
+        this.yaw = -90;
         this.pitch = 0;
         this.speed = 0.1f;
         this.sensitivity = 0.1f;
@@ -51,46 +52,22 @@ public class Camera {
     public void processKeyboard(Movement direction, boolean isPressed) {
         float velocity = speed * 0.1f;
         if (isPressed) {
-            if (direction == Movement.FORWARD) {
-                position.x += velocity * front.x;
-                position.z += velocity * front.z;
-            } else if (direction == Movement.BACKWARD) {
-                position.x -= front.x * velocity;
-                position.z -= front.z * velocity;
-            } else if (direction == Movement.LEFT) {
-                Vector3f tmp = new Vector3f(front);
-                tmp.x = front.y * up.z - front.y * up.y;
-                tmp.z = front.x * up.y - front.y * up.x;
-                position.x -= tmp.x * velocity;
-                position.z -= tmp.z * velocity;
-            } else if (direction == Movement.RIGHT) {
-                Vector3f tmp = new Vector3f(front);
-                tmp.x = front.y * up.z - front.y * up.y;
-                tmp.z = front.x * up.y - front.y * up.x;
+            switch (direction) {
+                case FORWARD:
+                    position.add(front.mul(velocity));
+                    break;
+                case BACKWARD:
+                    position.sub(front.mul(velocity));
+                    break;
+                case LEFT:
+                    position.sub(right.mul(velocity));
+                    break;
+                case RIGHT:
+                    position.add(right.mul(velocity));
+                    break;
+            }
 
-                position.x += tmp.x * velocity;
-                position.z += tmp.z * velocity;
-            }
-        } else {
-            if (direction == Movement.FORWARD) {
-                position.x -= front.x * velocity;
-                position.y -= front.y * velocity;
-                position.z -= front.z;
-            } else if (direction == Movement.BACKWARD) {
-                position.x += front.x * velocity;
-                position.y += front.y * velocity;
-                position.z += front.z * velocity;
-            } else if (direction == Movement.LEFT) {
-                position.x += right.x * velocity;
-                position.y += right.y * velocity;
-                position.z += right.z * velocity;
-            } else if (direction == Movement.RIGHT) {
-                position.x -= right.x * velocity;
-                position.y -= right.y * velocity;
-                position.z -= right.z * velocity;
-            }
         }
-
     }
 
     public Vector3f getFront() {
@@ -107,11 +84,12 @@ public class Camera {
 
     public void reset(Movement direction) {
         if (direction == Movement.RESET) {
-            this.position = new Vector3f(0, 0, 0);
+            this.position = new Vector3f(0, 0, -5);
             this.front = new Vector3f(0, 0, -1);
             this.up = new Vector3f(0, 1, 0);
-            this.positionPlusFront = new Vector3f(0, 0, 0);
-            this.yaw = 0;
+            this.positionPlusFront = positionPlusFront.add(front);
+            positionPlusFront.add(position);
+            this.yaw = -90;
             this.pitch = 0;
             this.updateCameraVectors();
             this.getViewMatrix().identity();
@@ -139,18 +117,20 @@ public class Camera {
     }
 
     public Matrix4f getViewMatrix() {
-        //   view.identity();
-        Vector3f tmp = new Vector3f(front);
-
-        tmp.x = front.y * up.z - front.y * up.y;
-        tmp.z = front.x * up.y - front.y * up.x;
-
-        return view.lookAt(position,tmp , up);
+        return view.lookAt(position,positionPlusFront , up);
     }
 
     public Vector3f getPosition() {
         return position;
     }
+
+    public Vector3f getPositionPlusFront() {
+        return positionPlusFront;
+    }
+    public Vector3f getUp() {
+        return up;
+    }
+
 
     private void updateCameraVectors() {
         Vector3f front = new Vector3f(0, 0, -90);
@@ -158,11 +138,10 @@ public class Camera {
         front.y = (float) Math.sin(Math.toRadians(pitch));
         front.z = (float) Math.sin(Math.toRadians(yaw)) * (float) Math.cos(Math.toRadians(pitch));
         this.front = front.normalize();
-        this.right = this.front.cross(this.up,right).normalize();
-        this.up = this.right.cross(this.front,up).normalize();
-
-
-
+        this.right = this.front.cross(this.up,right);
+        this.right.normalize();
+        this.up = this.right.cross(this.front,up);
+        this.up.normalize();
     }
 
     public enum Movement {
