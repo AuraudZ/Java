@@ -210,14 +210,18 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
        // view.lookAt(camX, 0, camZ, 0, 0, 0, 0, 1, 0).get(matrixBuffer2);
 
-        view.set(camera.getViewMatrix()).get(matrixBuffer2);
+        float randX = (float) (Math.random() * radius);
+
+        view = camera.getViewMatrix();
+        view.get(matrixBuffer2);
         Matrix4f projection = new Matrix4f();
         FloatBuffer matrixBuffer1 = Buffers.newDirectFloatBuffer(16);
         projection.perspective((float) Math.toRadians(90), (float) width / (float) height, 0.1f, 100.0f).get(matrixBuffer1);
 
         FloatBuffer matrixBuffer = Buffers.newDirectFloatBuffer(16);
         Matrix4f model = new Matrix4f();
-        model.rotate((float) Math.toRadians(-55.0f),1,0,0).get(matrixBuffer);
+        model.identity();
+        model.translate(0,0,-10);
         model.get(matrixBuffer);
         gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
         gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "view"), 1, false, matrixBuffer2);
@@ -229,16 +233,9 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glUniform1i(uniform_texture, 0);
         gl.glBindVertexArray(vao_handle[0]);
 
-        for(int i =0; i<cubePositions.length; i++){
-            Matrix4f model1 = new Matrix4f();
-            float angle = 20.0f * i;
-          //  camera.setFront(new Vector3f(0,0,1));
-            model1.translate(0,0,-5);
-            model1.rotate((float) Math.toRadians(angle), 1, 0.3f, 0.5f);
-            model1.get(matrixBuffer);
-            gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
-            gl.glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
+
+        gl.glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
         // gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
         gl.glBindVertexArray(0);
@@ -253,7 +250,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         textRenderer.beginRendering(glad.getSurfaceWidth(), glad.getSurfaceHeight());
         textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        textRenderer.draw("Hello World", 10, glad.getSurfaceHeight() - 20);
+        textRenderer.draw("RandX: " + nf.format(randX), 10, glad.getSurfaceHeight() - 20);
+
         textRenderer.draw("Camera Position: " + cameraPos, 10, glad.getSurfaceHeight() - 40);
         textRenderer.draw("Camera Rotation: " + cameraRot, 10, glad.getSurfaceHeight() - 60);
         textRenderer.endRendering();
@@ -298,31 +296,16 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if (e.getKeyChar() == 'w') {
-            camera.processKeyboard(Camera.Movement.FORWARD);
-        }
-        if (e.getKeyChar() == 's') {
-            camera.processKeyboard(Camera.Movement.BACKWARD);
-        }
-        if (e.getKeyChar() == 'a') {
-            camera.processKeyboard(Camera.Movement.LEFT);
-        }
-        if (e.getKeyChar() == 'd') {
-            camera.processKeyboard(Camera.Movement.RIGHT);
-        }
-        if(e.getKeyChar() == 'r') {
-            camera.reset(Camera.Movement.RESET);
-        }
-        System.out.println(e.getKeyChar());
+
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_W -> camera.processKeyboard(Camera.Movement.FORWARD);
-            case KeyEvent.VK_S -> camera.processKeyboard(Camera.Movement.BACKWARD);
-            case KeyEvent.VK_A -> camera.processKeyboard(Camera.Movement.LEFT);
-            case KeyEvent.VK_D -> camera.processKeyboard(Camera.Movement.RIGHT);
+            case KeyEvent.VK_W -> camera.processKeyboard(Camera.Movement.FORWARD,true);
+            case KeyEvent.VK_S -> camera.processKeyboard(Camera.Movement.BACKWARD,true);
+            case KeyEvent.VK_A -> camera.processKeyboard(Camera.Movement.LEFT,true);
+            case KeyEvent.VK_D -> camera.processKeyboard(Camera.Movement.RIGHT,true);
             case KeyEvent.VK_R -> camera.reset(Camera.Movement.RESET);
             case KeyEvent.VK_L -> lock = !lock;
         }
@@ -330,6 +313,13 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     @Override
     public void keyReleased(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_W -> camera.processKeyboard(Camera.Movement.FORWARD,false);
+            case KeyEvent.VK_S -> camera.processKeyboard(Camera.Movement.BACKWARD,false);
+            case KeyEvent.VK_A -> camera.processKeyboard(Camera.Movement.LEFT,false);
+            case KeyEvent.VK_D -> camera.processKeyboard(Camera.Movement.RIGHT,false);
+            case KeyEvent.VK_R -> camera.reset(Camera.Movement.RESET);
+        }
     }
 
     float lastX;
