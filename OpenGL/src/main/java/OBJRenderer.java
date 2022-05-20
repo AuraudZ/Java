@@ -1,6 +1,7 @@
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.math.Quaternion;
+import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.TileRendererBase;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.glsl.ShaderCode;
@@ -35,6 +36,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     private TextRenderer textRenderer;
 
+    FPSAnimator animator;
     private int width;
     private int height;
     private boolean verbose = true;
@@ -50,7 +52,9 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     };
     private TileRendererBase tileRendererInUse = null;
 
-    public OBJRenderer() {
+    public OBJRenderer(FPSAnimator animator)
+    {
+        this.animator = animator;
     }
 
 
@@ -68,6 +72,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     private int[] ebo_handle = new int[1];
     Texture cube;
     Texture face;
+    float FPS = 0;
 
     @Override
     public void init(final GLAutoDrawable glad) {
@@ -80,6 +85,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glEnable(GL_DEPTH_TEST);
         gl.glDepthFunc(GL_LESS);
         initShaders(gl);
+        FPS = animator.getLastFPS();
 
         try {
             cube = loadTexture(gl, "textures/container.jpg");
@@ -182,19 +188,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glBindBuffer(GL_ARRAY_BUFFER, vbo_handle[0]);
         gl.glBufferData(GL_ARRAY_BUFFER, Cube.verticesCube.length * 4, FloatBuffer.wrap(Cube.verticesCube), GL_STATIC_DRAW);
 
-
-        //  gl.glGenBuffers(1, IntBuffer.wrap(ebo_handle));
-        //gl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_handle[0]);
-        //gl.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.length * 4, IntBuffer.wrap(indices), GL_STATIC_DRAW);
-
-      //  gl.glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * 4, 0);
-       // gl.glEnableVertexAttribArray(0);
-       // gl.glVertexAttribPointer(1, 3, GL_FLOAT, false, 8 * 4, 3 * 4);
-        //gl.glEnableVertexAttribArray(1);
-        //gl.glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * 4, 6 * 4);
-        //gl.glEnableVertexAttribArray(2);
-
-
         gl.glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * Buffers.SIZEOF_FLOAT, 0);
         gl.glEnableVertexAttribArray(0);
         gl.glVertexAttribPointer(1, 2, GL_FLOAT, false, 5 * Buffers.SIZEOF_FLOAT, 3 * Buffers.SIZEOF_FLOAT);
@@ -222,6 +215,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         float randX = (float) (Math.random() * radius);
 
+        System.out.println(FPS);
 
 
 
