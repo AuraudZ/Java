@@ -1,5 +1,6 @@
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
+import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.util.TileRendererBase;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.glsl.ShaderCode;
@@ -28,6 +29,7 @@ import java.text.NumberFormat;
 import java.util.Vector;
 
 import static com.jogamp.opengl.GL.*;
+import static java.lang.Thread.sleep;
 
 public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyListener {
 
@@ -221,19 +223,23 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         float randX = (float) (Math.random() * radius);
 
 
-        Vector3f camPos = camera.getPosition();
-        Vector3f camDir = camera.getUp();
-        Vector3f up = new Vector3f(0, 1, 0);
-        view.lookAt(camPos,camera.getPositionPlusFront(),up);
-       // view.set(camera.getViewMatrix());
 
-        view.get(matrixBuffer2);
 
         FloatBuffer matrixBuffer = Buffers.newDirectFloatBuffer(16);
         Matrix4f model = new Matrix4f();
         model.identity();
         model.translate(0,0,-10);
         model.get(matrixBuffer);
+        Matrix4f viewMatrix = new Matrix4f();
+        viewMatrix.identity();
+        //viewMatrix.translate(0,0,-10);
+        camera.setPosition(new Vector3f(0,0,-10));
+        Vector3f tm;
+       // tm = camera.getPosition();
+        tm = camera.getFront();
+        viewMatrix.lookAt(camera.getPosition(), tm, camera.getUp());
+       // viewMatrix.lookAt(0,0,-10,0,0,5,0,1,0);
+        viewMatrix.get(matrixBuffer2);
         gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
         gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "view"), 1, false, matrixBuffer2);
 
@@ -247,22 +253,31 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glUniform1i(faceLoc, 1);
         gl.glBindVertexArray(vao_handle[0]);
 
+
         for(int i =0; i< cubePositions.length; i++){
             float angle = 20.0f * i;
-            float x = (float) (Math.sin(angle) * randX);
-            float z = (float) (Math.cos(angle) * randX);
             model.identity();
+            Vector3f t = new Vector3f(cubePositions[i]);
+            checkCollition(camera.getFront(),cubePositions[i] ,cubePositions[i]);
             model.translate(cubePositions[i]);
             model.rotate((float) Math.toRadians(angle), 1.0f, 0.3f, 0.5f);
             model.get(matrixBuffer);
             gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
             gl.glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-
+        // Colition detection
+      if(camera.getPosition().x > cubePositions[0].x - 0.5f && camera.getPosition().x < cubePositions[0].x + 0.5f && camera.getPosition().z > cubePositions[0].z - 0.5f && camera.getPosition().z < cubePositions[0].z + 0.5f){
+          System.out.println("Collision");
+      }
 
         // gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
         gl.glBindVertexArray(0);
         gl.glUseProgram(0);
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(5);
@@ -286,15 +301,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     public void reshape(final GLAutoDrawable glad, final int x, final int y, final int width,
                         final int height) {
         GL4 gl = glad.getGL().getGL4();
-        Matrix4f view = new Matrix4f();
-        FloatBuffer matrixBuffer2 = Buffers.newDirectFloatBuffer(16);
-        view.lookAt(0.f,0.f,0.f,0.f,0.f,0.f,0.f,1.f,0.f).get(matrixBuffer2);
-        Matrix4f projection = new Matrix4f();
-        projection.perspective((float) Math.toRadians(90), (float) width / (float) height, 0.1f, 100.0f);
-        FloatBuffer matrixBuffer = Buffers.newDirectFloatBuffer(16);
-        projection.get(matrixBuffer);
-        gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "projection"), 1, false, matrixBuffer);
-        gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "view"), 1, false, matrixBuffer2);
         gl.glViewport(0, 0, width, height);
     }
 
@@ -319,24 +325,59 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     @Override
     public void keyTyped(KeyEvent e) {
+        if(e.getKeyChar() == 'w'){
+             camera.processKeyboard(Camera.Movement.FORWARD,true);
+        }
+        if(e.getKeyChar() == 's'){
+            camera.processKeyboard(Camera.Movement.BACKWARD,true);
+        }
+        if(e.getKeyChar() == 'a'){
+            camera.processKeyboard(Camera.Movement.LEFT,true);
+        }
+        if(e.getKeyChar() == 'd'){
+            camera.processKeyboard(Camera.Movement.RIGHT,true);
+        }
+        if(e.getKeyChar() == 'r') {
+             camera.reset(Camera.Movement.RESET);
+        }
+        if(e.getKeyChar() == 'l') {
+            lock = !lock;
+        }
+        if(e.getKeyChar() == 'e') {
+            System.out.println("E");
+            camera.setFront(cubePositions[0]);
+            camera.setPosition(cubePositions[0]);
+        }
+    }
 
+
+    private void checkCollition(Vector3f cameraView, Vector3f objectPos, Vector3f objectSize) {
+        float x = objectPos.x - cameraView.x;
+        float y = objectPos.y - cameraView.y;
+        float z = objectPos.z - cameraView.z;
+
+        float x2 = objectPos.x + objectSize.x - cameraView.x;
+        float y2 = objectPos.y + objectSize.y - cameraView.y;
+        float z2 = objectPos.z + objectSize.z - cameraView.z;
+
+        if(x < 0 && x2 > 0){
+            System.out.println("Collision");
+        }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_W -> camera.processKeyboard(Camera.Movement.FORWARD,true);
             case KeyEvent.VK_S -> camera.processKeyboard(Camera.Movement.BACKWARD,true);
             case KeyEvent.VK_A -> camera.processKeyboard(Camera.Movement.LEFT,true);
             case KeyEvent.VK_D -> camera.processKeyboard(Camera.Movement.RIGHT,true);
-            case KeyEvent.VK_R -> camera.reset(Camera.Movement.RESET);
-            case KeyEvent.VK_L -> lock = !lock;
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
+            // Teleport to one of the cubes
             case KeyEvent.VK_W -> camera.processKeyboard(Camera.Movement.FORWARD,false);
             case KeyEvent.VK_S -> camera.processKeyboard(Camera.Movement.BACKWARD,false);
             case KeyEvent.VK_A -> camera.processKeyboard(Camera.Movement.LEFT,false);
