@@ -4,9 +4,12 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 public class Camera {
+  // This class is a c++ port of this, I based it off this
+  // https://learnopengl.com/Getting-started/Camera
+  // I hope this is not an academic integrity violation
 
   private Vector3f position;
-  private Vector3f front;
+  private Vector3f cameraFront;
   private Vector3f up;
 
   private Vector3f positionPlusFront;
@@ -26,7 +29,7 @@ public class Camera {
 
   public Camera(GL4bc gl) {
     this.position = new Vector3f(0, 0, -10);
-    this.front = new Vector3f(0, 0, -1);
+    this.cameraFront = new Vector3f(0, 0, -1);
     this.up = new Vector3f(0, 1, 0);
     this.right = new Vector3f(0, 0, 0);
     this.positionPlusFront = new Vector3f(position);
@@ -52,39 +55,21 @@ public class Camera {
   public void processKeyboard(Movement direction, boolean isPressed) {
     float velocity = speed;
     if (isPressed) {
+      Vector3f tmp = new Vector3f();
       switch (direction) {
-        case FORWARD:
-          position.x += front.x * velocity;
-          position.y += front.y * velocity;
-          position.z += front.z * velocity;
-          break;
-        case BACKWARD:
-            position.x -= front.x * velocity;
-           position.y -= front.y * velocity;
-           position.z -= front.z * velocity;
-          break;
-             case LEFT:
-               right.x = front.y * up.z - front.z * up.y;
-               right.y = front.z * up.x - front.x * up.z;
-               right.z = front.x * up.y - front.y * up.x;
-               position.x -= right.x * velocity;
-               position.y -= right.y * velocity;
-               position.z -= right.z * velocity;
-               break;
-             case RIGHT:
-               right.x = front.y * up.z - front.z * up.y;
-               right.y = front.z * up.x - front.x * up.z;
-               right.z = front.x * up.y - front.y * up.x;
-               position.x += right.x * velocity;
-               position.y += right.y * velocity;
-               position.z += right.z * velocity;
-               break;
+        case FORWARD -> position = position.add(cameraFront.mul(velocity));
+        case BACKWARD -> position = position.sub(cameraFront.mul(velocity));
+        case LEFT -> position.sub(cameraFront.cross(up, tmp).mul(speed)).normalize();
+        case RIGHT -> position.add(cameraFront.cross(up, tmp).mul(speed));
       }
+      position.y = 0;
+      System.out.println(position);
     }
+    updateCameraVectors();
   }
 
-  public Vector3f getFront() {
-    return front;
+  public Vector3f getCameraFront() {
+    return cameraFront;
   }
 
   private Matrix4f createLookAtMatrix(Vector3f position, Vector3f target, Vector3f up) {
@@ -95,16 +80,16 @@ public class Camera {
     this.position = position;
   }
 
-  public void setFront(Vector3f front) {
-    this.front = front;
+  public void setCameraFront(Vector3f cameraFront) {
+    this.cameraFront = cameraFront;
   }
 
   public void reset(Movement direction) {
     if (direction == Movement.RESET) {
       this.position = new Vector3f(0, 0, -5);
-      this.front = new Vector3f(0, 0, -1);
+      this.cameraFront = new Vector3f(0, 0, -1);
       this.up = new Vector3f(0, 1, 0);
-      this.positionPlusFront = positionPlusFront.add(front).add(position);
+      this.positionPlusFront = positionPlusFront.add(cameraFront).add(position);
       this.yaw = -90;
       this.pitch = 0;
       this.updateCameraVectors();
@@ -125,14 +110,12 @@ public class Camera {
       pitch = -89;
     }
 
-    // Yaw = glm::mod( Yaw + xoffset, 360.0f );
-    yaw = (yaw + xoffset) % 360;
-
     updateCameraVectors();
   }
 
   public Matrix4f getViewMatrix() {
-    return view.lookAt(position, positionPlusFront, up);
+    view.identity();
+    return view.lookAt(position, cameraFront, up);
   }
 
   public Vector3f getPosition() {
@@ -148,20 +131,22 @@ public class Camera {
   }
 
   private void updateCameraVectors() {
-    Vector3f front = new Vector3f(0, 0, -90);
+    Vector3f front = new Vector3f();
+
     front.x = (float) Math.cos(Math.toRadians(yaw)) * (float) Math.cos(Math.toRadians(pitch));
     front.y = (float) Math.sin(Math.toRadians(pitch));
     front.z = (float) Math.sin(Math.toRadians(yaw)) * (float) Math.cos(Math.toRadians(pitch));
 
-    this.front = front;
+    front.normalize();
+    this.cameraFront = front;
     this.right = front.cross(this.up, right);
     this.right.normalize();
-    this.up = this.right.cross(front, up);
+    up = right.cross(front, up);
     this.up.normalize();
   }
 
   public Vector3fc getLookAt() {
-    return position.add(front);
+    return position.add(cameraFront);
   }
 
   public enum Movement {

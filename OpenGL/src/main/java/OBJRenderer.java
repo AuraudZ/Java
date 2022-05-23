@@ -1,6 +1,5 @@
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
-import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.TileRendererBase;
 import com.jogamp.opengl.util.awt.TextRenderer;
@@ -9,11 +8,8 @@ import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.glsl.ShaderState;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
-import jogamp.opengl.glu.nurbs.CArrayOfArcs;
 import org.joml.Matrix4f;
-import org.joml.Vector3d;
 import org.joml.Vector3f;
-import org.joml.Vector3fc;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -27,7 +23,6 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.text.NumberFormat;
-import java.util.Vector;
 
 import static com.jogamp.opengl.GL.*;
 import static java.lang.Thread.sleep;
@@ -96,6 +91,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
 
         initBuffers(gl);
+        lastX = width / 2;
+        lastY = height / 2;
         // Convert to MBs
         double texMem = cube.getEstimatedMemorySize() / (1024.0 * 1024);
         System.out.println("Tex Mem Size: " + texMem + " MB");
@@ -108,6 +105,10 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         projection.get(matrixBuffer);
         gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "projection"), 1, false, matrixBuffer);
         gl.glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        System.out.println("OpenGL Version: " + gl.glGetString(GL_VERSION));
+        System.out.println("OpenGL Renderer: " + gl.glGetString(GL_RENDERER));
+        System.out.println("OpenGL Vendor: " + gl.glGetString(GL_VENDOR));
+        System.out.println("View Matrix: " + camera.getViewMatrix());
 
     }
 
@@ -215,8 +216,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         float randX = (float) (Math.random() * radius);
 
-        System.out.println(FPS);
-
 
 
         FloatBuffer matrixBuffer = Buffers.newDirectFloatBuffer(16);
@@ -230,8 +229,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         camera.setPosition(new Vector3f(0,0,-10));
         Vector3f tm;
        // tm = camera.getPosition();
-        tm = camera.getFront();
-        viewMatrix.lookAt(camera.getPosition(), tm, camera.getUp());
+        tm = camera.getCameraFront();
+        viewMatrix.set(camera.getViewMatrix());
        // viewMatrix.lookAt(0,0,-10,0,0,5,0,1,0);
         viewMatrix.get(matrixBuffer2);
         gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
@@ -252,7 +251,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             float angle = 20.0f * i;
             model.identity();
             Vector3f t = new Vector3f(cubePositions[i]);
-            checkCollition(camera.getFront(),cubePositions[i] ,cubePositions[i]);
+            checkCollition(camera.getCameraFront(),cubePositions[i] ,cubePositions[i]);
             model.translate(cubePositions[i]);
             model.rotate((float) Math.toRadians(angle), 1.0f, 0.3f, 0.5f);
             model.get(matrixBuffer);
@@ -339,7 +338,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         }
         if(e.getKeyChar() == 'e') {
             System.out.println("E");
-            camera.setFront(cubePositions[0]);
+            camera.setCameraFront(cubePositions[0]);
             camera.setPosition(cubePositions[0]);
         }
     }
@@ -390,28 +389,11 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     public void mouseDragged(MouseEvent e) {
         float xpos =e.getX();
         float ypos= e.getY();
-        Robot r;
-        try {
-            r = new Robot();
-        } catch (AWTException ex) {
-            throw new RuntimeException(ex);
-        }
-
-        if(lock == true){
-            r.mouseMove(width/2,height/2);
-        }
 
         float xoffset = xpos - lastX;
         float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
         lastX = xpos;
         lastY = ypos;
-
-        boolean firstMouse = true;
-        if(firstMouse){
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
 
         camera.processMouseMovement(xoffset, yoffset);
 
