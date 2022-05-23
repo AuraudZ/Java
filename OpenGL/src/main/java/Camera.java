@@ -143,6 +143,14 @@ public class Camera {
     this.right.normalize();
     up = right.cross(front, up);
     this.up.normalize();
+
+
+    Vector3f tmp = new Vector3f();
+    System.out.println("Front: " +cameraFront);
+    positionPlusFront.add(cameraFront, tmp);
+    positionPlusFront.add(position, tmp);
+    System.out.println("Position: " +position);
+    System.out.println("Pos+Front: " +positionPlusFront);
   }
 
   public Vector3fc getLookAt() {
