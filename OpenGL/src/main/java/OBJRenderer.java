@@ -1,5 +1,6 @@
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
+import com.jogamp.opengl.math.Ray;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.TileRendererBase;
 import com.jogamp.opengl.util.awt.TextRenderer;
@@ -9,6 +10,7 @@ import com.jogamp.opengl.util.glsl.ShaderState;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
 import org.joml.Matrix4f;
+import org.joml.RayAabIntersection;
 import org.joml.Vector3f;
 
 import javax.imageio.ImageIO;
@@ -31,6 +33,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     private TextRenderer textRenderer;
 
+    int score = 0;
     FPSAnimator animator;
     private int width;
     private int height;
@@ -53,6 +56,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     }
 
 
+
     int vertShaderID;
     int fragShaderID;
 
@@ -64,7 +68,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     private int[] vbo_handle = new int[1];
 
     private int[] vao_handle = new int[1];
-    private int[] ebo_handle = new int[1];
     Texture cube;
     Texture face;
     float FPS = 0;
@@ -81,7 +84,10 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glDepthFunc(GL_LESS);
         initShaders(gl);
         FPS = animator.getLastFPS();
-
+        if(animator.isAnimating());
+        {
+            System.out.println("FPS: " + FPS);
+        }
         try {
             cube = loadTexture(gl, "textures/container.jpg");
             face = loadTexture(gl, "textures/face.png");
@@ -212,6 +218,13 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         FloatBuffer matrixBuffer2 = Buffers.newDirectFloatBuffer(16);
         float radius = 10.0f;
 
+        // Delta time
+        float currentFrame = glad.getAnimator().getFPSStartTime();
+        float lastFrame = 0.0f;
+        float deltaTime = currentFrame - lastFrame;
+
+        // Update last frame
+        lastFrame = currentFrame;
        // view.lookAt(camX, 0, camZ, 0, 0, 0, 0, 1, 0).get(matrixBuffer2);
 
         float randX = (float) (Math.random() * radius);
@@ -253,6 +266,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             Vector3f t = new Vector3f(cubePositions[i]);
             checkCollition(camera.getCameraFront(),cubePositions[i] ,cubePositions[i]);
             model.translate(cubePositions[i]);
+            model.scale(0.5f);
             model.rotate((float) Math.toRadians(angle), 1.0f, 0.3f, 0.5f);
             model.get(matrixBuffer);
             gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
@@ -263,6 +277,9 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
           System.out.println("Collision");
       }
 
+      if(score > 1) {
+        System.out.println(score);
+      }
         // gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
         gl.glBindVertexArray(0);
         gl.glUseProgram(0);
@@ -394,9 +411,14 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
         lastX = xpos;
         lastY = ypos;
-
         camera.processMouseMovement(xoffset, yoffset);
 
+
+        Vector3f cameraView = camera.getCameraFront();
+        camera.setPitch(0);
+        camera.setYaw(0);
+        camera.setCameraFront(cameraView);
+        System.out.println(cameraView);
 
     }
 

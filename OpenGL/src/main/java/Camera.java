@@ -28,14 +28,14 @@ public class Camera {
   private Matrix4f view;
 
   public Camera(GL4bc gl) {
-    this.position = new Vector3f(0, 0, -10);
+    this.position = new Vector3f(0, 0, 3);
     this.cameraFront = new Vector3f(0, 0, -1);
     this.up = new Vector3f(0, 1, 0);
     this.right = new Vector3f(0, 0, 0);
     this.positionPlusFront = new Vector3f(position);
     this.yaw = -90;
     this.pitch = 0;
-    this.speed = 0.1f;
+    this.speed = 2.5f;
     this.sensitivity = 0.1f;
     this.fov = 45;
     this.zNear = 0.1f;
@@ -50,6 +50,14 @@ public class Camera {
 
   public float getPitch() {
     return pitch;
+  }
+
+  public void setPitch(float pitch) {
+    this.pitch = pitch;
+  }
+
+  public void setYaw(float yaw) {
+    this.yaw = yaw;
   }
 
   public void processKeyboard(Movement direction, boolean isPressed) {
@@ -115,6 +123,8 @@ public class Camera {
 
   public Matrix4f getViewMatrix() {
     view.identity();
+    Vector3f tmp = new Vector3f(position);
+    tmp.add(cameraFront);
     return view.lookAt(position, cameraFront, up);
   }
 
@@ -138,19 +148,16 @@ public class Camera {
     front.z = (float) Math.sin(Math.toRadians(yaw)) * (float) Math.cos(Math.toRadians(pitch));
 
     front.normalize();
+    //    lookAtVector = Normalize3dVector(viewDir * cos(angle) + UpVector * sin(angle));
+
+
     this.cameraFront = front;
-    this.right = front.cross(this.up, right);
-    this.right.normalize();
+    this.right = front.cross(this.up, right).normalize();
     up = right.cross(front, up);
     this.up.normalize();
-
-
     Vector3f tmp = new Vector3f();
-    System.out.println("Front: " +cameraFront);
-    positionPlusFront.add(cameraFront, tmp);
-    positionPlusFront.add(position, tmp);
-    System.out.println("Position: " +position);
-    System.out.println("Pos+Front: " +positionPlusFront);
+    positionPlusFront.add(cameraFront);
+    positionPlusFront.add(position);
   }
 
   public Vector3fc getLookAt() {
