@@ -3,6 +3,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
+import java.util.Vector;
+
 public class Camera {
   // This class is a c++ port of this, I based it off this
   // https://learnopengl.com/Getting-started/Camera
@@ -61,19 +63,22 @@ public class Camera {
   }
 
   public void processKeyboard(Movement direction, boolean isPressed) {
-    float velocity = speed;
-    if (isPressed) {
+    if (direction == Movement.FORWARD) {
       Vector3f tmp = new Vector3f();
-      switch (direction) {
-        case FORWARD -> position = position.add(cameraFront.mul(velocity));
-        case BACKWARD -> position = position.sub(cameraFront.mul(velocity));
-        case LEFT -> position.sub(cameraFront.cross(up, tmp).mul(speed)).normalize();
-        case RIGHT -> position.add(cameraFront.cross(up, tmp).mul(speed));
-      }
-      position.y = 0;
-      System.out.println(position);
+      cameraFront.mul(speed, tmp);
+      position = position.add(tmp);
     }
-    updateCameraVectors();
+    if (direction == Movement.BACKWARD) {
+      //        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+      Vector3f tmp = new Vector3f(cameraFront);
+      tmp.cross(up).mul(speed, tmp).normalize();
+      position = position.add(tmp);
+    }
+    if (direction == Movement.LEFT) {
+      Vector3f tmp = new Vector3f(cameraFront);
+      tmp.cross(up).mul(speed, tmp).normalize();
+      position = position.sub(tmp);
+    }
   }
 
   public Vector3f getCameraFront() {
@@ -149,7 +154,6 @@ public class Camera {
 
     front.normalize();
     //    lookAtVector = Normalize3dVector(viewDir * cos(angle) + UpVector * sin(angle));
-
 
     this.cameraFront = front;
     this.right = front.cross(this.up, right).normalize();
