@@ -9,9 +9,7 @@ import com.jogamp.opengl.util.glsl.ShaderProgram;
 import com.jogamp.opengl.util.glsl.ShaderState;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
-import org.joml.Matrix4f;
-import org.joml.RayAabIntersection;
-import org.joml.Vector3f;
+import org.joml.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -22,6 +20,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.Math;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.text.NumberFormat;
@@ -167,6 +166,19 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         fragShaderID = fp.id();
     }
 
+    Vector3f[] cubeSizes = {
+            new Vector3f(0.5f, 0.5f, 0.5f),
+            new Vector3f(0.5f, 0.5f, 0.5f),
+            new Vector3f(0.5f, 0.5f, 0.5f),
+            new Vector3f(0.5f, 0.5f, 0.5f),
+            new Vector3f(0.5f, 0.5f, 0.5f),
+            new Vector3f(0.5f, 0.5f, 0.5f),
+            new Vector3f(0.5f, 0.5f, 0.5f),
+            new Vector3f(0.5f, 0.5f, 0.5f),
+            new Vector3f(0.5f, 0.5f, 0.5f),
+            new Vector3f(0.5f, 0.5f, 0.5f)
+    };
+
 
     float[] texArr = {
             // positions      // colors          // texture coords
@@ -264,7 +276,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             float angle = 20.0f * i;
             model.identity();
             Vector3f t = new Vector3f(cubePositions[i]);
-            checkCollition(camera.getCameraFront(),cubePositions[i] ,cubePositions[i]);
             model.translate(cubePositions[i]);
             model.scale(0.5f);
             model.rotate((float) Math.toRadians(angle), 1.0f, 0.3f, 0.5f);
@@ -272,14 +283,9 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             gl.glUniformMatrix4fv(gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
             gl.glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-        // Colition detection
-      if(camera.getPosition().x > cubePositions[0].x - 0.5f && camera.getPosition().x < cubePositions[0].x + 0.5f && camera.getPosition().z > cubePositions[0].z - 0.5f && camera.getPosition().z < cubePositions[0].z + 0.5f){
-          System.out.println("Collision");
-      }
 
-      if(score > 1) {
-        System.out.println(score);
-      }
+        selectCube(camera, cubePositions, cubeSizes);
+
         // gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
         gl.glBindVertexArray(0);
         gl.glUseProgram(0);
@@ -361,19 +367,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     }
 
 
-    private void checkCollition(Vector3f cameraView, Vector3f objectPos, Vector3f objectSize) {
-        float x = objectPos.x - cameraView.x;
-        float y = objectPos.y - cameraView.y;
-        float z = objectPos.z - cameraView.z;
-
-        float x2 = objectPos.x + objectSize.x - cameraView.x;
-        float y2 = objectPos.y + objectSize.y - cameraView.y;
-        float z2 = objectPos.z + objectSize.z - cameraView.z;
-
-        if(x < 0 && x2 > 0){
-            System.out.println("Collision");
-        }
-    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -422,6 +415,26 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     }
 
+
+    public void selectCube(Camera camera, Vector3f cubePositions[], Vector3f cubeSizes[]) {
+        Vector3f dir = new Vector3f();
+        camera.getViewMatrix().positiveZ(dir).negate();
+        for(int i = 0; i < cubePositions.length; i++) {
+            Vector3f min = cubePositions[i];
+            Vector3f max = cubePositions[i];
+
+            //        min.add(-gameItem.getScale(), -gameItem.getScale(), -gameItem.getScale());
+            min.add(cubeSizes[i].negate());
+            max.add(cubeSizes[i]);
+            Vector2f nearFar = new Vector2f(0.1f, 100);
+            float closestDistance = Float.MAX_VALUE;
+            if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, nearFar) && nearFar.x < closestDistance) {
+                closestDistance = nearFar.x;
+                System.out.println("Collision" + i);
+            }
+
+    }
+        }
 
 
     @Override
