@@ -64,22 +64,24 @@ public class Camera {
   }
 
   public void processKeyboard(Movement direction, boolean isPressed) {
+    Vector3f tmp = new Vector3f();
     if (direction == Movement.FORWARD) {
-      Vector3f tmp = new Vector3f();
-      cameraFront.mul(speed, tmp);
-      position = position.add(tmp);
+      position.add(up.mul(speed, tmp));
+
     }
     if (direction == Movement.BACKWARD) {
       //        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-      Vector3f tmp = new Vector3f(cameraFront);
-      tmp.cross(up).mul(speed, tmp).normalize();
-      position = position.add(tmp);
+
+      position.add(up.mul(speed, tmp));
     }
     if (direction == Movement.LEFT) {
-      Vector3f tmp = new Vector3f(cameraFront);
-      tmp.cross(up).mul(speed, tmp).normalize();
-      position = position.sub(tmp);
+      position.sub(cameraFront.cross(up, tmp).mul(speed));
     }
+    if (direction == Movement.RIGHT) {
+      position.add(cameraFront.cross(up, tmp).mul(speed));
+    }
+    System.out.println(position);
+
   }
 
   public Vector3f getCameraFront() {
@@ -129,8 +131,7 @@ public class Camera {
 
   public Matrix4f getViewMatrix() {
     view.identity();
-    Vector3f tmp = new Vector3f(position);
-    tmp.add(cameraFront);
+    view.rotate((float) Math.toRadians(pitch), 1, 0, 0);
     return view.lookAt(position, cameraFront, up);
   }
 
@@ -154,15 +155,13 @@ public class Camera {
     front.z = (float) Math.sin(Math.toRadians(yaw)) * (float) Math.cos(Math.toRadians(pitch));
 
     front.normalize();
-    //    lookAtVector = Normalize3dVector(viewDir * cos(angle) + UpVector * sin(angle));
-
     this.cameraFront = front;
     this.right = front.cross(this.up, right).normalize();
     up = right.cross(front, up);
     this.up.normalize();
     Vector3f tmp = new Vector3f();
-    positionPlusFront.add(cameraFront);
-    positionPlusFront.add(position);
+    this.positionPlusFront = position.add(cameraFront,tmp).add(position,tmp);
+    positionPlusFront.add(tmp);
   }
 
   public Vector3fc getLookAt() {

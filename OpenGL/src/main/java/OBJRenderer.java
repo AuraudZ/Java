@@ -284,7 +284,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             gl.glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-        selectCube(camera, cubePositions, cubeSizes);
+      //  selectCube(camera, cubePositions, cubeSizes);
 
         // gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
         gl.glBindVertexArray(0);
@@ -361,8 +361,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         }
         if(e.getKeyChar() == 'e') {
             System.out.println("E");
-            camera.setCameraFront(cubePositions[0]);
-            camera.setPosition(cubePositions[0]);
+          camera.setCameraFront(cubePositions[3]);
+            camera.setPosition(cubePositions[5]);
         }
     }
 
@@ -370,23 +370,11 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     @Override
     public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_S -> camera.processKeyboard(Camera.Movement.BACKWARD,true);
-            case KeyEvent.VK_A -> camera.processKeyboard(Camera.Movement.LEFT,true);
-            case KeyEvent.VK_D -> camera.processKeyboard(Camera.Movement.RIGHT,true);
-        }
-    }
+     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()) {
-            // Teleport to one of the cubes
-            case KeyEvent.VK_W -> camera.processKeyboard(Camera.Movement.FORWARD,false);
-            case KeyEvent.VK_S -> camera.processKeyboard(Camera.Movement.BACKWARD,false);
-            case KeyEvent.VK_A -> camera.processKeyboard(Camera.Movement.LEFT,false);
-            case KeyEvent.VK_D -> camera.processKeyboard(Camera.Movement.RIGHT,false);
-            case KeyEvent.VK_R -> camera.reset(Camera.Movement.RESET);
-        }
+
     }
 
     float lastX;
