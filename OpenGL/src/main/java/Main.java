@@ -1,12 +1,10 @@
-import com.jogamp.opengl.FPSCounter;
-import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
 import com.jogamp.opengl.util.FPSAnimator;
 
 import javax.swing.*;
-
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -17,7 +15,10 @@ public class Main {
         GLCapabilities glcapabilities = new GLCapabilities(glprofile);
         GLJPanel gljpanel = new GLJPanel(glcapabilities);
         FPSAnimator animator = new FPSAnimator(gljpanel, 600);
+
+        System.out.println(animator.getFPS());
         OBJRenderer objrenderer = new OBJRenderer(animator);
+
         gljpanel.addGLEventListener(objrenderer);
         gljpanel.addMouseMotionListener(objrenderer);
         gljpanel.addKeyListener(objrenderer);

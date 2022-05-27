@@ -66,19 +66,17 @@ public class Camera {
   public void processKeyboard(Movement direction, boolean isPressed) {
     Vector3f tmp = new Vector3f();
     if (direction == Movement.FORWARD) {
-      position.add(up.mul(speed, tmp));
+      position.add(cameraFront.mul(speed));
 
     }
     if (direction == Movement.BACKWARD) {
-      //        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-
-      position.add(up.mul(speed, tmp));
+      position.sub(cameraFront.mul(speed));
     }
     if (direction == Movement.LEFT) {
-      position.sub(cameraFront.cross(up, tmp).mul(speed));
+      position.sub(cameraFront.cross(up, tmp).mul(speed).normalize());
     }
     if (direction == Movement.RIGHT) {
-      position.add(cameraFront.cross(up, tmp).mul(speed));
+      position.add(cameraFront.cross(up, tmp).mul(speed).normalize());
     }
     System.out.println(position);
 
@@ -154,11 +152,10 @@ public class Camera {
     front.y = (float) Math.sin(Math.toRadians(pitch));
     front.z = (float) Math.sin(Math.toRadians(yaw)) * (float) Math.cos(Math.toRadians(pitch));
 
-    front.normalize();
-    this.cameraFront = front;
-    this.right = front.cross(this.up, right).normalize();
-    up = right.cross(front, up);
-    this.up.normalize();
+
+    front.normalize(cameraFront);
+    right = (front.cross(this.up, right)).normalize();
+    up = (right.cross(front, up)).normalize();
     Vector3f tmp = new Vector3f();
     this.positionPlusFront = position.add(cameraFront,tmp).add(position,tmp);
     positionPlusFront.add(tmp);

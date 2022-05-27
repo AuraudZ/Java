@@ -82,6 +82,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glEnable(GL_DEPTH_TEST);
         gl.glDepthFunc(GL_LESS);
         initShaders(gl);
+
         FPS = animator.getLastFPS();
         if(animator.isAnimating());
         {
@@ -235,6 +236,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         float lastFrame = 0.0f;
         float deltaTime = currentFrame - lastFrame;
 
+
+
         // Update last frame
         lastFrame = currentFrame;
        // view.lookAt(camX, 0, camZ, 0, 0, 0, 0, 1, 0).get(matrixBuffer2);
@@ -284,7 +287,7 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
             gl.glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-      //  selectCube(camera, cubePositions, cubeSizes);
+        selectCube(camera, cubePositions, cubeSizes);
 
         // gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
         gl.glBindVertexArray(0);
@@ -385,8 +388,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        float xpos =e.getX();
-        float ypos= e.getY();
+        float xpos = e.getX();
+        float ypos = e.getY();
 
         float xoffset = xpos - lastX;
         float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
@@ -395,29 +398,25 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         camera.processMouseMovement(xoffset, yoffset);
 
 
-        Vector3f cameraView = camera.getCameraFront();
-        camera.setPitch(0);
-        camera.setYaw(0);
-        camera.setCameraFront(cameraView);
-        System.out.println(cameraView);
-
     }
 
 
     public void selectCube(Camera camera, Vector3f cubePositions[], Vector3f cubeSizes[]) {
         Vector3f dir = new Vector3f();
-        camera.getViewMatrix().positiveZ(dir).negate();
+        Vector3f ray_origin = new Vector3f();
+        camera.getViewMatrix().positiveZ(dir);
+        dir.negate();
+
+        ray_origin.z = 0;
         for(int i = 0; i < cubePositions.length; i++) {
             Vector3f min = cubePositions[i];
             Vector3f max = cubePositions[i];
 
-            //        min.add(-gameItem.getScale(), -gameItem.getScale(), -gameItem.getScale());
-            min.add(cubeSizes[i].negate());
+            min.add(-cubeSizes[i].get(0), -cubeSizes[i].get(1), -cubeSizes[i].get(2));
             max.add(cubeSizes[i]);
             Vector2f nearFar = new Vector2f(0.1f, 100);
             float closestDistance = Float.MAX_VALUE;
             if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, nearFar) && nearFar.x < closestDistance) {
-                closestDistance = nearFar.x;
                 System.out.println("Collision" + i);
             }
 
