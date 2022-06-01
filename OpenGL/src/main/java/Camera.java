@@ -67,7 +67,6 @@ public class Camera {
     Vector3f tmp = new Vector3f();
     if (direction == Movement.FORWARD) {
       position.add(cameraFront.mul(speed));
-
     }
     if (direction == Movement.BACKWARD) {
       position.sub(cameraFront.mul(speed));
@@ -79,7 +78,6 @@ public class Camera {
       position.add(cameraFront.cross(up, tmp).mul(speed).normalize());
     }
     System.out.println(position);
-
   }
 
   public Vector3f getCameraFront() {
@@ -152,12 +150,11 @@ public class Camera {
     front.y = (float) Math.sin(Math.toRadians(pitch));
     front.z = (float) Math.sin(Math.toRadians(yaw)) * (float) Math.cos(Math.toRadians(pitch));
 
-
     front.normalize(cameraFront);
     right = (front.cross(this.up, right)).normalize();
     up = (right.cross(front, up)).normalize();
     Vector3f tmp = new Vector3f();
-    this.positionPlusFront = position.add(cameraFront,tmp).add(position,tmp);
+    this.positionPlusFront = position.add(cameraFront, tmp).add(position, tmp);
     positionPlusFront.add(tmp);
   }
 

@@ -6,5 +6,6 @@ uniform sampler2D skybox;
 
 void main()
 {
+
     FragColor = texture(skybox, TexCoords);
 }
