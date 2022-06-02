@@ -84,6 +84,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
     gl.glEnable(GL_TEXTURE_2D);
     gl.glEnable(GL_DEPTH_TEST);
     gl.glDepthFunc(GL_LESS);
+    gl.glEnable(GL_FRAMEBUFFER_SRGB);
+//    Shader shader = new Shader("triangle","triangle",gl);
     initShaders(gl);
     gl.glEnable(GL_MULTISAMPLE);
 

@@ -1,9 +1,9 @@
 
 in vec2 TexCoord;
 out vec4 out_color;
-
 uniform sampler2D tex;
 uniform sampler2D face;
+
 
 void main() {
 
