@@ -22,15 +22,18 @@ public class Main {
         gljpanel.addGLEventListener(objrenderer);
         gljpanel.addMouseMotionListener(objrenderer);
         gljpanel.addKeyListener(objrenderer);
-        final JFrame jframe = new JFrame("One Triangle Swing GLJPanel");
+        final JFrame jframe = new JFrame("OpenGL FPS Game");
         jframe.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowevent) {
                 jframe.dispose();
                 System.exit(0);
             }
         });
+        FlowLayout flowLayout = new FlowLayout();
+        jframe.getContentPane().setLayout(flowLayout);
 
-        jframe.getContentPane().add(gljpanel, BorderLayout.CENTER);
+        MainMenu mainMenu = new MainMenu();
+        jframe.getContentPane().add(mainMenu);
         jframe.setSize(640, 480);
         jframe.setVisible(true);
         animator.start();

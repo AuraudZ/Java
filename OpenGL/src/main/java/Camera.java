@@ -7,6 +7,7 @@ import org.joml.Vector3fc;
 import java.util.Vector;
 
 public class Camera {
+
   // This class is a c++ port of this, I based it off this
   // https://learnopengl.com/Getting-started/Camera
   // I hope this is not an academic integrity violation
@@ -15,7 +16,7 @@ public class Camera {
   private Vector3f cameraFront;
   private Vector3f up;
 
-  private Vector3f positionPlusFront;
+  private float[] positionPlusFront;
   private Vector3f right;
 
   private float yaw;
@@ -35,7 +36,7 @@ public class Camera {
     this.cameraFront = new Vector3f(0, 0, -1);
     this.up = new Vector3f(0, 1, 0);
     this.right = new Vector3f(0, 0, 0);
-    this.positionPlusFront = new Vector3f(position);
+    this.positionPlusFront = new float[3];
     this.yaw = -90;
     this.pitch = 0;
     this.speed = 2.5f;
@@ -63,6 +64,10 @@ public class Camera {
     this.yaw = yaw;
   }
 
+  public float getFov() {
+    return fov;
+  }
+
   public void processKeyboard(Movement direction, boolean isPressed) {
     Vector3f tmp = new Vector3f();
     if (direction == Movement.FORWARD) {
@@ -77,6 +82,16 @@ public class Camera {
     if (direction == Movement.RIGHT) {
       position.add(cameraFront.cross(up, tmp).mul(speed).normalize());
     }
+    if(direction == Movement.UP) {
+      // the fov
+      fov += 15;
+      System.out.println(fov);
+    }
+    if(direction == Movement.DOWN) {
+      // the fov
+      fov -= 15;
+    }
+    updateCameraVectors();
     System.out.println(position);
   }
 
@@ -101,7 +116,7 @@ public class Camera {
       this.position = new Vector3f(0, 0, -5);
       this.cameraFront = new Vector3f(0, 0, -1);
       this.up = new Vector3f(0, 1, 0);
-      this.positionPlusFront = positionPlusFront.add(cameraFront).add(position);
+
       this.yaw = -90;
       this.pitch = 0;
       this.updateCameraVectors();
@@ -127,17 +142,18 @@ public class Camera {
 
   public Matrix4f getViewMatrix() {
     view.identity();
-    view.rotate((float) Math.toRadians(pitch), 1, 0, 0);
-    return view.lookAt(position, cameraFront, up);
+    positionPlusFront[0] = position.x + cameraFront.x;
+    positionPlusFront[1] = position.y + cameraFront.y;
+    positionPlusFront[2] = position.z + cameraFront.z;
+    view.lookAt(position, cameraFront, up);
+    return view;
   }
 
   public Vector3f getPosition() {
     return position;
   }
 
-  public Vector3f getPositionPlusFront() {
-    return positionPlusFront;
-  }
+
 
   public Vector3f getUp() {
     return up;
@@ -153,13 +169,14 @@ public class Camera {
     front.normalize(cameraFront);
     right = (front.cross(this.up, right)).normalize();
     up = (right.cross(front, up)).normalize();
-    Vector3f tmp = new Vector3f();
-    this.positionPlusFront = position.add(cameraFront, tmp).add(position, tmp);
-    positionPlusFront.add(tmp);
   }
 
   public Vector3fc getLookAt() {
     return position.add(cameraFront);
+  }
+
+  public Matrix4f getProjection() {
+    return projection;
   }
 
   public enum Movement {
@@ -167,6 +184,8 @@ public class Camera {
     BACKWARD,
     LEFT,
     RIGHT,
-    RESET
+    RESET,
+    UP,
+    DOWN
   }
 }
