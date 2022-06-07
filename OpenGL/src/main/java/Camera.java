@@ -85,14 +85,12 @@ public class Camera {
     if(direction == Movement.UP) {
       // the fov
       fov += 15;
-      System.out.println(fov);
     }
     if(direction == Movement.DOWN) {
       // the fov
       fov -= 15;
     }
     updateCameraVectors();
-    System.out.println(position);
   }
 
   public Vector3f getCameraFront() {

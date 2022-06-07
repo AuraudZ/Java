@@ -30,10 +30,12 @@ public class Main {
             }
         });
         FlowLayout flowLayout = new FlowLayout();
-        jframe.getContentPane().setLayout(flowLayout);
+//        jframe.getContentPane().setLayout(flowLayout);
 
         MainMenu mainMenu = new MainMenu();
-        jframe.getContentPane().add(mainMenu);
+        jframe.getContentPane().add(gljpanel,BorderLayout.CENTER);
+
+
         jframe.setSize(640, 480);
         jframe.setVisible(true);
         animator.start();

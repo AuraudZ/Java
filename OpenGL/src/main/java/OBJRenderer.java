@@ -92,11 +92,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
 
         cubeMap = loadCubeMap(gl, cubeMapFiles);
         FPS = animator.getLastFPS();
-        if (animator.isAnimating())
-            ;
-        {
-            System.out.println("FPS: " + FPS);
-        }
         try {
             cube = loadTexture(gl, "textures/container.jpg");
             face = loadTexture(gl, "textures/face.png");
@@ -124,7 +119,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         System.out.println("OpenGL Version: " + gl.glGetString(GL_VERSION));
         System.out.println("OpenGL Renderer: " + gl.glGetString(GL_RENDERER));
         System.out.println("OpenGL Vendor: " + gl.glGetString(GL_VENDOR));
-        System.out.println("View Matrix: " + camera.getViewMatrix());
     }
 
     private Texture loadTexture(GL4bc gl, String fileName) throws IOException {
@@ -230,8 +224,6 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glGenVertexArrays(1, vao_handle, 0);
         gl.glBindVertexArray(vao_handle[0]);
 
-        // Create a new Vertex Buffer Object in memory and select it (bind) this is for the square of
-        // triangles
         gl.glGenBuffers(1, IntBuffer.wrap(vbo_handle));
         gl.glBindBuffer(GL_ARRAY_BUFFER, vbo_handle[0]);
         gl.glBufferData(GL_ARRAY_BUFFER, texArr.length * 4, FloatBuffer.wrap(texArr), GL_STATIC_DRAW);
@@ -306,32 +298,28 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glUniform1i(faceLoc, 1);
         gl.glBindVertexArray(vao_handle[0]);
 
-        for (int i = 0; i < cubePositions.length; i++) {
+        for (int i = 0; i < 1; i++) {
             float angle = 20.0f * i;
             model.identity();
             Vector3f t = new Vector3f(cubePositions[i]);
-            model.translate(cubePositions[i]);
-            model.scale(0.5f);
-            model.rotate((float) Math.toRadians(angle), 1.0f, 0.3f, 0.5f);
+            //   genRandPos(t);
+            model.translate(t);
+            model.scale(1);
             model.get(matrixBuffer);
             gl.glUniformMatrix4fv(
                     gl.glGetUniformLocation(shaderProgramID, "model"), 1, false, matrixBuffer);
             gl.glDrawArrays(GL_TRIANGLES, 0, 36);
         }
 
-        selectCube(camera, cubePositions, cubeSizes);
+        if (selectCube(camera, cubePositions, model)) {
+            System.out.println("Score: " + score);
+        }
 
         // gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
         gl.glBindVertexArray(0);
         gl.glUseProgram(0);
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
         gl.glFlush();
-        // Ortho matrix for hud
+
         Matrix4f ortho = new Matrix4f();
         ortho.identity();
         ortho.ortho(0, width, height, 0, -1, 1);
@@ -342,17 +330,24 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glLoadIdentity();
         gl.glDisable(GL2.GL_DEPTH_TEST);
         gl.glBegin(GL_LINES);
-        gl.glColor3f(1, 0, 0);
-        gl.glVertex2f(0, 0);
-        gl.glVertex2f(width, height);
-        gl.glColor3f(0, 1, 0);
-        gl.glVertex2f(0, 0);
-        gl.glVertex2f(width, 0);
-        gl.glColor3f(0, 0, 1);
-        gl.glVertex2f(0, 0);
-        gl.glVertex2f(0, height);
-
+        gl.glColor3f(0, 1, 1);
+        gl.glVertex2f(width / 2, height / 2);
+        gl.glVertex2f(width / 2, height / 2 - 5);
+        gl.glColor3f(0, 1, 1);
+        gl.glVertex2f(width / 2, height / 2);
+        gl.glVertex2f(width / 2 + 5, height / 2);
+        gl.glColor3f(0, 1, 1);
+        gl.glVertex2f(width / 2, height / 2);
+        gl.glVertex2f(width / 2 - 5, height / 2);
+        gl.glColor3f(0, 1, 1);
+        gl.glVertex2f(width / 2, height / 2);
+        gl.glVertex2f(width / 2, height / 2 + 5);
         gl.glEnd();
+        textRenderer.beginRendering(glad.getSurfaceWidth(), glad.getSurfaceHeight());
+        textRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        textRenderer.draw("Score: " + score, 10, glad.getSurfaceHeight() - 20);
+        textRenderer.endRendering();
+
 
     }
 
@@ -377,40 +372,21 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         gl.glDetachShader(shaderProgramID, vertShaderID);
         gl.glDetachShader(shaderProgramID, fragShaderID);
         gl.glDeleteProgram(shaderProgramID);
-        System.out.println("Deleted shader program " + shaderProgramID);
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if (e.getKeyChar() == 'w') {
-            camera.processKeyboard(Camera.Movement.FORWARD, true);
-        }
-        if (e.getKeyChar() == 's') {
-            camera.processKeyboard(Camera.Movement.BACKWARD, true);
-        }
-        if (e.getKeyChar() == 'a') {
-            camera.processKeyboard(Camera.Movement.LEFT, true);
-        }
-        if (e.getKeyChar() == 'd') {
-            camera.processKeyboard(Camera.Movement.RIGHT, true);
-        }
         if (e.getKeyChar() == 'r') {
             camera.reset(Camera.Movement.RESET);
         }
-        if (e.getKeyChar() == 'l') {
-            lock = !lock;
-        }
-        if (e.getKeyChar() == 'e') {
-            System.out.println("E");
-            camera.setCameraFront(cubePositions[3]);
-            camera.setPosition(cubePositions[3]);
-        }
-        if(e.getKeyChar() == 'z') {
-            camera.processKeyboard(Camera.Movement.UP, true);
-        }
-        if(e.getKeyChar() == 'x') {
-            camera.processKeyboard(Camera.Movement.DOWN, true);
-        }
+    }
+
+    private float genRandPos(Vector3f dest) {
+        dest.x = (float) (Math.random() * 2 - 1);
+        dest.y = (float) (Math.random() * 2 - 1);
+        dest.z = (float) (Math.random() * 2 - 1);
+        dest.normalize();
+        return (float) (Math.random() * 2 - 1);
     }
 
     @Override
@@ -437,22 +413,40 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         lastX = xpos;
         lastY = ypos;
         camera.processMouseMovement(xoffset, yoffset);
+
     }
 
-    public void selectCube(Camera camera, Vector3f cubePositions[], Vector3f cubeSizes[]) {
+    public boolean selectCube(Camera camera, Vector3f cubePositions[], Matrix4f modelMatrix) {
         Vector3f dir = new Vector3f();
         camera.getViewMatrix().positiveZ(dir);
         dir.negate();
+        float closestDistance = Float.POSITIVE_INFINITY;
+
+        Vector2f nearFar = new Vector2f(1, 100);
+        Vector3f min = new Vector3f();
+        Vector3f max = new Vector3f();
+
 
         for (int i = 0; i < cubePositions.length; i++) {
-            Vector3f cubeCenter = new Vector3f(cubePositions[i]);
+            Vector3f cubeCenter = new Vector3f();
             Vector2f result = new Vector2f();
-            Intersectionf.intersectRayAab(camera.getPosition(), dir, cubeCenter, cubeSizes[i], result);
-            if (result.x > 5 && result.y > 5) {
-                System.out.println("Selected cube " + i);
-                return;
+            max.set(cubePositions[i]);
+            min.set(cubePositions[i]);
+            min.add(-modelMatrix.getScale(cubeCenter).x, -modelMatrix.getScale(cubeCenter).y, -modelMatrix.getScale(cubeCenter).z);
+            max.add(modelMatrix.getScale(cubeCenter).x, modelMatrix.getScale(cubeCenter).y, modelMatrix.getScale(cubeCenter).z);
+
+            modelMatrix.getScale(cubeCenter);
+            modelMatrix.transformPosition(cubeCenter);
+            if (Intersectionf.intersectRayAab(camera.getPosition(), dir, min, max, nearFar) && nearFar.x < closestDistance) {
+                closestDistance = nearFar.x;
+
+                result.set(nearFar.x, nearFar.y);
+
+                score++;
+                return true;
             }
         }
+        return false;
     }
 
     @Override
