@@ -7,5 +7,5 @@ uniform sampler2D face;
 
 void main() {
 
-    out_color = mix(texture(tex, TexCoord), texture(face, TexCoord), 0.2);
+    out_color = mix(texture(tex, TexCoord), texture(face, TexCoord), 0.5);
 }

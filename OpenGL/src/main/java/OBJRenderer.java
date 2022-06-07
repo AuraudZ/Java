@@ -93,8 +93,8 @@ public class OBJRenderer implements GLEventListener, MouseMotionListener, KeyLis
         cubeMap = loadCubeMap(gl, cubeMapFiles);
         FPS = animator.getLastFPS();
         try {
-            cube = loadTexture(gl, "textures/container.jpg");
-            face = loadTexture(gl, "textures/face.png");
+            cube = loadTexture(gl, "textures/wood.png");
+            face = loadTexture(gl, "textures/jack.png");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
