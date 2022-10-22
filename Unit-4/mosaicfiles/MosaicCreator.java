@@ -4,17 +4,13 @@ public class MosaicCreator {
     /**
      * @param args
      */
-    // This took 10 hours im not joking and have no idea why.
-    // And am so happy that I got it to work.
-    // Thank you Mr.Smith :)
-    // It is 1am and I am still working on it.
     public static void main(String[] args) {
         System.out.println("How many rows?");
         int rows = TextIO.getlnInt();
         System.out.println("How many columns?");
         int columns = TextIO.getlnInt();
-        int width = 80;
-        int height = 80;
+        int width = 40;
+        int height = 40;
         Mosaic.open(rows, columns, width, height);
         int currRow = 0;
         int currCol = 0;
